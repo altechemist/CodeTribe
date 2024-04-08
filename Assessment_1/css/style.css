@@ -1,1 +1,95 @@
+/* Basic styling for the page */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
 
+/* Header section styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #f0f0f0;
+}
+
+.header nav {
+    display: flex;
+}
+
+.header nav a {
+    margin-right: 1rem;
+    text-decoration: none;
+    color: #333;
+}
+
+.header img {
+    width: 50px;
+    height: 50px;
+}
+
+/* Main content section styling */
+.main {
+    padding: 1rem 2rem;
+}
+
+
+
+.main .content {
+    display: flex;
+    flex-wrap: wrap;
+
+    text-align: center;
+    justify-content: space-between;
+}
+
+.main .content .left-column,
+.main .content .right-column {
+    width: 48%;
+    padding-top: 100px;
+}
+
+.right-column img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+
+.container {
+    display: flex;
+}
+
+/* Footer section styling */
+.footer {
+    text-align: center;
+    padding: 1rem 2rem;
+    background-color: #f0f0f0;
+}
+
+.footer a {
+    text-decoration: none;
+    color: #333;
+}
+
+.footer .quick-links {
+    margin-top: 1rem;
+    text-align: left !important;
+    flex: 1;
+    /* Makes both columns equally wide */
+    padding: 1rem;
+}
+
+.footer .quick-links a {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.footer .map {
+    margin-top: 1rem;
+    align-content: flex-end !important;
+    flex: 1;
+    /* Makes both columns equally wide */
+    padding: 1rem;
+
+}
