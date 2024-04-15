@@ -60,6 +60,10 @@ body {
     display: flex;
 }
 
+ul {
+    list-style-type: none;
+  }
+  
 /* Footer section styling */
 .footer {
     text-align: center;
