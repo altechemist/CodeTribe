@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/index.js"></script>
 </head>
 
-<body>
+<body onload="showPersonalDetails()">
     <header class="header">
         <div>
             <img src="img/logo.png" alt="Securiti Company Logo">
@@ -27,12 +28,9 @@
 
         <section class="content">
             <div class="left-column">
-                <h2>Jon Doe</h2>
-                <p>Your Bio - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua.</p>
+                <h2 id="name">Name</h2>
+                <p id="bio">My Bio</p>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua.</p>
             </div>
             <div class="right-column">
                 <img src="img/profile.png" alt="Your image or video">
@@ -46,7 +44,7 @@
 
     <footer class="footer">
         <div class="container">
-            <div class="quick-links">
+            <div id="address" class="quick-links">
                 <h3>Address</h3>
                 <a>404 Matrix St.</a>
                 <a>Hacker Valley, Internet</a>
@@ -88,8 +86,8 @@
             </div>
         </div>
 
-        <a href="#">LinkedIn</a>
-        <a href="#">GitHub</a>
+        <a id="LinkedIn" href="#">LinkedIn</a>
+        <a id="GitHub" href="#">GitHub</a>
 
         <p>Copyright &copy; 2024</p>
     </footer>
