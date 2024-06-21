@@ -7,6 +7,9 @@ A classic card matching game implemented in JavaScript. The objective is to find
 ### Objective:
 Find all the matching pairs of cards.
 
+![image](https://github.com/altechemist/CodeTribe/assets/66011900/a6793879-6319-403a-98ea-368beccc5a22)
+
+
 ### Setup:
 - The game board consists of 16 cards arranged in a 4x4 grid.
 - Each card has a unique image, and there are 8 pairs of images in total.
