@@ -1,0 +1,72 @@
+body {
+    background-color: #0080ff;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Title Text */
+.title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 2px 4px 0px #000000;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Subtitle Text */
+.sub-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 2px 2px 0px #000000;
+    text-align: center;
+}
+
+/* Timer Display */
+.timer-display {
+    background-color: #ff8c00;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    text-align: center;
+    display: inline-block;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.timer-display:hover {
+    background-color: #e07b00;
+}
+
+/* Score and High score Display */
+.bar-display {
+    background-color: #4d4d4d;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    border-radius: 5px;
+    padding: 5px 10px;
+    display: inline-block;
+    margin: 5px;
+}
+
+/* Game Area */
+.game-area {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 110px);
+    justify-content: center;
+    grid-auto-rows: 110px;
+}
+
+/* Style for game cards */
+.game-card img {
+    width: 90px;
+    height: auto;
+    border: 5px solid white;
+    border-radius: 10px;
+    background-color: white;
+}
