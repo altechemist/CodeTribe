@@ -50,3 +50,4 @@ Contributions are welcome! If you have any suggestions, improvements, or bug fix
 
 - Inspired by the classic Memory Game.
 - Built as a refresher task for DOM manipulation in JavaScript.
+- Images sourced from: https://www.flaticon.com/
