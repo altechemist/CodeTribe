@@ -1,6 +1,6 @@
 # MatchQuest - A Memory Game
 
-A classic card matching game implemented in JavaScript. The objective is to find all matching pairs of cards by flipping them over two at a time.
+A classic card matching game implemented where the objective is to find all matching pairs of cards by flipping them over two at a time.
 
 ## Game Instructions
 
