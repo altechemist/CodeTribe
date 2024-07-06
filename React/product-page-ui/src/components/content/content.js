@@ -1,7 +1,7 @@
 import LeftCard from "../left-card/left-card";
 import RightCard from "../right-card/right-card";
 
-function Content() {
+function Content(props) {
   return (
     <div className="Content-container">
       {/* Left Card */}
@@ -11,7 +11,12 @@ function Content() {
 
       {/* Right Card */}
       <div className="Right-card">
-        <RightCard />
+        <RightCard
+          increaseCount={props.increaseCount}
+          decreaseCount={props.decreaseCount}
+          addToCart={props.addToCart}
+          itemCount={props.itemCount}
+        />
       </div>
     </div>
   );

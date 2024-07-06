@@ -1,30 +1,6 @@
 import cart from "../../assets/images/icon-cart.svg";
-import { useState } from "react";
 
-function RightCard() {
-  // Create a new state with variable counter
-  const [count, setCount] = useState(0);
-
-  // Increase counter
-  const increase = () => {
-    setCount(count + 1);
-  };
-
-  // Decrease counter
-  const decrease = () => {
-    if (count <= 0) {
-      setCount(0);
-    } else {
-      setCount(count - 1);
-    }
-  };
-
-  // Add to counter
-  const [cartItems, addItem] = useState(0);
-  const addToCart = () => {
-    addItem(cartItems + count);
-  };
-
+function RightCard(props) {
   return (
     <div className="Right-card-content">
       {/* Product Details */}
@@ -48,19 +24,29 @@ function RightCard() {
       {/* Action Buttons */}
       <div className="Action-buttons">
         <div className="Group-buttons">
-          <button className="Decrease-count-button" onClick={decrease}>
+          <button
+            className="Decrease-count-button"
+            onClick={props.decreaseCount}
+          >
             -
           </button>
 
-          <button className="Item-count">{count}</button>
+          <button className="Item-count">{props.itemCount}</button>
 
-          <button className="Increase-count-button" onClick={increase}>
+          <button
+            className="Increase-count-button"
+            onClick={props.increaseCount}
+          >
             +
           </button>
 
           {/* Add to cart button */}
           <div>
-            <button className="Add-to-cart" onClick={addToCart} type="Submit">
+            <button
+              className="Add-to-cart"
+              onClick={props.addToCart}
+              type="Submit"
+            >
               <img src={cart} alt="avatar" />
               Add to cart
             </button>

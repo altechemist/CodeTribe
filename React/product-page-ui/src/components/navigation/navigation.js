@@ -2,12 +2,7 @@ import logo from "../../assets/images/logo.svg";
 import cart from "../../assets/images/icon-cart.svg";
 import avatar from "../../assets/images/image-avatar.png";
 
-import { useState } from "react";
-
-function Navigation() {
-  // Create a new state with variable to count items
-  const [itemCount] = useState(0);
-
+function Navigation(props) {
   return (
     <div>
       <nav className="Nav-bar">
@@ -37,7 +32,7 @@ function Navigation() {
         <div className="Nav-buttons">
           <div className="Cart-button">
             <button className="" type="Submit">
-              <p className="Cart-count">{itemCount}</p>
+              <p className="Cart-count">{props.cartItems}</p>
               <img src={cart} alt="avatar" />
             </button>
           </div>
