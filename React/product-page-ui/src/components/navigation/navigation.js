@@ -4,7 +4,7 @@ import avatar from "../../assets/images/image-avatar.png";
 
 function Navigation(props) {
   return (
-    <div>
+    <div className="Nav">
       <nav className="Nav-bar">
         <ul>
           {/* Company Logo */}
@@ -45,8 +45,6 @@ function Navigation(props) {
           ></input>
         </div>
       </nav>
-
-      <div className="Divider"></div>
     </div>
   );
 }

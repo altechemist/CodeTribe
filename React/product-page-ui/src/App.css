@@ -1,12 +1,17 @@
+/* General styles applicable to all screen sizes */
+
 :root {
   --Orange: hsl(26, 100%, 55%);
   --Pale_Orange: #ffac6a;
 }
 
 .Nav-bar {
-  padding: 2% 5% 0% 5%;
+  margin: 3% 5% 5% 5%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between;  
+  border-bottom-style: solid;
+  border-color: gray;
+  border-width: 1px;
 }
 
   
@@ -14,9 +19,6 @@
   margin-left: 5%;
   margin-right: 5%;
   margin-bottom: 5%;
-  border-bottom-style: solid;
-  border-color: gray;
-  border-width: 1px;
 }
 
 .Nav-buttons {
@@ -67,62 +69,59 @@ ul {
   display: flex;
 }
 
-li {
+ul li {
   list-style: none;
   padding-left: 10%;
 }
 
-a:hover {
-  color: black;
-  border-bottom: 3px solid var(--Orange);
-  background-clip: padding-box;
-}
-
-a {
+ul li a {
   text-decoration: none;
   color: grey;
+  position: relative;
+}
+
+ul li a:hover {
+  color: black;
+  background-clip: padding-box;
+  padding-bottom: 69px;
+  border-bottom: 3px solid var(--Orange);
 }
 
 .Content-container {
   display: flex;
-  padding-left: 15%;
-  padding-right: 15%;
-  flex-direction: row;
-  grid-template-columns: repeat(2, 1fr);
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .Left-card {
   text-align: center;
+  margin-right: 5%;
 }
 
 .Right-card {
-  justify-content: left;
+  text-align: left;
 }
 
 .Product-image {
   border-radius: 5%;
-  width: 75%;
+  width: 90%;
 }
 
 .Product-thumbnail {
   margin-top: 5%;
   margin-inline: 1.5%;
   border-radius: 10%;
-  width: 16%;
+  width: 20%;
 }
+
 
 .Product-thumbnail:hover {
   opacity: 0.5;
-}
-
-.Product-details {
-  margin-top: 10%;
-  margin-bottom: 10%;
+  border: 3px solid var(--Orange);
 }
 
 .Product-summary {
   color: gray;
-  width: 70%;
 }
 
 .Company-name {
@@ -158,34 +157,26 @@ a {
   margin-bottom: 10%;
 }
 
-.Decrease-count-button {
+.Decrease-count-button, .Increase-count-button {
   background-color: #f0f0f0;
   color: var(--Orange);
   border-radius: 5%;
   height: 180%;
-  width: 30%;
-}
-
-.Increase-count-button {
-  background-color: #f0f0f0;
-  color: var(--Orange);
-  border-radius: 5%;
-  height: 180%;
-  width: 30%;
+  width: 50%;
 }
 
 .Item-count {
   background-color: #f0f0f0;
   height: 180%;
-  width: 30%;
+  width: 50%;
 }
 
 .Add-to-cart {
-  margin-left: 10%;
+  margin-left: 30%;
   background-color: var(--Orange);
   border-radius: 5%;
   height: 180%;
-  width: 320%;
+  width: 500%;
   align-items: baseline;
 }
 
@@ -193,9 +184,11 @@ a {
   background-color: var(--Orange);
   border-radius: 5%;
 }
+
 .Add-to-cart:hover {
   background-color: var(--Pale_Orange);
 }
+
 .Add-to-cart img {
   margin-right: 5%;
   height: 30%; 
@@ -213,4 +206,11 @@ button {
 
 .Cart-items {
   display: flex;
+}
+
+/* Styles specific to mobile screens (up to 375px) */
+@media (max-width: 375px) {
+  .Nav-bar {
+    display: none;
+  }
 }
