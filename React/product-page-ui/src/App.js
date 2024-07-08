@@ -1,6 +1,7 @@
 import "./App.css";
 import Content from "./components/content/content";
 import Navigation from "./components/navigation/navigation";
+import Cart from "./components/cart/cart";
 
 import { useState } from "react";
 
@@ -37,6 +38,9 @@ function App() {
       </div>
 
       {/* Cart modal */}
+      <div>
+        <Cart />
+      </div>
 
       {/* Content Area */}
       <div className="Content">
