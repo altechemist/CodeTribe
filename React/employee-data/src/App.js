@@ -5,6 +5,9 @@ import ViewEmployee from "./components/view_emp.";
 
 import { useState } from "react";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
 function App() {
   // A list of employee data
   const [employeeData, setEmployeeData] = useState([]);
@@ -70,6 +73,17 @@ function App() {
     setEmployeeData((employeeData) => [...employeeData]);
   };
 
+  // Track selected employee
+  const [selectedEmployee, SetSelectedEmployee] = useState([]);
+
+  const SelectEmployee = (employeeID) => {
+    const selectedEmployeeData = employeeData.filter(
+      (employee) => employee.employeeID === employeeID
+    );
+
+    SetSelectedEmployee(selectedEmployeeData);
+  };
+
   return (
     <div className="App">
       <div className="Header">
@@ -78,6 +92,8 @@ function App() {
         <button className="Tab">View</button>
         <button className="Tab">Edit</button>
       </div>
+
+      {/* Bootstrap tabs */}
 
       {/* Create different tabs to perform CRUD */}
       <div className="Content-area">
@@ -88,7 +104,7 @@ function App() {
         <ViewEmployee
           EmployeeData={employeeData}
           RemoveEmployee={RemoveEmployee}
-          UpdateEmployee={UpdateEmployee}
+          SelectEmployee={SelectEmployee}
         />
 
         {/* Deletes an employee */}
@@ -96,6 +112,8 @@ function App() {
           EmployeeData={employeeData}
           TmpEmployeeData={tmpEmployeeData}
           UpdateEmployee={UpdateEmployee}
+          SelectEmployee={SelectEmployee}
+          SelectedEmployee={selectedEmployee}
         />
       </div>
     </div>

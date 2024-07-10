@@ -18,7 +18,6 @@ function EditEmployee(props) {
       (employee) => employee.employeeID === employeeID
     );
 
-    console.log("searching for:", employeeID);
     // If user is not found
     if (tmpEmployeeData[0] == null) alert("User Not Found!");
 
@@ -31,6 +30,21 @@ function EditEmployee(props) {
       setPhoneNumber(tmpEmployeeData[0].phoneNumber);
       setPosition(tmpEmployeeData[0].position);
     }
+  };
+
+  // If employee already selected
+  const isEmployeeSelected = props.SelectedEmployee.length === 1 ? true : false;
+
+  // Cancel edit
+  const CancelEdit = () => {
+    setEmployeeID("");
+    setFirstName("");
+    setLastName("");
+    setEmailAddress("");
+    setPhoneNumber("");
+    setPosition("");
+
+    props.SelectEmployee(null);
   };
 
   // Add user input to data object
@@ -56,22 +70,49 @@ function EditEmployee(props) {
   return (
     <div id="Edit" className="Tab-content">
       <div>
-        <h3>Search for an Employee</h3>
-        <input
-          type="text"
-          placeholder="Enter Employee ID..."
-          onChange={(event) => setSearchID(event.target.value)}
-        />
-        <button
-          className="Submission"
-          onClick={() => FilterEmployees(searchID)}
-        >
-          Search
-        </button>
+        <h3>Update Employee Information</h3>
+        <div>
+          {isEmployeeSelected ? (
+            <div>
+              <p>
+                Are you sure you want to edit{" "}
+                {props.SelectedEmployee[0].firstName}'s details?
+              </p>
+              <div>
+                <button
+                  className="Submission"
+                  onClick={() =>
+                    FilterEmployees(props.SelectedEmployee[0].employeeID)
+                  }
+                >
+                  Yes
+                </button>
+                <button className="Submission" onClick={() => CancelEdit()}>
+                  No
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h3>Search for an Employee</h3>
+              <input
+                type="text"
+                placeholder={"Enter Employee ID..."}
+                onChange={(event) => setSearchID(event.target.value)}
+                value={searchID}
+              />
+              <button
+                className="Submission"
+                onClick={() => FilterEmployees(searchID)}
+              >
+                Search
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <form className="AddEmployeeForm">
-        <h3>Add Employee Information</h3>
         <div className="Name-input">
           <input
             type="text"

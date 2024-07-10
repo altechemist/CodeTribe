@@ -4,12 +4,11 @@ function ViewEmployee(props) {
   // Find employee by ID
   const RemoveEmployee = (empID) => {
     props.RemoveEmployee(empID);
-    console.log("Deleting: ", empID);
   };
 
   // Edit employee by ID
   const EditEmployee = (empID) => {
-    alert("Emp ID: ", empID);
+    props.SelectEmployee(empID);
   };
 
   return (
