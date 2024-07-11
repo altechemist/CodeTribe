@@ -17,7 +17,7 @@ function ViewEmployee(props) {
         <h3>View Employee Information</h3>
       </div>
 
-      <table className="Table-EmployeesData">
+      <table className="table table-hover table-striped">
         <tbody>
           <tr>
             <th>Employee ID</th>
@@ -35,24 +35,26 @@ function ViewEmployee(props) {
               <td>{empData.employeeID}</td>
               <td>{empData.firstName}</td>
               <td>{empData.lastName}</td>
-              <td>{empData.eMAilAddress}</td>
+              <td>{empData.eMailAddress}</td>
               <td>{empData.phoneNumber}</td>
               <td>{empData.position}</td>
               <td>
-                <button
-                  className="Edit-button"
-                  value={empData.employeeID}
-                  onClick={() => EditEmployee(empData.employeeID)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="Delete-button"
-                  value={empData.employeeID}
-                  onClick={() => RemoveEmployee(empData.employeeID)}
-                >
-                  Delete
-                </button>
+                <div className="btn-group" role="group">
+                  <button
+                    className="btn btn-secondary"
+                    value={empData.employeeID}
+                    onClick={() => EditEmployee(empData.employeeID)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    value={empData.employeeID}
+                    onClick={() => RemoveEmployee(empData.employeeID)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

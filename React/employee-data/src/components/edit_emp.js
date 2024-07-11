@@ -80,14 +80,14 @@ function EditEmployee(props) {
               </p>
               <div>
                 <button
-                  className="Submission"
+                  className="btn btn-success"
                   onClick={() =>
                     FilterEmployees(props.SelectedEmployee[0].employeeID)
                   }
                 >
                   Yes
                 </button>
-                <button className="Submission" onClick={() => CancelEdit()}>
+                <button className="btn btn-danger" onClick={() => CancelEdit()}>
                   No
                 </button>
               </div>
@@ -102,7 +102,7 @@ function EditEmployee(props) {
                 value={searchID}
               />
               <button
-                className="Submission"
+                className="btn btn-primary"
                 onClick={() => FilterEmployees(searchID)}
               >
                 Search
@@ -113,54 +113,83 @@ function EditEmployee(props) {
       </div>
 
       <form className="AddEmployeeForm">
-        <div className="Name-input">
-          <input
-            type="text"
-            placeholder="Employee ID"
-            onChange={(event) => setEmployeeID(event.target.value)}
-            value={employeeID}
-          />
-          <br />
-          <input
-            type="text"
-            placeholder="First Name"
-            onChange={(event) => setFirstName(event.target.value)}
-            value={firstName}
-          />
-          <br />
-          <input
-            type="text"
-            placeholder="Last Name"
-            onChange={(event) => setLastName(event.target.value)}
-            value={lastName}
-          />
+        {/* Full Names */}
+        <div class="mb-3">
+          <label for="fname" class="form-label">
+            Full Names
+          </label>
+
+          <div class="row g-3 align-items-center">
+            <div class="col-sm-6">
+              <input
+                type="text"
+                class="form-control"
+                id="fname"
+                placeholder="Jon"
+                onChange={(event) => setFirstName(event.target.value)}
+                value={firstName}
+              />
+            </div>
+            <div class="col-sm-6">
+              <input
+                type="text"
+                class="form-control"
+                id="lname"
+                placeholder="Doe"
+                onChange={(event) => setLastName(event.target.value)}
+                value={lastName}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="Employee-details">
+        {/* Email Address */}
+        <div class="mb-3">
+          <label for="email" class="form-label">
+            Email Address
+          </label>
           <input
-            type="text"
-            placeholder="eMail Address"
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="name@example.com"
             onChange={(event) => setEmailAddress(event.target.value)}
             value={eMailAddress}
           />
-          <br />
+        </div>
+
+        {/* Phone Number */}
+        <div class="mb-3">
+          <label for="phone" class="form-label">
+            Phone Number
+          </label>
           <input
             type="text"
-            placeholder="Phone Number"
+            class="form-control"
+            id="phone"
+            placeholder="0612345678"
             onChange={(event) => setPhoneNumber(event.target.value)}
             value={phoneNumber}
           />
-          <br />
+        </div>
+
+        {/* Position */}
+        <div class="mb-3">
+          <label for="position" class="form-label">
+            Position
+          </label>
           <input
             type="text"
-            placeholder="Position"
+            class="form-control"
+            id="position"
+            placeholder="Developer"
             onChange={(event) => setPosition(event.target.value)}
             value={position}
           />
         </div>
       </form>
 
-      <button className="Submission" onClick={UpdateEmployee}>
+      <button className="btn btn-success" onClick={UpdateEmployee}>
         Update
       </button>
     </div>

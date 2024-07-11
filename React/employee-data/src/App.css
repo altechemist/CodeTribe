@@ -11,21 +11,6 @@ h4 {
     margin-right: 150px;
 }
 
-.Container {
-    display: flex;
-    background-color: lightgray;
-    margin-left: 150px;
-    margin-right: 150px;
-    padding-bottom: 150px;
-    align-items: center;
-}
-
-.Box {
-    height: 100px;
-    width: calc(100% / 2);
-    margin: 10px;
-}
-
 .Left-column {
     display: flex;
 }

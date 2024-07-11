@@ -2,6 +2,7 @@ import "./App.css";
 import CreateEmployee from "./components/create_emp";
 import EditEmployee from "./components/edit_emp";
 import ViewEmployee from "./components/view_emp.";
+import HomePage from "./components/home";
 
 import { useState } from "react";
 
@@ -84,37 +85,99 @@ function App() {
     SetSelectedEmployee(selectedEmployeeData);
   };
 
+  // Show tabs
+  const [isVisible, SetVisibility] = useState("");
+
+  const AddPage = () => {
+    SetVisibility("Add");
+    setCurrPage("Add");
+  };
+
+  const ViewPage = () => {
+    SetVisibility("View");
+    setCurrPage("View");
+  };
+
+  const UpdatePage = () => {
+    SetVisibility("Update");
+    setCurrPage("Update");
+  };
+
+  const Home = () => {
+    SetVisibility("");
+    setCurrPage("Home");
+  };
+
+  const [currPage, setCurrPage] = useState("Home");
+
   return (
     <div className="App">
-      <div className="Header">
-        <h1 className="Title">Employee Data</h1>
-        <button className="Tab">Add</button>
-        <button className="Tab">View</button>
-        <button className="Tab">Edit</button>
+      <div class="container-sm">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4">
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
+          >
+            <svg class="bi me-2" width="40" height="32" onClick={Home} />
+            <span class="fs-4">Employee Data</span>
+          </a>
+
+          <ul class="nav">
+            <li class="nav-item">
+              <button onClick={AddPage} class="btn btn-outline-primary me-2">
+                Add Employees
+              </button>
+            </li>
+
+            <li class="nav-item">
+              <button onClick={ViewPage} class="btn btn-outline-primary me-2">
+                View Employees
+              </button>
+            </li>
+            <li class="nav-item">
+              <button onClick={UpdatePage} class="btn btn-outline-primary me-2">
+                Update Employees
+              </button>
+            </li>
+          </ul>
+        </header>
       </div>
 
-      {/* Bootstrap tabs */}
-
       {/* Create different tabs to perform CRUD */}
-      <div className="Content-area">
+      <div className="container-sm px-5">
         {/* Adds a new employee */}
-        <CreateEmployee AddEmployee={AddEmployee} />
+        {isVisible === "Add" ? (
+          <CreateEmployee AddEmployee={AddEmployee} />
+        ) : (
+          () => setCurrPage("Add")
+        )}
 
-        {/* Edits existing employee */}
-        <ViewEmployee
-          EmployeeData={employeeData}
-          RemoveEmployee={RemoveEmployee}
-          SelectEmployee={SelectEmployee}
-        />
+        {/* View existing employees */}
+        {isVisible === "View" ? (
+          <ViewEmployee
+            EmployeeData={employeeData}
+            RemoveEmployee={RemoveEmployee}
+            SelectEmployee={SelectEmployee}
+          />
+        ) : (
+          () => setCurrPage("View")
+        )}
 
-        {/* Deletes an employee */}
-        <EditEmployee
-          EmployeeData={employeeData}
-          TmpEmployeeData={tmpEmployeeData}
-          UpdateEmployee={UpdateEmployee}
-          SelectEmployee={SelectEmployee}
-          SelectedEmployee={selectedEmployee}
-        />
+        {/* Updates an employee */}
+        {isVisible === "Update" ? (
+          <EditEmployee
+            EmployeeData={employeeData}
+            TmpEmployeeData={tmpEmployeeData}
+            UpdateEmployee={UpdateEmployee}
+            SelectEmployee={SelectEmployee}
+            SelectedEmployee={selectedEmployee}
+          />
+        ) : (
+          () => setCurrPage("Update")
+        )}
+
+        {/* Show default homepage */}
+        {currPage === "Home" ? <HomePage /> : () => setCurrPage("")}
       </div>
     </div>
   );
