@@ -9,42 +9,67 @@ function CreateEmployee(props) {
   const [eMailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [position, setPosition] = useState("");
+  const [image, uploadImage] = useState("");
 
   // Check if input valid
-  const FormValid = () => {
-    if (employeeID === "") {
-      alert("Enter a valid employee id");
-      return false;
-    }
-  };
-
-  // Add user input to data object
   const AddEmployee = () => {
-    alert(FormValid());
-
-    // Check if input valid
-    props.AddEmployee(
+    const isFormValid = props.FormValidation(
       employeeID,
       firstName,
       lastName,
       eMailAddress,
       phoneNumber,
-      position
+      position,
+      image
     );
 
-    // Clear fields
-    setEmployeeID("");
-    setFirstName("");
-    setLastName("");
-    setEmailAddress("");
-    setPhoneNumber("");
-    setPosition("");
+    if (isFormValid) {
+      props.AddEmployee(
+        employeeID,
+        firstName,
+        lastName,
+        eMailAddress,
+        phoneNumber,
+        position,
+        image
+      );
+
+      // Clear fields
+      setEmployeeID("");
+      setFirstName("");
+      setLastName("");
+      setEmailAddress("");
+      setPhoneNumber("");
+      setPosition("");
+    }
   };
 
   return (
     <div id="Add" className="container-sm">
       <form className="AddEmployeeForm">
         <h3>Add Employee Information</h3>
+
+        {/* Display errors */}
+        {props.errorList.length > 0 ? (
+          <div class="mb-3 alert alert-danger">
+            <h6>Whoops! There were some problems with your input</h6>
+            <ul>
+              {props.errorList.map((errors) => (
+                <li>{errors}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div>
+            {props.isFormValid ? (
+              <div class="mb-3 alert alert-success">
+                <h6>Employee Successfully Created!</h6>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        )}
 
         {/* Employee ID */}
         <div class="mb-3">
@@ -152,12 +177,19 @@ function CreateEmployee(props) {
           <label for="formFile" class="form-label">
             Upload picture
           </label>
-          <input class="form-control" type="file" id="formFile" required />
+          <input
+            class="form-control"
+            type="file"
+            id="formFile"
+            onChange={(event) => uploadImage(event.target.value)}
+            value={image}
+            required
+          />
         </div>
-        <button className="btn btn-primary" onClick={AddEmployee}>
-          Create
-        </button>
       </form>
+      <button className="btn btn-primary" onClick={AddEmployee}>
+        Create
+      </button>
     </div>
   );
 }

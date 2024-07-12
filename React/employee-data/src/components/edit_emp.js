@@ -10,6 +10,7 @@ function EditEmployee(props) {
   const [eMailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [position, setPosition] = useState("");
+  const [image, uploadImage] = useState("");
 
   // Filter the employee data
   const FilterEmployees = (employeeID) => {
@@ -29,6 +30,9 @@ function EditEmployee(props) {
       setEmailAddress(tmpEmployeeData[0].eMailAddress);
       setPhoneNumber(tmpEmployeeData[0].phoneNumber);
       setPosition(tmpEmployeeData[0].position);
+      uploadImage(tmpEmployeeData[0].image);
+    } else {
+      props.SelectEmployee(null);
     }
   };
 
@@ -49,31 +53,44 @@ function EditEmployee(props) {
 
   // Add user input to data object
   const UpdateEmployee = () => {
-    props.UpdateEmployee(
+    const isFormValid = props.FormValidation(
       employeeID,
       firstName,
       lastName,
       eMailAddress,
       phoneNumber,
-      position
+      position,
+      image
     );
 
-    // Clear fields
-    setEmployeeID("");
-    setFirstName("");
-    setLastName("");
-    setEmailAddress("");
-    setPhoneNumber("");
-    setPosition("");
+    if (isFormValid) {
+      props.UpdateEmployee(
+        employeeID,
+        firstName,
+        lastName,
+        eMailAddress,
+        phoneNumber,
+        position
+      );
+
+      // Clear fields
+      setEmployeeID("");
+      setFirstName("");
+      setLastName("");
+      setEmailAddress("");
+      setPhoneNumber("");
+      setPosition("");
+      CancelEdit();
+    }
   };
 
   return (
-    <div id="Edit" className="Tab-content">
+    <div id="Edit" className="container-sm">
       <div>
         <h3>Update Employee Information</h3>
         <div>
           {isEmployeeSelected ? (
-            <div>
+            <div className="modal-content d-flex gap-2">
               <p>
                 Are you sure you want to edit{" "}
                 {props.SelectedEmployee[0].firstName}'s details?
@@ -87,26 +104,38 @@ function EditEmployee(props) {
                 >
                   Yes
                 </button>
-                <button className="btn btn-danger" onClick={() => CancelEdit()}>
+                <button
+                  className="btn btn-danger mx-2 my-2"
+                  onClick={() => CancelEdit()}
+                >
                   No
                 </button>
               </div>
             </div>
           ) : (
-            <div>
-              <h3>Search for an Employee</h3>
-              <input
-                type="text"
-                placeholder={"Enter Employee ID..."}
-                onChange={(event) => setSearchID(event.target.value)}
-                value={searchID}
-              />
-              <button
-                className="btn btn-primary"
-                onClick={() => FilterEmployees(searchID)}
-              >
-                Search
-              </button>
+            <div class="mb-3">
+              <div class="row g-3 align-items-center">
+                <div class="col-sm-6">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="searchID"
+                    placeholder={"Enter Employee ID..."}
+                    onChange={(event) => setSearchID(event.target.value)}
+                    value={searchID}
+                    required
+                  />
+                </div>
+
+                <div class="col-sm-6">
+                  <button
+                    className="btn btn-primary mx-2 my-2"
+                    onClick={() => FilterEmployees(searchID)}
+                  >
+                    Search
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

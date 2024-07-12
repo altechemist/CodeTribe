@@ -9,10 +9,13 @@ function ViewEmployee(props) {
   // Edit employee by ID
   const EditEmployee = (empID) => {
     props.SelectEmployee(empID);
+
+    // Change to update tab
+    props.UpdatePage();
   };
 
   return (
-    <div id="View" className="Tab-content">
+    <div id="View" className="container-sm">
       <div>
         <h3>View Employee Information</h3>
       </div>
@@ -26,6 +29,7 @@ function ViewEmployee(props) {
             <th>eMail Address</th>
             <th>Phone Number</th>
             <th>Position</th>
+            <th>Photo</th>
             <th>Action</th>
           </tr>
 
@@ -38,6 +42,10 @@ function ViewEmployee(props) {
               <td>{empData.eMailAddress}</td>
               <td>{empData.phoneNumber}</td>
               <td>{empData.position}</td>
+              <td>
+                {empData.image}
+                <img className="Thumbnail" src={empData.image} alt="avatar" />
+              </td>
               <td>
                 <div className="btn-group" role="group">
                   <button

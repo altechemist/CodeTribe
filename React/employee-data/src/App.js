@@ -20,7 +20,8 @@ function App() {
     lastName,
     eMailAddress,
     phoneNumber,
-    position
+    position,
+    image
   ) => {
     let newEmployee = {
       employeeID,
@@ -29,8 +30,70 @@ function App() {
       eMailAddress,
       phoneNumber,
       position,
+      image,
     };
     setEmployeeData((employeeData) => [...employeeData, newEmployee]);
+  };
+
+  // Validate user input
+  const [errorList, addError] = useState([]);
+  const [isFormValid, setValidity] = useState(null);
+
+  const FormValidation = (
+    employeeID,
+    firstName,
+    lastName,
+    eMailAddress,
+    phoneNumber,
+    position
+  ) => {
+    const newErrors = [];
+    if (employeeID === "") {
+      newErrors.push("Employee ID Missing...");
+    }
+
+    if (Number.isInteger(employeeID)) {
+      newErrors.push("Employee ID must be a digit...");
+    }
+
+    if (firstName === "") {
+      newErrors.push("First Name Missing...");
+    }
+
+    if (lastName === "") {
+      newErrors.push("Last Name Missing...");
+    }
+
+    // Email Validation
+    if (eMailAddress === "") {
+      newErrors.push("Email Missing...");
+    }
+
+    if (!eMailAddress.includes("@", ".")) {
+      newErrors.push("Invalid Email...");
+    }
+
+    // Phone Number Validation
+    if (phoneNumber === "") {
+      newErrors.push("Phone Missing...");
+    }
+
+    if (phoneNumber.length !== 10) {
+      newErrors.push("Phone must be 10 digits...");
+    }
+
+    if (position === "") {
+      newErrors.push("Position Missing...");
+    }
+
+    addError(newErrors);
+
+    if (newErrors.length === 0) {
+      setValidity(true);
+      return true;
+    } else {
+      return false;
+    }
   };
 
   // Delete employee using their ID
@@ -53,7 +116,8 @@ function App() {
     lastName,
     eMailAddress,
     phoneNumber,
-    position
+    position,
+    image
   ) => {
     let tmpEmployee = {
       employeeID,
@@ -62,6 +126,7 @@ function App() {
       eMailAddress,
       phoneNumber,
       position,
+      image,
     };
 
     // Find the index of employee
@@ -147,7 +212,12 @@ function App() {
       <div className="container-sm px-5">
         {/* Adds a new employee */}
         {isVisible === "Add" ? (
-          <CreateEmployee AddEmployee={AddEmployee} />
+          <CreateEmployee
+            AddEmployee={AddEmployee}
+            FormValidation={FormValidation}
+            errorList={errorList}
+            isFormValid={isFormValid}
+          />
         ) : (
           () => setCurrPage("Add")
         )}
@@ -158,6 +228,7 @@ function App() {
             EmployeeData={employeeData}
             RemoveEmployee={RemoveEmployee}
             SelectEmployee={SelectEmployee}
+            UpdatePage={UpdatePage}
           />
         ) : (
           () => setCurrPage("View")
@@ -171,6 +242,8 @@ function App() {
             UpdateEmployee={UpdateEmployee}
             SelectEmployee={SelectEmployee}
             SelectedEmployee={selectedEmployee}
+            FormValidation={FormValidation}
+            errorList={errorList}
           />
         ) : (
           () => setCurrPage("Update")
