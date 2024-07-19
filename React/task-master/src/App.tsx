@@ -15,25 +15,70 @@ import "../src/index.css";
 
 export default function App() {
   // Define the Task interface
+  type InputValue = string | undefined;
   interface Task {
-    title: string;
-    date: string;
-    time: string;
-    priority: string;
+    title: InputValue;
+    date: InputValue;
+    time: InputValue;
+    priority: InputValue;
+    status: InputValue;
   }
 
   // State to hold the list of tasks
   const [taskList, setTaskList] = useState<Task[]>([]);
 
   // Function to create a new task
-  const CreateTask = () => {
+  const CreateTask = (
+    title: InputValue,
+    date: InputValue,
+    time: InputValue,
+    priority: InputValue,
+    status: InputValue
+  ) => {
     const newTask: Task = {
-      title: "Project",
-      date: "yyyy/mm/dd",
-      time: "10:42",
-      priority: "High Priority"
+      title: title,
+      date: date,
+      time: time,
+      priority: priority,
+      status: status,
     };
     setTaskList((taskList) => [...taskList, newTask]);
+  };
+
+ 
+  // Track the selected task
+  const [selectedTask, setSelectTask] = useState<InputValue>();
+  const SelectTask = (id: InputValue) => {
+    setSelectTask(id)
+  };
+
+  // Function to update an existing task
+  const UpdatesTask = (
+    id: InputValue,
+    title: InputValue,
+    date: InputValue,
+    time: InputValue,
+    priority: InputValue,
+    status: InputValue
+  ) => {
+
+    // Temporarily store task information
+    const tmpTask: Task = {
+      title: title,
+      date: date,
+      time: time,
+      priority: priority,
+      status: status,
+    };
+
+    // Find the index of the selected task
+    const index = taskList.findIndex(function (task) {
+      return task.title === title;
+    });
+
+    // Update values
+    taskList[index] = tmpTask;
+    setTaskList((taskList) => [...taskList]);
   };
 
   return (
@@ -42,8 +87,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            {/* Pass CreateTask as a prop to Task component */}
-            <Route path="task" element={<Task CreateTask={CreateTask} taskList={taskList} />} />
+            <Route
+              path="task"
+              element={<Task CreateTask={CreateTask}  taskList={taskList} UpdatesTask={UpdatesTask} selectedTask={selectedTask} SelectTask={SelectTask} />}
+            />
             <Route path="register" element={<Register />} />
             <Route path="login" element={<Login />} />
             <Route path="*" element={<NoPage />} />

@@ -1,26 +1,46 @@
 import React from "react";
 import CurrentTask from "../components/CurrentTask";
+import UpdateTask from "../components/UpdateTask";
 import NewTask from "../components/NewTask";
 import SearchTask from "../components/SearchTask";
-import UpdateTask from "../components/UpdateTask";
 
-// Define prop types for the Task component
+// Prop types for the Task component
+type InputValue = string | undefined;
 interface TaskProps {
-  CreateTask: () => void;
+  // Function adds new task
+  CreateTask: (
+    title: InputValue,
+    date: InputValue,
+    time: InputValue,
+    priority: InputValue,
+    status: InputValue
+  ) => void;
+
+  // List of available tasks
   taskList: {
-    title: string;
-    date: string;
-    time: string;
-    priority: string;
+    title: InputValue;
+    date: InputValue;
+    time: InputValue;
+    priority: InputValue;
+    status: InputValue;
   }[];
+
+  // Track selected task
+  selectedTask: InputValue;
+  SelectTask: (id: InputValue) => void;
+
+  // Function updates a task
+  UpdatesTask: (
+    index: InputValue,
+    title: InputValue,
+    date: InputValue,
+    time: InputValue,
+    priority: InputValue,
+    status: InputValue
+  ) => void;
 }
 
-const Task: React.FC<TaskProps> = ({ CreateTask, taskList }) => {
-  // Function to handle creating a task
-  const handleCreateTask = () => {
-    CreateTask();
-  };
-
+const Task: React.FC<TaskProps> = ({ CreateTask, taskList, UpdatesTask }) => {
   return (
     <div className="container-sm">
       {/* Section for current tasks */}
@@ -39,28 +59,10 @@ const Task: React.FC<TaskProps> = ({ CreateTask, taskList }) => {
       </div>
 
       {/* Component for adding a new task */}
-      <NewTask />
+      <NewTask CreateTask={CreateTask} />
 
       {/* Component for updating a task */}
-      <UpdateTask />
-
-      {/* Button to test CreateTask function */}
-      <button onClick={handleCreateTask} className="btn btn-primary mt-3">
-        Create Task
-      </button>
-
-      {/* Display current tasks */}
-      <div>
-        <h2>Current Task List:</h2>
-        <ul>
-          {taskList.map((task, index) => (
-            <li key={index}>
-              <strong>{task.title}</strong> - {task.date}, {task.time},{" "}
-              {task.priority}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <UpdateTask UpdatesTask={UpdatesTask} />
     </div>
   );
 };
