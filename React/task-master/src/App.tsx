@@ -15,7 +15,7 @@ import "../src/index.css";
 
 export default function App() {
   // Define the Task interface
-  type InputValue = string | undefined;
+  type InputValue = string | number | undefined;
   interface Task {
     title: InputValue;
     date: InputValue;

@@ -10,12 +10,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.black-text
-{
-color:  rgba(0, 0, 0, 0.700) !important;
+.black-text {
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 
-input:hover, select:hover, button:hover {
+input:hover,
+select:hover {
   border: solid 3px #646cff !important;
 }
 
@@ -34,13 +34,12 @@ body {
 }
 
 input {
-  border-radius:  25px !important;
-  border: solid 2px lightgray  !important;
+  border-radius: 25px !important;
+  border: solid 2px lightgray !important;
 }
 
-
 button {
-  border-radius:  15px !important;
+  border-radius: 15px !important;
 }
 
 .search {
@@ -61,24 +60,12 @@ select {
 }
 
 .outline {
-  border: solid 2px #fff  !important;
+  border: solid 2px #fff !important;
 }
 
 .streak {
   border-radius: 25px !important;
   border: solid 3px lightgray !important;
-}
-
-.time-input {
-  width: 15% !important;
-}
-
-.date-input {
-  width: 20% !important;
-}
-
-.priority-input {
-  width: 15% !important;
 }
 
 ul {
@@ -91,4 +78,10 @@ ul {
   background-color: var(--bs-danger-bg-subtle);
   border-radius: 20px !important;
   border: solid 1px var(--bs-danger-border-subtle) !important;
+}
+
+.floating {
+  position: absolute;
+  bottom: 5%;
+  right: 20%;
 }

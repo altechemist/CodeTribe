@@ -24,8 +24,6 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [errorList, setErrorList] = useState<string[]>([]);
 
-  // State for selected task
-
   // Validate form
   const isFormValid = (): boolean => {
     const title = titleRef.current?.value || "";
@@ -86,48 +84,45 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
 
   return (
     <div className="AddTask">
-      <div className="text-center">
-        <h1 className="display-5 fw-bold text-body-emphasis">
-          Add New Task...
-        </h1>
-      </div>
-
       {/* Start of form */}
       <div className="d-flex justify-content-center">
-        <div className="w-75 flex-md-row p-4 py-md-5 align-items-center">
-          <div className="list-group border rounded-2 p-2 streak">
-            {/* Display errors here */}
-            <div className="mb-4 m-2">
-              {errorList.length > 0 && (
-                <div className="mb-3 alert error-list">
-                  <h6>Whoops! There were some problems with your input</h6>
-                  <ul className="list-group">
-                    {errorList.map((error, index) => (
-                      <li key={index} className="error">
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+        <div className="flex-md-row pb-2 align-items-center">
+          {/* Display errors here */}
+          <div className="mb-4 m-2">
+            {errorList.length > 0 && (
+              <div className="mb-3 alert error-list">
+                <h6>Whoops! There were some problems with your input</h6>
+                <ul className="list-group">
+                  {errorList.map((error, index) => (
+                    <li key={index} className="error">
+                      {error}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-              {/* Confirmation */}
-              {submitted && (
-                <div className="mb-3 alert alert-success">
-                  <h6>Task Successfully Created!</h6>
-                  <button
-                    onClick={resetSubmitted}
-                    className="btn btn-sm btn-outline-success"
-                    style={{ marginTop: "0px", marginLeft: "95%" }}
-                  >
-                    Close
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="list-group-item d-flex gap-1 border-0">
-              <div className="col-md-6">
-                <label className="form-label">Title</label>
+            {/* Confirmation */}
+            {submitted && (
+              <div
+                className="mb-3 alert alert-success alert-dismissible"
+                role="alert"
+              >
+                <h6>Task Successfully Added!</h6>
+                <button
+                  onClick={resetSubmitted}
+                  type="button"
+                  className="btn-close"
+                  aria-label="Close"
+                ></button>
+              </div>
+            )}
+          </div>
+
+          <div className="list-group rounded-2 p-2">
+            <div className="list-group-item flex gap-1 border-0">
+              <div className="col-md-11">
+                <label className="form-label ms-3">Title</label>
                 <input
                   type="text"
                   className="form-control"
@@ -137,8 +132,8 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
                 />
               </div>
 
-              <div className="col-md date-input">
-                <label className="form-label">Date</label>
+              <div className="col-md-11">
+                <label className="form-label ms-3  mt-2">Date</label>
                 <input
                   type="date"
                   className="form-control"
@@ -147,8 +142,8 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
                 />
               </div>
 
-              <div className="col-md-2 time-input">
-                <label className="form-label">Time</label>
+              <div className="col-md-11">
+                <label className="form-label ms-3 mt-2">Time</label>
                 <input
                   type="time"
                   className="form-control"
@@ -157,30 +152,36 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
                 />
               </div>
 
-              <div className="col-md-2 priority-input">
-                <label className="form-label">Priority</label>
+              <div className="col-md-11">
+                <label className="form-label ms-3 mt-2">Priority</label>
                 <select
                   id="inputPriority"
                   className="form-select"
                   ref={priorityRef}
                 >
                   <option value="">Choose...</option>
-                  <option className="text-bg-danger" value="High Priority">High Priority</option>
-                  <option className="text-bg-warning" value="Medium Priority">Medium Priority</option>
-                  <option className="text-bg-success" value="Low Priority">Low Priority</option>
+                  <option className="text-bg-danger" value="High">
+                    High Priority
+                  </option>
+                  <option className="text-bg-warning" value="Medium">
+                    Medium Priority
+                  </option>
+                  <option className="text-bg-success" value="Low">
+                    Low Priority
+                  </option>
                 </select>
               </div>
             </div>
+          </div>
 
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end my-2">
-              <button
-                onClick={handleCreateTask}
-                className="btn btn-primary me-md-2"
-              >
-                <i className="bi bi-plus-lg me-2"></i>
-                Add Task
-              </button>
-            </div>
+          <div className="d-grid gap-2 d-md-flex justify-content-md-center mt-1">
+            <button
+              onClick={handleCreateTask}
+              className="btn btn-primary me-md-2"
+            >
+              <i className="bi bi-plus-lg me-2"></i>
+              Create Task
+            </button>
           </div>
         </div>
       </div>

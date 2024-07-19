@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 
 // Prop types Task component
-type InputValue = string | undefined;
+type InputValue = string | number | undefined;
 interface TaskProps {
   taskList: {
     title: InputValue;
@@ -10,27 +10,24 @@ interface TaskProps {
     priority: InputValue;
     status: InputValue;
   }[];
+
+  // Track selected task
+  SelectTask: (id: InputValue) => void;
 }
 
-const CurrentTask: React.FC<TaskProps> = ({ taskList }) => {
+const CurrentTask: React.FC<TaskProps> = ({ taskList, SelectTask }) => {
   // Change the color based on priority
   const colorPicker = (priority: InputValue) => {
     switch (priority) {
-      case "High Priority":
+      case "High":
         return "#dc3545";
-      case "Medium Priority":
+      case "Medium":
         return "#ffc107";
-      case "Low Priority":
+      case "Low":
         return "#198754";
       default:
-        return "black";
+        return "gray";
     }
-  };
-
-  // Track the selected task
-  const [selectedTask, setSelectTask] = useState<number>();
-  const SelectTask = (id: number) => {
-    setSelectTask(id)
   };
 
   return (
@@ -65,11 +62,18 @@ const CurrentTask: React.FC<TaskProps> = ({ taskList }) => {
                   style={{ backgroundColor: colorPicker(task.priority) }}
                 >
                   {task.priority}
+                  <br />
+                  Priority
                 </span>
                 <div className="btn-group gap-1" role="group">
-                  <button onClick={() => SelectTask(index)} className="btn btn-secondary btn-sm outline">
+                  <button
+                    onClick={() => SelectTask(index)}
+                    className="btn btn-secondary btn-sm outline"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateTaskModal"
+                  >
                     <i className="bi bi-pencil me-1"></i>
-                    Edit {index}
+                    Edit
                   </button>
                   <button className="btn btn-danger btn-sm outline">
                     <i className="bi bi-trash me-1"></i>
@@ -85,8 +89,6 @@ const CurrentTask: React.FC<TaskProps> = ({ taskList }) => {
           </div>
         </div>
       </div>
-
-      <h1>Selected: {selectedTask}</h1>
     </div>
   );
 };

@@ -1,8 +1,16 @@
 import React, { useState, useRef } from "react";
 
 // Prop types for the component
-type InputValue = string | undefined;
+type InputValue = string | number | undefined;
 interface TaskProps {
+  taskList: {
+    title: InputValue;
+    date: InputValue;
+    time: InputValue;
+    priority: InputValue;
+    status: InputValue;
+  }[];
+
   // Function update a task
   UpdatesTask: (
     id: InputValue,
@@ -12,9 +20,16 @@ interface TaskProps {
     priority: InputValue,
     status: InputValue
   ) => void;
+
+  // Track selected task
+  selectedTask: InputValue;
 }
 
-const UpdateTask: React.FC<TaskProps> = ({ UpdatesTask }) => {
+const UpdateTask: React.FC<TaskProps> = ({
+  UpdatesTask,
+  selectedTask,
+  taskList,
+}) => {
   // Refs for input fields
   const titleRef = useRef<HTMLInputElement>(null);
   const dateRef = useRef<HTMLInputElement>(null);
@@ -24,6 +39,21 @@ const UpdateTask: React.FC<TaskProps> = ({ UpdatesTask }) => {
   // State for success message and errors
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [errorList, setErrorList] = useState<string[]>([]);
+
+  // Loads form data
+  let titleString: InputValue = "";
+  let dateString: InputValue = "";
+  let timeString: InputValue = "";
+  let priorityString: InputValue = "";
+
+  if (selectedTask != null) {
+    alert(typeof(selectedTask));
+    const task: number = Number(selectedTask);
+    titleString = taskList[task].title;
+    dateString = taskList[task].date;
+    timeString = taskList[task].time;
+    priorityString = taskList[task].priority;
+  }
 
   // Validate form
   const isFormValid = (): boolean => {
@@ -66,7 +96,7 @@ const UpdateTask: React.FC<TaskProps> = ({ UpdatesTask }) => {
     }
 
     // Create task
-    UpdatesTask('0', title, date, time, priority, "Incomplete");
+    UpdatesTask("0", title, date, time, priority, "Incomplete");
 
     // Clear fields
     if (titleRef.current) titleRef.current.value = "";
@@ -78,114 +108,108 @@ const UpdateTask: React.FC<TaskProps> = ({ UpdatesTask }) => {
     setSubmitted(true);
   };
 
-   // Function to reset submitted state
-   const resetSubmitted = () => {
+  // Function to reset submitted state
+  const resetSubmitted = () => {
     setSubmitted(false);
   };
 
   return (
     <div className="AddTask">
-      <div className="text-center">
-        <h1 className="display-5 fw-bold text-body-emphasis">
-          Update A Task...
-        </h1>
-      </div>
-
       {/* Start of form */}
       <div className="d-flex justify-content-center">
-        <div className="w-75 flex-md-row p-4 py-md-5 align-items-center">
-          <div className="list-group border rounded-2 p-2 streak">
-            {/* Display errors here */}
-            <div className="mb-4 m-2">
-              {errorList.length > 0 && (
-                <div className="mb-3 alert error-list">
-                  <h6>Whoops! There were some problems with your input</h6>
-                  <ul className="list-group">
-                    {errorList.map((error, index) => (
-                      <li key={index} className="error">
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+        <div className="flex-md-row pb-2 align-items-center">
+          <div className="mb-4 m-2">
+            {errorList.length > 0 && (
+              <div className="mb-3 alert error-list">
+                <h6>Whoops! There were some problems with your input</h6>
+                <ul className="list-group">
+                  {errorList.map((error, index) => (
+                    <li key={index} className="error">
+                      {error}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-              {/* Confirmation */}
-              {submitted && (
-                <div className="mb-3 alert alert-success">
-                  <h6>Task Successfully Created!</h6>
-                  <button
-                    onClick={resetSubmitted}
-                    className="btn btn-sm btn-outline-success"
-                    style={{ marginTop: "0px", marginLeft: "95%" }}
-                  >
-                    Close
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="list-group-item d-flex gap-1 border-0">
-              <div className="col-md-6">
-                <label className="form-label">Title</label>
+            {/* Confirmation */}
+            {submitted && (
+              <div
+                className="mb-3 alert alert-success alert-dismissible"
+                role="alert"
+              >
+                <h6>Task Successfully Updated!</h6>
+                <button
+                  onClick={resetSubmitted}
+                  type="button"
+                  className="btn-close"
+                  aria-label="Close"
+                ></button>
+              </div>
+            )}
+          </div>
+
+          <div className="list-group rounded-2 p-2">
+            <div className="list-group-item flex gap-1 border-0">
+              <div className="col-md-11">
+                <label className="form-label ms-3">Title</label>
                 <input
                   type="text"
                   className="form-control"
                   id="inputTitle"
                   placeholder="Task Name..."
+                  value={titleString}
                   ref={titleRef}
                 />
               </div>
 
-              <div className="col-md date-input">
-                <label className="form-label">Date</label>
+              <div className="col-md-11">
+                <label className="form-label ms-3 mt-2">Date</label>
                 <input
                   type="date"
                   className="form-control"
                   id="inputDate"
+                  value={dateString}
                   ref={dateRef}
                 />
               </div>
 
-              <div className="col-md-2 time-input">
-                <label className="form-label">Time</label>
+              <div className="col-md-11">
+                <label className="form-label ms-3 mt-2">Time</label>
                 <input
                   type="time"
                   className="form-control"
                   id="inputTime"
+                  value={timeString}
                   ref={timeRef}
                 />
               </div>
 
-              <div className="col-md-2 priority-input">
-                <label className="form-label">Priority</label>
+              <div className="col-md-11">
+                <label className="form-label ms-3 mt-2">Priority</label>
                 <select
                   id="inputPriority"
                   className="form-select"
+                  value={priorityString}
                   ref={priorityRef}
                 >
                   <option value="">Choose...</option>
-                  <option className="text-bg-danger" value="High Priority">High Priority</option>
-                  <option className="text-bg-warning" value="Medium Priority">Medium Priority</option>
-                  <option className="text-bg-success" value="Low Priority">Low Priority</option>
+                  <option className="text-bg-danger" value="High">
+                    High Priority
+                  </option>
+                  <option className="text-bg-warning" value="Medium">
+                    Medium Priority
+                  </option>
+                  <option className="text-bg-success" value="Low">
+                    Low Priority
+                  </option>
                 </select>
               </div>
             </div>
 
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end my-2">
+            <div className="d-grid gap-2 d-md-flex justify-content-md-center mt-2">
               <button
-                onClick={() =>
-                  handleUpdatesTask()
-                }
-                className="btn btn-danger me-md-2"
-              >
-                <i className="bi bi-x-lg me-2"></i>
-                Cancel
-              </button>
-
-              <button
-                onClick={() =>
-                  handleUpdatesTask()
-                }
+                onClick={() => handleUpdatesTask()}
                 className="btn btn-success me-md-2"
               >
                 <i className="bi bi-floppy me-2"></i>
