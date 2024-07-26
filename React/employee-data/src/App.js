@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   // A list of employee data
@@ -50,6 +51,10 @@ function App() {
     const newErrors = [];
     if (employeeID === "") {
       newErrors.push("Employee ID Missing...");
+    }
+
+    if (employeeID.length !== 13) {
+      newErrors.push("Employee ID must be 13 digits...");
     }
 
     if (Number.isInteger(employeeID)) {
@@ -183,24 +188,32 @@ function App() {
             href="/"
             class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
           >
-            <svg class="bi me-2" width="40" height="32" onClick={Home} />
+            <i
+              class="bi bi-house-fill me-2"
+              width="40"
+              height="32"
+              onClick={Home}
+            ></i>
             <span class="fs-4">Employee Data</span>
           </a>
 
           <ul class="nav">
             <li class="nav-item">
               <button onClick={AddPage} class="btn btn-outline-primary me-2">
+                <i class="bi bi-person-plus me-2"></i>
                 Add Employees
               </button>
             </li>
 
             <li class="nav-item">
               <button onClick={ViewPage} class="btn btn-outline-primary me-2">
+                <i class="bi bi-search me-2"></i>
                 View Employees
               </button>
             </li>
             <li class="nav-item">
               <button onClick={UpdatePage} class="btn btn-outline-primary me-2">
+                <i class="bi bi-file-arrow-up me-2"></i>
                 Update Employees
               </button>
             </li>
@@ -244,6 +257,7 @@ function App() {
             SelectedEmployee={selectedEmployee}
             FormValidation={FormValidation}
             errorList={errorList}
+            isFormValid={isFormValid}
           />
         ) : (
           () => setCurrPage("Update")

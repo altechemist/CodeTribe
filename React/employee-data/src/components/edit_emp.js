@@ -20,7 +20,11 @@ function EditEmployee(props) {
     );
 
     // If user is not found
-    if (tmpEmployeeData[0] == null) alert("User Not Found!");
+    if (employeeID === "") {
+      alert("Employee ID cannot be empty");
+    } else if (tmpEmployeeData[0] == null) {
+      alert("User Not Found!");
+    }
 
     // Update text fields
     if (tmpEmployeeData[0]) {
@@ -86,8 +90,30 @@ function EditEmployee(props) {
 
   return (
     <div id="Edit" className="container-sm">
-      <div>
+      <div className="EmployeeForm">
         <h3>Update Employee Information</h3>
+        {/* Display errors */}
+        {props.errorList.length > 0 ? (
+          <div class="mb-3 alert alert-danger">
+            <h6>Whoops! There were some problems with your input</h6>
+            <ul>
+              {props.errorList.map((errors) => (
+                <li>{errors}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div>
+            {props.isFormValid ? (
+              <div class="mb-3 alert alert-success">
+                <h6>Employee Successfully Updated!</h6>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        )}
+
         <div>
           {isEmployeeSelected ? (
             <div className="modal-content d-flex gap-2">
@@ -132,6 +158,7 @@ function EditEmployee(props) {
                     className="btn btn-primary mx-2 my-2"
                     onClick={() => FilterEmployees(searchID)}
                   >
+                    <i class="bi bi-search me-2"></i>
                     Search
                   </button>
                 </div>
@@ -141,7 +168,7 @@ function EditEmployee(props) {
         </div>
       </div>
 
-      <form className="AddEmployeeForm">
+      <form className="EmployeeForm">
         {/* Full Names */}
         <div class="mb-3">
           <label for="fname" class="form-label">
@@ -218,7 +245,8 @@ function EditEmployee(props) {
         </div>
       </form>
 
-      <button className="btn btn-success" onClick={UpdateEmployee}>
+      <button className="btn btn-success centered" onClick={UpdateEmployee}>
+        <i class="bi bi-file-arrow-up me-2"></i>
         Update
       </button>
     </div>

@@ -45,8 +45,8 @@ function CreateEmployee(props) {
   };
 
   return (
-    <div id="Add" className="container-sm">
-      <form className="AddEmployeeForm">
+    <div id="Add" className="container-sm form">
+      <form className="EmployeeForm">
         <h3>Add Employee Information</h3>
 
         {/* Display errors */}
@@ -78,7 +78,7 @@ function CreateEmployee(props) {
           </label>
 
           <div class="row g-3 align-items-center">
-            <div class="col-sm-6">
+            <div class="col-sm">
               <input
                 type="text"
                 class="form-control"
@@ -187,7 +187,8 @@ function CreateEmployee(props) {
           />
         </div>
       </form>
-      <button className="btn btn-primary" onClick={AddEmployee}>
+      <button className="btn btn-primary centered" onClick={AddEmployee}>
+        <i class="bi bi-floppy me-2"></i>
         Create
       </button>
     </div>

@@ -1,5 +1,10 @@
 import React from "react";
 
 export default function HomePage() {
-  return <div>HomePage</div>;
+  return (<div>
+    
+        <div className="col-lg-6 mx-auto text-center">
+        <h1 className="display-5 fw-bold text-body-emphasis">Manage Employees</h1>
+        </div>
+  </div>);
 }

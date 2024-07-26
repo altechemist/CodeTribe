@@ -14,13 +14,17 @@ function ViewEmployee(props) {
     props.UpdatePage();
   };
 
+  const HasData = () => {
+    if (props.EmployeeData.length !== 0) return true;
+  };
+
   return (
     <div id="View" className="container-sm">
       <div>
+        {props.EmployeeData.length === 0 ? <div class="text-center"><h1>No Employee Data Found</h1></div> : <div>
         <h3>View Employee Information</h3>
-      </div>
 
-      <table className="table table-hover table-striped">
+        <table className="table table-hover table-striped">
         <tbody>
           <tr>
             <th>Employee ID</th>
@@ -53,6 +57,7 @@ function ViewEmployee(props) {
                     value={empData.employeeID}
                     onClick={() => EditEmployee(empData.employeeID)}
                   >
+                    <i class="bi bi-pencil me-2"></i>
                     Edit
                   </button>
                   <button
@@ -60,6 +65,7 @@ function ViewEmployee(props) {
                     value={empData.employeeID}
                     onClick={() => RemoveEmployee(empData.employeeID)}
                   >
+                    <i class="bi bi-trash me-2"></i>
                     Delete
                   </button>
                 </div>
@@ -68,6 +74,9 @@ function ViewEmployee(props) {
           ))}
         </tbody>
       </table>
+      </div>}
+      </div>
+      
     </div>
   );
 }

@@ -26,3 +26,13 @@ h4 {
 .Thumbnail {
     width: 80px;
 }
+
+.EmployeeForm {
+    margin-left: 200px;
+    margin-right: 200px;
+}
+
+.centered {
+    position: absolute;
+    right: 50%;
+}
