@@ -59,7 +59,9 @@ app.post("/register", (req, res) => {
     }
   } catch (error) {
     // Handle errors
-    res.status(500).json({ error: "An error occurred while registering the user" });
+    res
+      .status(500)
+      .json({ error: "An error occurred while registering the user" });
   }
 });
 
@@ -89,7 +91,6 @@ app.post("/login", (req, res) => {
     res.status(500).json({ error: "An error occurred while logging in" });
   }
 });
-
 
 // Get user details by uid
 app.get("/users/:uid", (req, res) => {
@@ -127,28 +128,55 @@ app.get("/users/:uid/tasks", (req, res) => {
 app.put("/users/:uid/tasks/:taskid", (req, res) => {
   const { uid, taskid } = req.params;
   const { title, time, date, priority, status } = req.body;
-  const sql = `UPDATE tasks SET title = ?, time = ?, date = ?, priority = ?, status = ? WHERE tid = ? AND uid = ?`;
-  const stmt = db.prepare(sql);
-  const info = stmt.run(title, time, date, priority, status, taskid, uid);
-  if (info.changes > 0) {
-    res.json({ message: "Task updated successfully" });
-  } else {
-    res.status(404).json({ error: "Task not found for this user" });
+
+  // Basic validation
+  if (!title || !time || !date || !priority || !status) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  const sql = `UPDATE tasks SET title = ?, time = ?, date = ?, priority = ?, status = ? WHERE taskid = ? AND uid = ?`;
+
+  try {
+    const stmt = db.prepare(sql);
+    const info = stmt.run(title, time, date, priority, status, taskid, uid);
+
+    if (info.changes > 0) {
+      res.json({ message: "Task updated successfully" });
+    } else {
+      res.status(404).json({ error: "Task not found for this user" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
   }
 });
 
 // Delete a task by taskid
-app.delete("/users/:uid/tasks/:taskid", (req, res) => {
+app.delete("/users/:uid/tasks/:taskid", async (req, res) => {
   const { uid, taskid } = req.params;
-  const sql = `DELETE FROM tasks WHERE tid = ? AND uid = ?`;
-  const stmt = db.prepare(sql);
-  const info = stmt.run(taskid, uid);
-  if (info.changes > 0) {
-    res.json({ message: "Task deleted successfully" });
-  } else {
-    res.status(404).json({ error: "Task not found for this user" });
+
+  // Validate input if necessary
+  if (!uid || !taskid) {
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  try {
+    const sql = `DELETE FROM tasks WHERE taskid = ? AND uid = ?`;
+    const stmt = db.prepare(sql);
+    
+    // Execute the statement
+    const info = stmt.run(taskid, uid);
+
+    if (info.changes > 0) {
+      res.json({ message: "Task deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Task not found for this user" });
+    }
+  } catch (error) {
+    console.error("Error deleting task:", error);  // Log the error
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Retrieve all tasks across all users (for admin or listing purposes)
 app.get("/tasks", (req, res) => {

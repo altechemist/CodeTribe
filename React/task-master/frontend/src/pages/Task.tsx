@@ -4,71 +4,73 @@ import UpdateTask from "../components/UpdateTask";
 import NewTask from "../components/NewTask";
 import SearchTask from "../components/SearchTask";
 
-// Prop types for the Task component
 type InputValue = string | number | undefined;
 
+interface Task {
+  id: number;
+  title: InputValue;
+  date: InputValue;
+  time: InputValue;
+  priority: InputValue;
+  status: InputValue;
+  uid: InputValue; // Ensure uid is included
+}
+
 interface TaskProps {
-  // Function adds new task
   userID: number | undefined;
- 
+
+  // Create a new Task
   CreateTask: (
     title: InputValue,
     date: InputValue,
     time: InputValue,
     priority: InputValue,
     status: InputValue
-  ) => void;
+  ) => Promise<void>;
+  taskList: Task[]; // Ensure this matches the type in CurrentTask
 
-  // List of available tasks
-  taskList: {
-    title: InputValue;
-    date: InputValue;
-    time: InputValue;
-    priority: InputValue;
-    status: InputValue;
-  }[];
-
-  // Track selected task
+  // Track selected tasks
   selectedTask: InputValue;
   SelectTask: (id: InputValue) => void;
 
-  // Function updates a task
+  // Updates a task
   UpdatesTask: (
-    index: InputValue,
+    id: InputValue,
     title: InputValue,
     date: InputValue,
     time: InputValue,
     priority: InputValue,
     status: InputValue
-  ) => void;
+  ) => Promise<void>;
+  setTaskList: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
-const Task: React.FC<TaskProps> = ({
+const Tasks: React.FC<TaskProps> = ({
   CreateTask,
   taskList,
   UpdatesTask,
   selectedTask,
   SelectTask,
-  userID
+  userID,
+  setTaskList,
 }) => {
   return (
     <div className="container-sm">
-      {/* Section for current tasks */}
       <div className="current-tasks">
         <div className="text-center">
           <h1 className="display-5 fw-bold text-body-emphasis">
             Current Tasks
           </h1>
         </div>
-
-        {/* Search Task component */}
         <SearchTask />
-
-        {/* Current Task component */}
-        <CurrentTask userID={userID} SelectTask={SelectTask} />
+        <CurrentTask
+          taskList={taskList}
+          userID={userID}
+          SelectTask={SelectTask}
+          setTaskList={setTaskList}
+        />
       </div>
 
-      {/* Creates a new task */}
       <button
         type="button"
         className="btn btn-primary floating"
@@ -79,7 +81,6 @@ const Task: React.FC<TaskProps> = ({
         Add Task
       </button>
 
-      {/* New Task Modal */}
       <div
         className="modal fade"
         id="addTaskModal"
@@ -99,14 +100,12 @@ const Task: React.FC<TaskProps> = ({
               ></button>
             </div>
             <div className="modal-body">
-              {/* Component for adding a new task */}
               <NewTask CreateTask={CreateTask} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Update Modal */}
       <div
         className="modal fade"
         id="updateTaskModal"
@@ -126,7 +125,6 @@ const Task: React.FC<TaskProps> = ({
               ></button>
             </div>
             <div className="modal-body">
-              {/* Component for updating a task */}
               <UpdateTask
                 taskList={taskList}
                 UpdatesTask={UpdatesTask}
@@ -140,4 +138,4 @@ const Task: React.FC<TaskProps> = ({
   );
 };
 
-export default Task;
+export default Tasks;

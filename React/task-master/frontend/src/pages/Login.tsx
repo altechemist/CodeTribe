@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 
-type InputValue = string;
+type InputValue = string | undefined;
 
 interface LoginProps {
-  LoginUser: (email: InputValue, password: InputValue) => Promise<void>;
+  LoginUser: (
+    email: InputValue,
+    password: InputValue
+  ) => Promise<void>;
 }
 
-const Login: React.FC<LoginProps> = ({ LoginUser }) => {
+const Login: React.FC<LoginProps> = ({ LoginUser}) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorList, setErrorList] = useState<string[]>([]);
@@ -26,27 +29,21 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
 
     setErrorList(newErrors);
 
-    // Call the login function
     if (newErrors.length === 0) {
       try {
-        await LoginUser(email, password);
+        await LoginUser(email, password); // Call the login function
         setEmail("");
         setPassword("");
         setErrorList([]);
       } catch (error) {
-        setErrorList([
-          "Failed to login. Please check your credentials and try again.",
-        ]);
+        setErrorList(["Failed to login. Please check your credentials and try again."]);
       }
     }
   };
 
   const showPassword = () => {
-    const passwordInput = document.getElementById(
-      "passwordInput"
-    ) as HTMLInputElement;
-    passwordInput.type =
-      passwordInput.type === "password" ? "text" : "password";
+    const passwordInput = document.getElementById("passwordInput") as HTMLInputElement;
+    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
   };
 
   return (
@@ -58,18 +55,11 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
               Welcome Back!
             </h1>
             <p className="col-lg-10 fs-4">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde
-              praesentium inventore sint fugiat, sunt cumque ab fugit nobis
-              dolorem repudiandae similique voluptate omnis ea illum adipisci
-              corporis corrupti asperiores? Exercitationem!
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde praesentium inventore sint fugiat, sunt cumque ab fugit nobis dolorem repudiandae similique voluptate omnis ea illum adipisci corporis corrupti asperiores? Exercitationem!
             </p>
           </div>
           <div className="col-md-10 mx-auto col-lg-5">
-            <form
-              className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
-              onSubmit={handleSubmit}
-            >
-              {/* Handle errors */}
+            <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary" onSubmit={handleSubmit}>
               <div className="mb-4 m-2">
                 {errorList.length > 0 && (
                   <div className="mb-3 alert error-list">
@@ -85,7 +75,6 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
                 )}
               </div>
 
-              {/* Login Form */}
               <div className="form-floating mb-3">
                 <input
                   type="email"
@@ -114,12 +103,7 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
 
               <div className="checkbox mb-3">
                 <label>
-                  <input
-                    type="checkbox"
-                    value="show-password"
-                    onClick={showPassword}
-                  />{" "}
-                  Show Password
+                  <input type="checkbox" value="show-password" onClick={showPassword}/> Show Password
                 </label>
               </div>
 
