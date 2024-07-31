@@ -6,6 +6,7 @@ type InputValue = string | number | undefined;
 // Define prop types for the UpdateTask component
 interface TaskProps {
   taskList: {
+    id: number;
     title: InputValue;
     date: InputValue;
     time: InputValue;
@@ -44,18 +45,26 @@ const UpdateTask: React.FC<TaskProps> = ({
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [errorList, setErrorList] = useState<string[]>([]);
 
-  // Effect to load form data based on selected task
   useEffect(() => {
-    // Check if selectedTask is valid and within bounds
-    if (selectedTask != null) {
-      const taskID = Number(selectedTask);
-      if (taskID >= 0 && taskID < taskList.length) {
-        const selectedTaskDetails = taskList[taskID];
+    // Check if selectedTask is valid and find the task with the matching taskid
+    if (selectedTask !== null && selectedTask !== undefined) {
+      const selectedTaskId = Number(selectedTask);
+
+      // Find the task in the taskList
+      const selectedTaskDetails = taskList.find(task => task.id === selectedTaskId);
+
+      if (selectedTaskDetails) {
         // Populate form fields with selected task details
         setTitle(selectedTaskDetails.title || "");
         setDate(selectedTaskDetails.date || "");
         setTime(selectedTaskDetails.time || "");
         setPriority(selectedTaskDetails.priority || "");
+      } else {
+        // Optionally clear fields if no task found
+        setTitle("");
+        setDate("");
+        setTime("");
+        setPriority("");
       }
     }
   }, [selectedTask, taskList]);
@@ -77,6 +86,14 @@ const UpdateTask: React.FC<TaskProps> = ({
     return newErrors.length === 0;
   };
 
+  // Function to close the modal
+  const closeModal = () => {
+    const closeButton = document.querySelector("#closeUpdateTask");
+    if (closeButton) {
+      (closeButton as HTMLElement).click();
+    }
+  };
+
   // Handle form submission to update task
   const handleUpdatesTask = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -87,9 +104,13 @@ const UpdateTask: React.FC<TaskProps> = ({
     }
 
     // Proceed to update task
-    if (selectedTask != null) {
-      const taskID = Number(selectedTask);
-      UpdatesTask(taskID, title, date, time, priority, "Incomplete");
+    if (selectedTask !== null && selectedTask !== undefined) {
+      const selectedTaskId = Number(selectedTask);
+
+      // Debug log
+      console.log("Submitting Task ID:", selectedTaskId);
+
+      UpdatesTask(selectedTaskId, title, date, time, priority, "Incomplete");
 
       // Clear form fields and set submission state
       setTitle("");
@@ -97,6 +118,8 @@ const UpdateTask: React.FC<TaskProps> = ({
       setTime("");
       setPriority("");
       setSubmitted(true);
+
+      closeModal();
     }
   };
 

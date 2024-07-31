@@ -22,28 +22,13 @@ interface TaskProps {
 
   // Updates a task
   setTaskList: React.Dispatch<React.SetStateAction<Task[]>>;
-
-  // Function to update a task
-  UpdatesTask: (
-    id: InputValue,
-    title: InputValue,
-    date: InputValue,
-    time: InputValue,
-    priority: InputValue,
-    status: InputValue,
-    uid?: InputValue
-  ) => void;
-
-  // Track selected task
-  selectedTask: InputValue;
 }
 
-const CurrentTask: React.FC<TaskProps> = ({
+const CompletedTask: React.FC<TaskProps> = ({
   userID,
   SelectTask,
   taskList,
   setTaskList,
-  UpdatesTask,
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -135,23 +120,7 @@ const CurrentTask: React.FC<TaskProps> = ({
   );
 
   // Filter completed tasks
-  const incompleteTasks = taskList.filter(
-    (task) => task.status !== "Completed"
-  );
-
-  // Changes the task status to completed
-  const handleCompletedTask = (taskId: number) => {
-    if (taskId !== undefined) {
-      const selectedTaskDetails = taskList.find((task) => task.id === taskId);
-
-      if (selectedTaskDetails) {
-        const { title, date, time, priority } = selectedTaskDetails;
-        const status = "Completed";
-
-        UpdatesTask(taskId, title, date, time, priority, status, userID);
-      }
-    }
-  };
+  const completedTasks = taskList.filter((task) => task.status === "Completed");
 
   // Determine background color based on task priority
   const colorPicker = (priority: InputValue) => {
@@ -167,7 +136,6 @@ const CurrentTask: React.FC<TaskProps> = ({
     }
   };
 
-  // Try to load existing tasks
   if (loading) {
     return (
       <div className="d-flex justify-content-center p-4 py-md-5">
@@ -188,20 +156,20 @@ const CurrentTask: React.FC<TaskProps> = ({
     <div className="d-flex justify-content-center">
       <div className="w-75 flex-md-row p-4 py-md-5 align-items-center">
         <div className="list-group gap-2">
-          {incompleteTasks.length === 0 ? (
+          {completedTasks.length === 0 ? (
             <div>
               <h3 className="d-flex justify-content-center p-4 py-md-5">
-                No Current Tasks
+                No Completed Tasks
               </h3>
             </div>
           ) : (
             <div>
               <div className="text-center">
                 <h1 className="display-5 fw-bold text-body-emphasis">
-                  Current Tasks
+                  Completed Tasks
                 </h1>
               </div>
-              {incompleteTasks.map((task, index) => (
+              {completedTasks.map((task, index) => (
                 <label
                   key={index}
                   className="list-group-item d-flex align-items-center justify-content-between rounded-4 streak text-light"
@@ -209,10 +177,9 @@ const CurrentTask: React.FC<TaskProps> = ({
                 >
                   <div className="d-flex gap-4">
                     <input
-                      onClick={() => handleCompletedTask(task.id)}
                       className="form-check-input flex-shrink-0 outline mt-3"
                       type="checkbox"
-                      value=""
+                      checked
                       style={{ fontSize: "1.375em" }}
                     />
                     <span className="pt-1 form-checked-content">
@@ -257,4 +224,4 @@ const CurrentTask: React.FC<TaskProps> = ({
   );
 };
 
-export default CurrentTask;
+export default CompletedTask;

@@ -1,18 +1,17 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 type InputValue = string | undefined;
 
 interface LoginProps {
-  LoginUser: (
-    email: InputValue,
-    password: InputValue
-  ) => Promise<void>;
+  LoginUser: (email: InputValue, password: InputValue) => Promise<boolean>;
 }
 
-const Login: React.FC<LoginProps> = ({ LoginUser}) => {
+const Login: React.FC<LoginProps> = ({ LoginUser }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorList, setErrorList] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,20 +29,40 @@ const Login: React.FC<LoginProps> = ({ LoginUser}) => {
     setErrorList(newErrors);
 
     if (newErrors.length === 0) {
+     
       try {
-        await LoginUser(email, password); // Call the login function
-        setEmail("");
-        setPassword("");
-        setErrorList([]);
+        // Call the login function
+        const success = await LoginUser(email, password) as unknown as boolean;
+    
+        if (success) {
+          // If login was successful, redirect to the tasks page
+          navigate("/tasks");
+    
+          // Clear fields
+          setEmail("");
+          setPassword("");
+          setErrorList([]);
+        } else {
+          // If login was unsuccessful, set error message
+          setErrorList([
+            "Failed to login. Please check your credentials and try again.",
+          ]);
+        }
       } catch (error) {
-        setErrorList(["Failed to login. Please check your credentials and try again."]);
+        setErrorList([
+          "Failed to login. Please check your credentials and try again.",
+        ]);
       }
     }
   };
+  
 
   const showPassword = () => {
-    const passwordInput = document.getElementById("passwordInput") as HTMLInputElement;
-    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    const passwordInput = document.getElementById(
+      "passwordInput"
+    ) as HTMLInputElement;
+    passwordInput.type =
+      passwordInput.type === "password" ? "text" : "password";
   };
 
   return (
@@ -55,11 +74,17 @@ const Login: React.FC<LoginProps> = ({ LoginUser}) => {
               Welcome Back!
             </h1>
             <p className="col-lg-10 fs-4">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde praesentium inventore sint fugiat, sunt cumque ab fugit nobis dolorem repudiandae similique voluptate omnis ea illum adipisci corporis corrupti asperiores? Exercitationem!
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde
+              praesentium inventore sint fugiat, sunt cumque ab fugit nobis
+              dolorem repudiandae similique voluptate omnis ea illum adipisci
+              corporis corrupti asperiores? Exercitationem!
             </p>
           </div>
           <div className="col-md-10 mx-auto col-lg-5">
-            <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary" onSubmit={handleSubmit}>
+            <form
+              className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
+              onSubmit={handleSubmit}
+            >
               <div className="mb-4 m-2">
                 {errorList.length > 0 && (
                   <div className="mb-3 alert error-list">
@@ -103,19 +128,27 @@ const Login: React.FC<LoginProps> = ({ LoginUser}) => {
 
               <div className="checkbox mb-3">
                 <label>
-                  <input type="checkbox" value="show-password" onClick={showPassword}/> Show Password
+                  <input
+                    type="checkbox"
+                    value="show-password"
+                    onClick={showPassword}
+                  />{" "}
+                  Show Password
                 </label>
               </div>
 
               <button className="w-100 btn btn-lg btn-primary" type="submit">
+                <i className="bi bi-box-arrow-in-left me-2"></i>
                 Login
               </button>
 
               <hr className="my-4" />
 
-              <small className="text-body-secondary">
-                Don't have an account? Click here to register
-              </small>
+              <Link className="nav-link" to="/register">
+                <small className="text-body-secondary">
+                  Don't have an account? Click here to register
+                </small>
+              </Link>
             </form>
           </div>
         </div>

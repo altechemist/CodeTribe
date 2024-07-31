@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // Define input value type
 type InputValue = string | undefined;
@@ -9,7 +10,7 @@ interface RegisterProps {
     name: InputValue,
     email: InputValue,
     password: InputValue
-  ) => void;
+  ) => Promise<boolean>;
 }
 
 // Register component
@@ -19,12 +20,13 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const navigate = useNavigate();
 
   // State for success message and errors
   const [errorList, setErrorList] = useState<string[]>([]);
 
   // Function to handle form submission
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const newErrors: string[] = [];
 
@@ -53,25 +55,40 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
     // If there are no errors
     if (newErrors.length === 0) {
-      CreateUser(name, email, password);
+      
+    const success = await CreateUser(name, email, password) as unknown as boolean;
+    
+
+    if (success) {
       setName("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-
-     // Goto tasks
-      window.location.href = "/tasks";
       setErrorList([]);
-    }
+
+      // Redirect to task
+      navigate("/tasks");
+    } else {
+      alert(success)
+      setErrorList([
+        "Failed to register. Please check your credentials and try again.",
+      ]);
+    }}
   };
 
-  
   // Display password in plain text
   const showPassword = () => {
-    const passwordInput = document.getElementById("passwordInput") as HTMLInputElement;
-    const confirmPasswordInput = document.getElementById("confirmPasswordInput") as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      "passwordInput"
+    ) as HTMLInputElement;
+    const confirmPasswordInput = document.getElementById(
+      "confirmPasswordInput"
+    ) as HTMLInputElement;
 
-    if (passwordInput.type === "password" && confirmPasswordInput.type === "password"){
+    if (
+      passwordInput.type === "password" &&
+      confirmPasswordInput.type === "password"
+    ) {
       passwordInput.type = "text";
       confirmPasswordInput.type = "text";
     } else {
@@ -116,7 +133,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
                 )}
 
                 {/* Confirmation */}
-               {<div></div>}
+                {<div></div>}
               </div>
               <div className="form-floating mb-3">
                 <input
@@ -172,9 +189,13 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
               <div className="checkbox mb-3">
                 <label>
-                  <input type="checkbox" value="show-password" onClick={showPassword}/> Show Password
+                  <input
+                    type="checkbox"
+                    value="show-password"
+                    onClick={showPassword}
+                  />{" "}
+                  Show Password
                 </label>
-
               </div>
 
               <button className="w-100 btn btn-lg btn-primary" type="submit">
@@ -183,9 +204,11 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
               <hr className="my-4" />
 
-              <small className="text-body-secondary">
-                Already have an account? Click here to login
-              </small>
+              <Link className="nav-link" to="/login">
+                <small className="text-body-secondary">
+                  Already have an account? Click here to login
+                </small>
+              </Link>
             </form>
           </div>
         </div>

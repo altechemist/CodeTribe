@@ -85,12 +85,15 @@ app.post("/login", (req, res) => {
       res.json({ uid: user.uid, message: "Login successful" });
     } else {
       res.status(401).json({ error: "Invalid email or password" });
+      alert("Invalid email or password");
+      return;
     }
   } catch (error) {
     // Handle errors
     res.status(500).json({ error: "An error occurred while logging in" });
   }
 });
+
 
 // Get user details by uid
 app.get("/users/:uid", (req, res) => {
@@ -162,7 +165,7 @@ app.delete("/users/:uid/tasks/:taskid", async (req, res) => {
   try {
     const sql = `DELETE FROM tasks WHERE taskid = ? AND uid = ?`;
     const stmt = db.prepare(sql);
-    
+
     // Execute the statement
     const info = stmt.run(taskid, uid);
 
@@ -172,11 +175,10 @@ app.delete("/users/:uid/tasks/:taskid", async (req, res) => {
       res.status(404).json({ error: "Task not found for this user" });
     }
   } catch (error) {
-    console.error("Error deleting task:", error);  // Log the error
+    console.error("Error deleting task:", error); // Log the error
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Retrieve all tasks across all users (for admin or listing purposes)
 app.get("/tasks", (req, res) => {

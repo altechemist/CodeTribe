@@ -46,6 +46,15 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
     return newErrors.length === 0;
   };
 
+  // Function to close the modal
+  const closeModal = () => {
+    const closeButton = document.querySelector("#closeAddTask");
+    //const closeButton = document.querySelector("#closeAddTask");
+    if (closeButton) {
+      (closeButton as HTMLElement).click();
+    }
+  };
+
   // Function to handle creating a task
   const handleCreateTask = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,6 +75,9 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
 
     // Update submitted state
     setSubmitted(true);
+
+    // Close modal after successful creation
+    closeModal(); 
   };
 
   // Function to reset submitted state

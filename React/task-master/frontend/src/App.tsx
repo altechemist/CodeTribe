@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout";
-import Home from "./pages/Home";
 import Tasks from "./pages/Task";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -20,7 +19,7 @@ import "../src/index.css";
 type InputValue = string | number | undefined;
 
 interface Task {
-  id:number;
+  id: number;
   title: InputValue;
   date: InputValue;
   time: InputValue;
@@ -47,7 +46,7 @@ export default function App() {
     name: InputValue,
     email: InputValue,
     password: InputValue
-  ) => {
+  ): Promise<boolean> => {
     const newUser: User = {
       uid: undefined,
       name: name,
@@ -63,32 +62,47 @@ export default function App() {
       const uid = response.data.uid;
       setUser({ ...newUser, uid });
       setUserID(uid);
+      return true;
     } catch (error) {
       console.error("Error creating new user: ", error);
+      return false;
     }
+    return false;
   };
 
   // Function to handle user login
-  const LoginUser = async (email: InputValue, password: InputValue) => {
+  const LoginUser = async (
+    email: InputValue,
+    password: InputValue
+  ): Promise<boolean> => {
     try {
-      console.log("Logging in with:", { email, password }); // Debugging line
+      console.log("Logging in with:", { email, password });
 
       const response = await axios.post("http://localhost:3001/login", {
         email,
         password,
       });
 
-      // Debugging line: Check the response data
       console.log("Login response:", response.data);
 
+      // Track current user
       const { uid } = response.data;
       if (uid) {
         setUserID(uid);
+        return true;
       } else {
         console.error("Login failed: No UID returned from server.");
+        return false;
       }
     } catch (error) {
-      console.error("Login failed: ", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Login error response:", error.response?.data);
+        console.error("Login error message:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+      // Indicate failure
+      return false;
     }
   };
 
@@ -112,8 +126,10 @@ export default function App() {
 
     try {
       await axios.post(`http://localhost:3001/users/${userID}/tasks`, newTask);
-      console.log("Task successfully added.");
-      fetchTasks(); // Refetch tasks after adding
+
+      // Refetch tasks after adding
+      fetchTasks();
+
     } catch (error) {
       console.error("Error adding task:", error);
     }
@@ -164,7 +180,6 @@ export default function App() {
     }
   };
 
-
   // useEffect to track when the task list updates
   useEffect(() => {
     console.log("Task list has been updated:", taskList);
@@ -179,8 +194,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
           <Route
+            index
             path="tasks"
             element={
               <Tasks
