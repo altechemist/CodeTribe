@@ -18,6 +18,17 @@ export default function Layout() {
                     <ul className="nav">
                         
                         <li className="nav-item">
+<<<<<<< HEAD
+=======
+                            <Link className="nav-link" to="/">
+                                <button className="btn btn-outline-primary me-2">
+                                    <i className="bi bi-house-fill me-2"></i>
+                                    Home
+                                </button>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
                             <Link className="nav-link" to="/tasks"><button className="btn btn-outline-primary me-2">
                                 <i className="bi bi-list-task me-2"></i>
                                 Tasks

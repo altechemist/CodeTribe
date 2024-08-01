@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
+=======
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
 
 // Define input value type
 type InputValue = string | undefined;
@@ -10,7 +13,11 @@ interface RegisterProps {
     name: InputValue,
     email: InputValue,
     password: InputValue
+<<<<<<< HEAD
   ) => Promise<boolean>;
+=======
+  ) => void;
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
 }
 
 // Register component
@@ -20,13 +27,20 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+<<<<<<< HEAD
   const navigate = useNavigate();
+=======
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
 
   // State for success message and errors
   const [errorList, setErrorList] = useState<string[]>([]);
 
   // Function to handle form submission
+<<<<<<< HEAD
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+=======
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
     event.preventDefault();
     const newErrors: string[] = [];
 
@@ -55,15 +69,20 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
     // If there are no errors
     if (newErrors.length === 0) {
+<<<<<<< HEAD
       
     const success = await CreateUser(name, email, password) as unknown as boolean;
     
 
     if (success) {
+=======
+      CreateUser(name, email, password);
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
       setName("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+<<<<<<< HEAD
       setErrorList([]);
 
       // Redirect to task
@@ -89,6 +108,22 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
       passwordInput.type === "password" &&
       confirmPasswordInput.type === "password"
     ) {
+=======
+
+     // Goto tasks
+      window.location.href = "/tasks";
+      setErrorList([]);
+    }
+  };
+
+  
+  // Display password in plain text
+  const showPassword = () => {
+    const passwordInput = document.getElementById("passwordInput") as HTMLInputElement;
+    const confirmPasswordInput = document.getElementById("confirmPasswordInput") as HTMLInputElement;
+
+    if (passwordInput.type === "password" && confirmPasswordInput.type === "password"){
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
       passwordInput.type = "text";
       confirmPasswordInput.type = "text";
     } else {
@@ -133,7 +168,11 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
                 )}
 
                 {/* Confirmation */}
+<<<<<<< HEAD
                 {<div></div>}
+=======
+               {<div></div>}
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
               </div>
               <div className="form-floating mb-3">
                 <input
@@ -189,6 +228,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
               <div className="checkbox mb-3">
                 <label>
+<<<<<<< HEAD
                   <input
                     type="checkbox"
                     value="show-password"
@@ -196,6 +236,11 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
                   />{" "}
                   Show Password
                 </label>
+=======
+                  <input type="checkbox" value="show-password" onClick={showPassword}/> Show Password
+                </label>
+
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
               </div>
 
               <button className="w-100 btn btn-lg btn-primary" type="submit">
@@ -204,11 +249,17 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
               <hr className="my-4" />
 
+<<<<<<< HEAD
               <Link className="nav-link" to="/login">
                 <small className="text-body-secondary">
                   Already have an account? Click here to login
                 </small>
               </Link>
+=======
+              <small className="text-body-secondary">
+                Already have an account? Click here to login
+              </small>
+>>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
             </form>
           </div>
         </div>
