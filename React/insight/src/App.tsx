@@ -7,27 +7,27 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 
 function App() {
   // Determine the selected news category
-  const [newsCategory, setCategory] = useState("everything");
+  const [newsCategory, setCategory] = useState<string>("general");
 
   const selectedCategory = (category: string) => {
     switch (category) {
       case "Business":
-        setCategory("business");
+        setCategory("Business");
         break;
 
       case "Sports":
-        setCategory("sports");
+        setCategory("Sports");
         break;
 
-      case "Politics":
-        setCategory("politics");
+      case "Science":
+        setCategory("Science");
         break;
 
       case "Technology":
-        setCategory("technology");
+        setCategory("Technology");
         break;
       default:
-        setCategory("everything");
+        setCategory("General");
         break;
     }
   };
@@ -68,8 +68,8 @@ function App() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Politics")}>
-                  Politics
+                <a className="nav-link" onClick={() => selectedCategory("Science")}>
+                  Science
                 </a>
               </li>
               <li className="nav-item">
@@ -82,8 +82,10 @@ function App() {
         </div>
       </nav>
 
-      <p>Selected category: {newsCategory}</p>
-      <NewsFeed />
+      <div>
+        <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">{newsCategory} News</h2>
+        <NewsFeed newsCategory={newsCategory}/>
+      </div>
     </div>
   );
 }

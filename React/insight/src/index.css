@@ -1,0 +1,11 @@
+.headline-image {
+    width: 100%;
+    height: 300px !important;
+    object-fit: cover;
+}
+
+nav a {
+    color: #007bff!important;
+    text-decoration: none;
+    cursor: pointer;
+}
