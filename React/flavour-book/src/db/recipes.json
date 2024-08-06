@@ -1,0 +1,206 @@
+{
+    "recipes": [
+        {
+            "id": "1",
+            "name": "Classic Caesar Salad",
+            "category": "salad",
+            "image": "/caesar-salad.jpg",
+            "description": "A crisp and refreshing salad with a creamy Caesar dressing, croutons, and Parmesan cheese.",
+            "ingredients": [
+                {
+                    "name": "romaine lettuce",
+                    "quantity": "1 head"
+                },
+                {
+                    "name": "Caesar dressing",
+                    "quantity": "120 ml"
+                },
+                {
+                    "name": "croutons",
+                    "quantity": "100 g"
+                },
+                {
+                    "name": "Parmesan cheese",
+                    "quantity": "25 g"
+                },
+                {
+                    "name": "salt",
+                    "quantity": "to taste"
+                },
+                {
+                    "name": "black pepper",
+                    "quantity": "to taste"
+                }
+            ],
+            "steps": [
+                "Wash and chop the romaine lettuce.",
+                "In a large bowl, toss the lettuce with Caesar dressing.",
+                "Top with croutons and Parmesan cheese.",
+                "Season with salt and black pepper to taste."
+            ],
+            "servings": 4,
+            "prep_time": "10 minutes",
+            "cook_time": "0 minutes",
+            "total_time": "10 minutes"
+        },
+        {
+            "id": "2",
+            "name": "Honey Glazed Carrots",
+            "category": "side dish",
+            "image": "/honey-glazed-carrots.jpg",
+            "description": "Sweet and savory carrots with a honey glaze, perfect as a side dish.",
+            "ingredients": [
+                {
+                    "name": "carrots",
+                    "quantity": "450 g"
+                },
+                {
+                    "name": "honey",
+                    "quantity": "60 ml"
+                },
+                {
+                    "name": "butter",
+                    "quantity": "30 g"
+                },
+                {
+                    "name": "salt",
+                    "quantity": "1/2 tsp"
+                },
+                {
+                    "name": "black pepper",
+                    "quantity": "1/4 tsp"
+                },
+                {
+                    "name": "water",
+                    "quantity": "120 ml"
+                }
+            ],
+            "steps": [
+                "Peel and cut the carrots into bite-sized pieces.",
+                "In a skillet, melt the butter over medium heat.",
+                "Add the carrots and cook for about 5 minutes.",
+                "Pour in the honey, water, salt, and black pepper.",
+                "Simmer for 15-20 minutes, or until the carrots are tender and the glaze has thickened."
+            ],
+            "servings": 4,
+            "prep_time": "10 minutes",
+            "cook_time": "20 minutes",
+            "total_time": "30 minutes"
+        },
+        {
+            "id": "3",
+            "name": "Chicken Teriyaki Stir-Fry",
+            "category": "main course",
+            "image": "/chicken-teriyaki.jpg",
+            "description": "Tender chicken and vegetables in a savory teriyaki sauce served over rice.",
+            "ingredients": [
+                {
+                    "name": "chicken breast",
+                    "quantity": "450 g"
+                },
+                {
+                    "name": "teriyaki sauce",
+                    "quantity": "60 ml"
+                },
+                {
+                    "name": "bell peppers",
+                    "quantity": "2"
+                },
+                {
+                    "name": "broccoli florets",
+                    "quantity": "150 g"
+                },
+                {
+                    "name": "carrot",
+                    "quantity": "1"
+                },
+                {
+                    "name": "olive oil",
+                    "quantity": "30 ml"
+                },
+                {
+                    "name": "rice",
+                    "quantity": "375 g"
+                },
+                {
+                    "name": "salt",
+                    "quantity": "to taste"
+                },
+                {
+                    "name": "black pepper",
+                    "quantity": "to taste"
+                }
+            ],
+            "steps": [
+                "Cook the rice according to package instructions.",
+                "Cut the chicken into bite-sized pieces.",
+                "Heat olive oil in a large skillet over medium-high heat.",
+                "Add the chicken and cook until browned and cooked through.",
+                "Remove the chicken and set aside.",
+                "In the same skillet, add sliced bell peppers, broccoli, and carrot.",
+                "Stir-fry for 5-7 minutes until vegetables are tender.",
+                "Return the chicken to the skillet and pour in the teriyaki sauce.",
+                "Cook for an additional 2-3 minutes, stirring to coat everything in the sauce.",
+                "Serve over cooked rice."
+            ],
+            "servings": 4,
+            "prep_time": "15 minutes",
+            "cook_time": "15 minutes",
+            "total_time": "30 minutes"
+        },
+        {
+            "id": "4",
+            "name": "Blueberry Muffins",
+            "category": "baking",
+            "image": "/blueberry-muffins.jpg",
+            "description": "Delicious blueberry muffins that are soft and fluffy, perfect for breakfast or a snack.",
+            "ingredients": [
+                {
+                    "name": "all-purpose flour",
+                    "quantity": "250 g"
+                },
+                {
+                    "name": "sugar",
+                    "quantity": "200 g"
+                },
+                {
+                    "name": "baking powder",
+                    "quantity": "10 g"
+                },
+                {
+                    "name": "salt",
+                    "quantity": "2 g"
+                },
+                {
+                    "name": "milk",
+                    "quantity": "120 ml"
+                },
+                {
+                    "name": "vegetable oil",
+                    "quantity": "80 ml"
+                },
+                {
+                    "name": "egg",
+                    "quantity": "1"
+                },
+                {
+                    "name": "blueberries",
+                    "quantity": "150 g"
+                }
+            ],
+            "steps": [
+                "Preheat the oven to 190°C and line a muffin tin with paper liners.",
+                "In a large bowl, combine flour, sugar, baking powder, and salt.",
+                "In another bowl, whisk together milk, vegetable oil, and egg.",
+                "Add the wet ingredients to the dry ingredients and mix until just combined.",
+                "Gently fold in the blueberries.",
+                "Divide the batter evenly among the muffin cups.",
+                "Bake for 20-25 minutes, or until a toothpick inserted into the center comes out clean."
+            ],
+            "servings": 12,
+            "prep_time": "15 minutes",
+            "cook_time": "25 minutes",
+            "total_time": "40 minutes"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+#recipe-cards {
+  flex-wrap: nowrap;
+  overflow-y: auto;
+  scrollbar-width: thin
+}
+
+.card {
+  height: 420px !important;
+}
