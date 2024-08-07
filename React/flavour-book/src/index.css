@@ -1,9 +1,31 @@
 #recipe-cards {
   flex-wrap: nowrap;
-  overflow-y: auto;
-  scrollbar-width: thin
+  overflow-y: hidden;
+  overflow-x: visible;
+  scrollbar-width: thin;
+  scrollbar-color: #164240 white !important;
 }
 
 .card {
   height: 420px !important;
+  background-color: rgb(33, 37, 41, 0.1) !important;
+}
+
+.card-header {
+  background-color: transparent !important;
+}
+
+.header {
+  color: #f7f7f7 !important;
+}
+
+button {
+  background-color: #164240 !important;
+  border: 1px solid #164240 !important;
+  border-radius: 5px !important;
+  color: #f7f7f7 !important;
+}
+
+li {
+  cursor: pointer !important;
 }

@@ -8,27 +8,27 @@
             "description": "A refreshing salad with a creamy Caesar dressing, croutons, and Parmesan cheese.",
             "ingredients": [
                 {
-                    "name": "romaine lettuce",
+                    "name": "Romaine Lettuce",
                     "quantity": "1 head"
                 },
                 {
-                    "name": "Caesar dressing",
+                    "name": "Caesar Dressing",
                     "quantity": "120 ml"
                 },
                 {
-                    "name": "croutons",
+                    "name": "Croutons",
                     "quantity": "100 g"
                 },
                 {
-                    "name": "Parmesan cheese",
+                    "name": "Parmesan Cheese",
                     "quantity": "25 g"
                 },
                 {
-                    "name": "salt",
+                    "name": "Salt",
                     "quantity": "to taste"
                 },
                 {
-                    "name": "black pepper",
+                    "name": "Black Pepper",
                     "quantity": "to taste"
                 }
             ],
@@ -39,9 +39,9 @@
                 "Season with salt and black pepper to taste."
             ],
             "servings": 4,
-            "prep_time": "10 MINS",
-            "cook_time": "0 MINS",
-            "total_time": "10 MINS",
+            "prep_time": "10 mins",
+            "cook_time": "0 mins",
+            "total_time": "10 mins",
             "calories": 120,
             "tags": [
                 "Recommended",
@@ -56,27 +56,27 @@
             "description": "Sweet and savory carrots with a honey glaze, perfect as a side dish.",
             "ingredients": [
                 {
-                    "name": "carrots",
+                    "name": "Carrots",
                     "quantity": "450 g"
                 },
                 {
-                    "name": "honey",
+                    "name": "Honey",
                     "quantity": "60 ml"
                 },
                 {
-                    "name": "butter",
+                    "name": "Butter",
                     "quantity": "30 g"
                 },
                 {
-                    "name": "salt",
+                    "name": "Salt",
                     "quantity": "1/2 tsp"
                 },
                 {
-                    "name": "black pepper",
+                    "name": "Black Pepper",
                     "quantity": "1/4 tsp"
                 },
                 {
-                    "name": "water",
+                    "name": "Water",
                     "quantity": "120 ml"
                 }
             ],
@@ -88,9 +88,9 @@
                 "Simmer for 15-20 minutes, or until the carrots are tender and the glaze has thickened."
             ],
             "servings": 4,
-            "prep_time": "10 MINS",
-            "cook_time": "20 MINS",
-            "total_time": "30 MINS",
+            "prep_time": "10 mins",
+            "cook_time": "20 mins",
+            "total_time": "30 mins",
             "calories": 78,
             "tags": [
                 "Popular",
@@ -105,39 +105,39 @@
             "description": "Tender chicken and vegetables in a savory teriyaki sauce served over rice.",
             "ingredients": [
                 {
-                    "name": "chicken breast",
+                    "name": "Chicken Breast",
                     "quantity": "450 g"
                 },
                 {
-                    "name": "teriyaki sauce",
+                    "name": "Teriyaki Sauce",
                     "quantity": "60 ml"
                 },
                 {
-                    "name": "bell peppers",
+                    "name": "Bell Peppers",
                     "quantity": "2"
                 },
                 {
-                    "name": "broccoli florets",
+                    "name": "Broccoli Florets",
                     "quantity": "150 g"
                 },
                 {
-                    "name": "carrot",
+                    "name": "Carrot",
                     "quantity": "1"
                 },
                 {
-                    "name": "olive oil",
+                    "name": "Olive Oil",
                     "quantity": "30 ml"
                 },
                 {
-                    "name": "rice",
+                    "name": "Rice",
                     "quantity": "375 g"
                 },
                 {
-                    "name": "salt",
+                    "name": "Salt",
                     "quantity": "to taste"
                 },
                 {
-                    "name": "black pepper",
+                    "name": "Black Pepper",
                     "quantity": "to taste"
                 }
             ],
@@ -154,9 +154,9 @@
                 "Serve over cooked rice."
             ],
             "servings": 4,
-            "prep_time": "15 MINS",
-            "cook_time": "15 MINS",
-            "total_time": "30 MINS",
+            "prep_time": "15 mins",
+            "cook_time": "15 mins",
+            "total_time": "30 mins",
             "calories": 48,
             "tags": [
                 "Recommended",
@@ -171,35 +171,35 @@
             "description": "Delicious blueberry muffins that are soft and fluffy, perfect for breakfast or a snack.",
             "ingredients": [
                 {
-                    "name": "all-purpose flour",
+                    "name": "All-purpose Flour",
                     "quantity": "250 g"
                 },
                 {
-                    "name": "sugar",
+                    "name": "Sugar",
                     "quantity": "200 g"
                 },
                 {
-                    "name": "baking powder",
+                    "name": "Baking Powder",
                     "quantity": "10 g"
                 },
                 {
-                    "name": "salt",
+                    "name": "Salt",
                     "quantity": "2 g"
                 },
                 {
-                    "name": "milk",
+                    "name": "Milk",
                     "quantity": "120 ml"
                 },
                 {
-                    "name": "vegetable oil",
+                    "name": "Vegetable Oil",
                     "quantity": "80 ml"
                 },
                 {
-                    "name": "egg",
+                    "name": "Egg",
                     "quantity": "1"
                 },
                 {
-                    "name": "blueberries",
+                    "name": "Blueberries",
                     "quantity": "150 g"
                 }
             ],
@@ -213,9 +213,9 @@
                 "Bake for 20-25 minutes, or until a toothpick inserted into the center comes out clean."
             ],
             "servings": 12,
-            "prep_time": "15 MINS",
-            "cook_time": "25 MINS",
-            "total_time": "40 MINS",
+            "prep_time": "15 mins",
+            "cook_time": "25 mins",
+            "total_time": "40 mins",
             "calories": 50,
             "tags": [
                 "Popular",
@@ -230,31 +230,31 @@
             "description": "A classic Italian pasta dish made with eggs, cheese, pancetta, and black pepper.",
             "ingredients": [
                 {
-                    "name": "spaghetti",
+                    "name": "Spaghetti",
                     "quantity": "250 g"
                 },
                 {
-                    "name": "pancetta",
+                    "name": "Pancetta",
                     "quantity": "150 g"
                 },
                 {
-                    "name": "egg yolks",
+                    "name": "Egg Yolks",
                     "quantity": "3"
                 },
                 {
-                    "name": "Parmesan cheese",
+                    "name": "Parmesan Cheese",
                     "quantity": "100 g"
                 },
                 {
-                    "name": "black pepper",
+                    "name": "Black Pepper",
                     "quantity": "to taste"
                 },
                 {
-                    "name": "salt",
+                    "name": "Salt",
                     "quantity": "to taste"
                 },
                 {
-                    "name": "olive oil",
+                    "name": "Olive Oil",
                     "quantity": "30 ml"
                 }
             ],
@@ -268,9 +268,9 @@
                 "Serve immediately."
             ],
             "servings": 4,
-            "prep_time": "10 MINS",
-            "cook_time": "15 MINS",
-            "total_time": "25 MINS",
+            "prep_time": "10 mins",
+            "cook_time": "15 mins",
+            "total_time": "25 mins",
             "calories": 450,
             "tags": [
                 "Popular",
@@ -285,35 +285,35 @@
             "description": "Classic chocolate chip cookies with a soft and chewy center and crispy edges.",
             "ingredients": [
                 {
-                    "name": "all-purpose flour",
+                    "name": "All-purpose Flour",
                     "quantity": "250 g"
                 },
                 {
-                    "name": "sugar",
+                    "name": "Sugar",
                     "quantity": "150 g"
                 },
                 {
-                    "name": "brown sugar",
+                    "name": "Brown Sugar",
                     "quantity": "100 g"
                 },
                 {
-                    "name": "butter",
+                    "name": "Butter",
                     "quantity": "115 g"
                 },
                 {
-                    "name": "egg",
+                    "name": "Egg",
                     "quantity": "1"
                 },
                 {
-                    "name": "baking soda",
+                    "name": "Baking Soda",
                     "quantity": "5 g"
                 },
                 {
-                    "name": "salt",
+                    "name": "Salt",
                     "quantity": "1/2 tsp"
                 },
                 {
-                    "name": "chocolate chips",
+                    "name": "Chocolate Chips",
                     "quantity": "150 g"
                 }
             ],
@@ -327,9 +327,9 @@
                 "Scoop dough onto the prepared baking sheet and bake for 10-12 minutes, or until golden brown."
             ],
             "servings": 24,
-            "prep_time": "15 MINS",
-            "cook_time": "12 MINS",
-            "total_time": "27 MINS",
+            "prep_time": "15 mins",
+            "cook_time": "12 mins",
+            "total_time": "27 mins",
             "calories": 200,
             "tags": [
                 "Popular",

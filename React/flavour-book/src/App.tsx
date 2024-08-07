@@ -31,6 +31,7 @@ function App() {
 
   // Show recipes based on category
   const categoryList: string[] = [
+    "All",
     "Main",
     "Sides",
     "Dessert",
@@ -47,27 +48,30 @@ function App() {
   const selectCategory = (category: string) => {
     // Sets the selected category
     setCategory(category);
+    filterRecipes(category);
   };
 
   // Filters recipes based on category
-  /* const filteredRecipes = recipes.filter((recipe) =>
-    recipe.category === category || category === "all"
-  );*/
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const filterRecipes = (selectedCategory: string) => {
+    // If category is All
+    if (selectedCategory === "All") {
+      setCategory("");
+      setFilteredRecipes([]);
+      return;
+    }
+
+    const filtered = recipes.filter(
+      (recipe) => recipe.category === selectedCategory.toLowerCase()
+    );
+    setFilteredRecipes(filtered);
+  };
 
   // Track selected recipe
   const [selectedRecipe, setSelectedRecipe] = useState({});
   const selectRecipe = (rid: number) => {
     // Sets the selected recipe
     setSelectedRecipe(recipes.find((recipe) => recipe.id === rid)!);
-  };
-  console.log(selectedRecipe.ingredients);
-  const selectedRecipes = {
-    ingredients: [
-      { name: "romaine lettuce", quantity: "1 head" },
-      { name: "Caesar dressing", quantity: "120 ml" },
-      { name: "croutons", quantity: "100 g" },
-      { name: "Parmesan cheese", quantity: "25 g" },
-    ],
   };
 
   return (
@@ -176,8 +180,6 @@ function App() {
       </div>
 
       {/* Categories */}
-      <h6 className="px-1">Categories</h6>
-      <p>{category}</p>
       <div className="d-flex gap-2 justify-content-center py-3">
         {categoryList.map((category) => (
           <button
@@ -190,164 +192,252 @@ function App() {
         ))}
       </div>
 
-      {/* Recommended Recipes */}
+      {/* Filtered Recipes */}
       <div className="container px-1 mt-3">
-        <h4 className="pb-2 border-bottom">Recommended Recipes</h4>
+        {filteredRecipes.length > 0 ? (
+          <div className="container px-1 mt-3">
+            <h4 className="pb-2 border-bottom">{category} Recipes</h4>
+            <div
+              className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
+              id="recipe-cards"
+            >
+              {filteredRecipes.map((recipe) => (
+                <div className="col p-2">
+                  <div className="card shadow-sm">
+                    <img
+                      className="bd-placeholder-img card-img-top"
+                      width="100%"
+                      height="225"
+                      src={recipe.image}
+                      alt={recipe.title}
+                    />
+                    <div className="card-body">
+                      <h6 className="card-header px-0 pb-3">{recipe.name}</h6>
+                      <p className="card-text pt-2">{recipe.description}</p>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
+                          <li className="d-flex align-items-center me-2">
+                            <i className="bi bi-clock me-2" />
+                            <small>{recipe.total_time}</small>
+                          </li>
+                          <li className="d-flex align-items-center me-2">
+                            <i className="bi bi-fire me-2" />
+                            <small>{recipe.calories}</small>
+                          </li>
+                          <li className="d-flex align-items-center me-2">
+                            <i className="bi bi-people-fill me-2" />
+                            <small>{recipe.servings}</small>
+                          </li>
+                          <li className="d-flex align-items-center me-2">
+                            <i className="bi bi-bookmark-heart-fill me-2" />
+                          </li>
+                          <button
+                            onClick={() => selectRecipe(recipe.id)}
+                            data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop"
+                            className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                          >
+                            View
+                          </button>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div>
+            {category === "" ? (
+              <div>
+                {/* Recommended Recipes */}
+                <div className="container px-1 mt-3">
+                  <h4 className="pb-2 border-bottom">Recommended Recipes</h4>
 
-        <div
-          className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
-          id="recipe-cards"
-        >
-          {recipes.map((recipe) => (
-            <div className="col p-2">
-              <div className="card shadow-sm">
-                <img
-                  className="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  src={recipe.image}
-                  alt={recipe.title}
-                />
-                <div className="card-body">
-                  <h6 className="card-header px-0 pb-3">{recipe.name}</h6>
-                  <p className="card-text pt-2">{recipe.description}</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <ul className="d-flex list-unstyled mt-auto justify-content-between gap-2">
-                      <li className="d-flex align-items-center me-2">
-                        <i className="bi bi-clock me-2" />
-                        <small>{recipe.total_time}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-2">
-                        <i className="bi bi-fire me-2" />
-                        <small>{recipe.calories}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-2">
-                        <i className="bi bi-people-fill me-2" />
-                        <small>{recipe.servings}</small>
-                      </li>
-                      <button
-                        onClick={() => selectRecipe(recipe.id)}
-                        data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"
-                        className="btn btn-outline-primary rounded-pill px-3 ms-4"
-                      >
-                        View {recipe.id}
-                      </button>
-                    </ul>
+                  <div
+                    className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
+                    id="recipe-cards"
+                  >
+                    {recipes.map((recipe) => (
+                      <div className="col p-2">
+                        <div className="card shadow-sm">
+                          <img
+                            className="bd-placeholder-img card-img-top"
+                            width="100%"
+                            height="225"
+                            src={recipe.image}
+                            alt={recipe.title}
+                          />
+                          <div className="card-body">
+                            <h6 className="card-header px-0 pb-3">
+                              {recipe.name}
+                            </h6>
+                            <p className="card-text pt-2">
+                              {recipe.description}
+                            </p>
+                            <div className="d-flex justify-content-between align-items-center">
+                              <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-clock me-2" />
+                                  <small>{recipe.total_time}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-fire me-2" />
+                                  <small>{recipe.calories}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-people-fill me-2" />
+                                  <small>{recipe.servings}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-bookmark-heart-fill me-2" />
+                                </li>
+                                <button
+                                  onClick={() => selectRecipe(recipe.id)}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#staticBackdrop"
+                                  className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                                >
+                                  View
+                                </button>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Popular Recipes */}
+                <div className="container px-1 mt-3">
+                  <h4 className="pb-2 border-bottom">Most Popular</h4>
+
+                  <div
+                    className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
+                    id="recipe-cards"
+                  >
+                    {recipes.map((recipe) => (
+                      <div className="col p-2">
+                        <div className="card shadow-sm">
+                          <img
+                            className="bd-placeholder-img card-img-top"
+                            width="100%"
+                            height="225"
+                            src={recipe.image}
+                            alt={recipe.title}
+                          />
+                          <div className="card-body">
+                            <h6 className="card-header px-0 pb-3">
+                              {recipe.name}
+                            </h6>
+                            <p className="card-text pt-2">
+                              {recipe.description}
+                            </p>
+                            <div className="d-flex justify-content-between align-items-center">
+                              <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-clock me-2" />
+                                  <small>{recipe.total_time}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-fire me-2" />
+                                  <small>{recipe.calories}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-people-fill me-2" />
+                                  <small>{recipe.servings}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-bookmark-heart-fill me-2" />
+                                </li>
+                                <button
+                                  onClick={() => selectRecipe(recipe.id)}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#staticBackdrop"
+                                  className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                                >
+                                  View
+                                </button>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Latest Recipes */}
+                <div className="container px-1 mt-3">
+                  <h4 className="pb-2 border-bottom">Latest Recipes</h4>
+
+                  <div
+                    className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
+                    id="recipe-cards"
+                  >
+                    {recipes.map((recipe) => (
+                      <div className="col p-2">
+                        <div className="card shadow-sm">
+                          <img
+                            className="bd-placeholder-img card-img-top"
+                            width="100%"
+                            height="225"
+                            src={recipe.image}
+                            alt={recipe.title}
+                          />
+                          <div className="card-body">
+                            <h6 className="card-header px-0 pb-3">
+                              {recipe.name}
+                            </h6>
+                            <p className="card-text pt-2">
+                              {recipe.description}
+                            </p>
+                            <div className="d-flex justify-content-between align-items-center">
+                              <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-clock me-2" />
+                                  <small>{recipe.total_time}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-fire me-2" />
+                                  <small>{recipe.calories}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-people-fill me-2" />
+                                  <small>{recipe.servings}</small>
+                                </li>
+                                <li className="d-flex align-items-center me-2">
+                                  <i className="bi bi-bookmark-heart-fill me-2" />
+                                </li>
+                                <button
+                                  onClick={() => selectRecipe(recipe.id)}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#staticBackdrop"
+                                  className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                                >
+                                  View
+                                </button>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ) : (
+              <h4 className="text-center mt-5">
+                No {category} Recipes Found...
+              </h4>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Popular Recipes */}
-      <div className="container px-1 mt-3">
-        <h4 className="pb-2 border-bottom">Most Popular</h4>
-
-        <div
-          className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
-          id="recipe-cards"
-        >
-          {recipes.map((recipe) => (
-            <div className="col p-2">
-              <div className="card shadow-sm">
-                <img
-                  className="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  src={recipe.image}
-                  alt={recipe.title}
-                />
-                <div className="card-body">
-                  <h6 className="card-header px-0 pb-3">{recipe.name}</h6>
-                  <p className="card-text pt-2">{recipe.description}</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                      <li className="d-flex align-items-center me-3">
-                        <i className="bi bi-clock me-2" />
-                        <small>{recipe.total_time}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-3">
-                        <i className="bi bi-fire me-2" />
-                        <small>{recipe.calories}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-3">
-                        <i className="bi bi-people-fill me-2" />
-                        <small>{recipe.servings}</small>
-                      </li>
-                      <button className="btn btn-outline-primary rounded-pill px-3 ms-4">
-                        View
-                      </button>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Latest Recipes */}
-      <div className="container px-1 mt-3">
-        <h4 className="pb-2 border-bottom">Latest Recipes</h4>
-
-        <div
-          className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-2"
-          id="recipe-cards"
-        >
-          {recipes.map((recipe) => (
-            <div className="col p-2">
-              <div className="card shadow-sm">
-                <img
-                  className="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  src={recipe.image}
-                  alt={recipe.title}
-                />
-                <div className="card-body">
-                  <h6 className="card-header px-0 pb-3">{recipe.name}</h6>
-                  <p className="card-text pt-2">{recipe.description}</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                      <li className="d-flex align-items-center me-3">
-                        <i className="bi bi-clock me-2" />
-                        <small>{recipe.total_time}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-3">
-                        <i className="bi bi-fire me-2" />
-                        <small>{recipe.calories}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-3">
-                        <i className="bi bi-people-fill me-2" />
-                        <small>{recipe.servings}</small>
-                      </li>
-                      <button className="btn btn-outline-primary rounded-pill px-3 ms-4">
-                        View
-                      </button>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Selected Recipe */}
-      <div>{selectedRecipe.name}</div>
-      
-      <button
-        type="button"
-        className="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#staticBackdrop"
-      >
-        Launch static backdrop modal
-      </button>
-
+      {/* View Selected Recipe */}
       <div
         className="modal fade"
         id="staticBackdrop"
@@ -360,7 +450,7 @@ function App() {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                {selectedRecipe.name}
+                Flavour Book
               </h1>
               <button
                 type="button"
@@ -375,7 +465,7 @@ function App() {
                 {/* Left card */}
                 <div className="left-card col p-2">
                   <img
-                  className="border rounded-4"
+                    className="border rounded-4"
                     src={selectedRecipe.image}
                     alt={selectedRecipe.name}
                     style={{ width: "500px" }}
@@ -387,6 +477,9 @@ function App() {
                   <h2 className="card-header px-0 pt-5 pb-3">
                     {selectedRecipe.name}
                   </h2>
+
+                  {/* Recipe description */}
+                  <p className="card-text pt-2">{selectedRecipe.description}</p>
 
                   {/* Icon group */}
                   <div className="icon-group pt-4 pb-4">
@@ -405,22 +498,25 @@ function App() {
                       </li>
                     </ul>
                   </div>
-
-                  {/* Recipe description */}
-                  <p className="card-text pt-2">{selectedRecipe.description}</p>
                 </div>
               </div>
 
               {/* Mid Section */}
               <div className="mid-section row pt-5">
                 <div className="left-card col p-2">
+                  {/* Mapping ingredients */}
                   <h5 className="mb-4">Ingredients</h5>
-                  <ul className="list-group list-group-flush">
-                    {selectedRecipes.ingredients.map((ingredient) => (
-                      <li key={ingredient.name}>
-                        {ingredient.name} {ingredient.quantity}
-                      </li>
-                    ))}
+                  <ul>
+                    {Array.isArray(selectedRecipe.ingredients) &&
+                    selectedRecipe.ingredients.length > 0 ? (
+                      selectedRecipe.ingredients.map((ingredient, index) => (
+                        <li key={index}>
+                          {ingredient.name} - {ingredient.quantity}
+                        </li>
+                      ))
+                    ) : (
+                      <li>No ingredients available</li>
+                    )}
                   </ul>
                 </div>
 
@@ -428,26 +524,35 @@ function App() {
                 <div className="right-card col p-2">
                   <h5 className="mb-4">Preparation method</h5>
                   <ol className="list-group list-group-flush ms-3">
-                    {selectedRecipes.ingredients.map((ingredient) => (
-                      <li key={ingredient.name}>
-                        {ingredient.name} {ingredient.quantity}
-                      </li>
-                    ))}
+                    {Array.isArray(selectedRecipe.steps) &&
+                    selectedRecipe.steps.length > 0 ? (
+                      selectedRecipe.steps.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))
+                    ) : (
+                      <li>No instructions available</li>
+                    )}
                   </ol>
                 </div>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Understood
-              </button>
+
+              {/* Icon group */}
+              <div className="icon-group pt-4 pb-4">
+                <ul className="d-flex list-unstyled mt-auto justify-content-between p-2 gap-2 border rounded-4">
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-clock me-2" />
+                    <small>Prep Time: {selectedRecipe.prep_time}</small>
+                  </li>
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-clock me-2" />
+                    <small>Cook Time: {selectedRecipe.cook_time}</small>
+                  </li>
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-people-fill me-2" />
+                    <small>{selectedRecipe.servings} Servings</small>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
