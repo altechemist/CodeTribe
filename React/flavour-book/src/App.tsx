@@ -29,6 +29,28 @@ function App() {
     }
   };
 
+  // Function to post a new recipe
+  const postRecipe = async () => {
+    const newRecipe = {
+      imageURL,
+      name,
+      description,
+      totalTime,
+      calories,
+      servings,
+      ingredients,
+      steps,
+    };
+
+    try {
+      const response = await axios.post(`./recipes.json`, newRecipe);
+      console.log("Recipe posted successfully:", response.data);
+      // Optionally, you can handle the response data here or show a success message
+    } catch (error) {
+      console.error("Error posting recipe:", error);
+    }
+  };
+
   // Show recipes based on category
   const categoryList: string[] = [
     "All",
@@ -74,6 +96,82 @@ function App() {
     setSelectedRecipe(recipes.find((recipe) => recipe.id === rid)!);
   };
 
+  // State variables for recipe details
+  const [imageURL, setImageURL] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [totalTime, setTotalTime] = useState<string>("");
+  const [calories, setCalories] = useState<number | "">("");
+  const [servings, setServings] = useState<number | "">("");
+
+  // State variables for ingredients
+  const [ingredientName, setIngredientName] = useState<string>("");
+  const [ingredientQuantity, setIngredientQuantity] = useState<string>("");
+  const [ingredients, setIngredients] = useState<
+    { name: string; quantity: string }[]
+  >([]);
+
+  // State variables for preparation steps
+  const [stepDescription, setStepDescription] = useState<string>("");
+  const [steps, setSteps] = useState<string[]>([]);
+
+  // Handlers for input changes
+  const handleImageURLChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setImageURL(e.target.value);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setName(e.target.value);
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setDescription(e.target.value);
+  const handleTotalTimeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setTotalTime(e.target.value);
+  const handleCaloriesChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setCalories(e.target.value);
+  const handleServingsChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setServings(e.target.value);
+  const handleIngredientNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setIngredientName(e.target.value);
+  const handleIngredientQuantityChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => setIngredientQuantity(e.target.value);
+  const handleStepDescriptionChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => setStepDescription(e.target.value);
+
+  // Handlers to add ingredients and steps
+  const addIngredient = () => {
+    if (ingredientName && ingredientQuantity) {
+      setIngredients([
+        ...ingredients,
+        { name: ingredientName, quantity: ingredientQuantity },
+      ]);
+      setIngredientName("");
+      setIngredientQuantity("");
+    }
+  };
+
+  const addStep = () => {
+    if (stepDescription) {
+      setSteps([...steps, stepDescription]);
+      setStepDescription("");
+    }
+  };
+
+  // Handler for form submission
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Process form submission here
+    console.log({
+      imageURL,
+      name,
+      description,
+      totalTime,
+      calories,
+      servings,
+      ingredients,
+      steps,
+    });
+    postRecipe;
+  };
   return (
     <div className="container">
       {/* Navigation */}
@@ -155,7 +253,12 @@ function App() {
                 </a>
                 <ul className="dropdown-menu text-small">
                   <li>
-                    <a className="dropdown-item" href="#">
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addRecipe"
+                    >
                       New Recipe...
                     </a>
                   </li>
@@ -234,7 +337,7 @@ function App() {
                           <button
                             onClick={() => selectRecipe(recipe.id)}
                             data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop"
+                            data-bs-target="#viewRecipe"
                             className="btn btn-outline-primary rounded-pill px-3 ms-4"
                           >
                             View
@@ -296,7 +399,7 @@ function App() {
                                 <button
                                   onClick={() => selectRecipe(recipe.id)}
                                   data-bs-toggle="modal"
-                                  data-bs-target="#staticBackdrop"
+                                  data-bs-target="#viewRecipe"
                                   className="btn btn-outline-primary rounded-pill px-3 ms-4"
                                 >
                                   View
@@ -355,7 +458,7 @@ function App() {
                                 <button
                                   onClick={() => selectRecipe(recipe.id)}
                                   data-bs-toggle="modal"
-                                  data-bs-target="#staticBackdrop"
+                                  data-bs-target="#viewRecipe"
                                   className="btn btn-outline-primary rounded-pill px-3 ms-4"
                                 >
                                   View
@@ -414,7 +517,7 @@ function App() {
                                 <button
                                   onClick={() => selectRecipe(recipe.id)}
                                   data-bs-toggle="modal"
-                                  data-bs-target="#staticBackdrop"
+                                  data-bs-target="#viewRecipe"
                                   className="btn btn-outline-primary rounded-pill px-3 ms-4"
                                 >
                                   View
@@ -440,16 +543,16 @@ function App() {
       {/* View Selected Recipe */}
       <div
         className="modal fade"
-        id="staticBackdrop"
+        id="viewRecipe"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
-        aria-labelledby="staticBackdropLabel"
+        aria-labelledby="viewRecipeLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog modal-fullscreen">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="staticBackdropLabel">
+              <h1 className="modal-title fs-5" id="viewRecipeLabel">
                 Flavour Book
               </h1>
               <button
@@ -553,6 +656,225 @@ function App() {
                   </li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add A Recipe */}
+      <div
+        className="modal fade"
+        id="addRecipe"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        aria-labelledby="addRecipeLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-fullscreen">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="addRecipeLabel">
+                Add A Recipe...
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body container-sm">
+              {/* Form Section */}
+              <form onSubmit={handleSubmit}>
+                {/* Upper Section */}
+                <div className="upper-section row">
+                  {/* Left card */}
+                  <div className="left-card col p-2">
+                    <h5 className="mb-4">Recipe Details</h5>
+                    <div className="mb-3">
+                      <label htmlFor="recipeName" className="form-label">
+                        Recipe Name
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="recipeName"
+                        value={name}
+                        onChange={handleNameChange}
+                        placeholder="Enter recipe name"
+                      />
+                    </div>
+
+                    <label htmlFor="recipeImage" className="form-label">
+                      Recipe Image URL
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control mb-3"
+                      id="recipeImage"
+                      value={imageURL}
+                      onChange={handleImageURLChange}
+                      placeholder="Enter image URL"
+                    />
+
+                    <div className="mb-3">
+                      <label htmlFor="recipeDescription" className="form-label">
+                        Description
+                      </label>
+                      <textarea
+                        className="form-control"
+                        id="recipeDescription"
+                        value={description}
+                        onChange={handleDescriptionChange}
+                        placeholder="Enter recipe description"
+                        rows={3}
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  {/* Right card */}
+                  <div className="right-card col p-2">
+                    {/* Additional Information */}
+                    <h5 className="mb-4">Additional Information</h5>
+                    <div className="mb-3">
+                      <label htmlFor="totalTime" className="form-label">
+                        Total Time
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="totalTime"
+                        value={totalTime}
+                        onChange={handleTotalTimeChange}
+                        placeholder="Enter total time"
+                      />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="calories" className="form-label">
+                        Calories
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="calories"
+                        value={calories}
+                        onChange={handleCaloriesChange}
+                        placeholder="Enter calories"
+                      />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="servings" className="form-label">
+                        Servings
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="servings"
+                        value={servings}
+                        onChange={handleServingsChange}
+                        placeholder="Enter number of servings"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mid Section */}
+                <div className="mid-section row pt-5">
+                  <div className="left-card col p-2">
+                    <h5 className="mb-4">Ingredients</h5>
+                    <div id="ingredientsList">
+                      <div className="row mb-3">
+                        <div className="col-8">
+                          <label
+                            htmlFor="ingredientName"
+                            className="form-label"
+                          >
+                            Ingredient Name
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="ingredientName"
+                            value={ingredientName}
+                            onChange={handleIngredientNameChange}
+                            placeholder="Enter ingredient name"
+                          />
+                        </div>
+                        <div className="col-4">
+                          <label
+                            htmlFor="ingredientQuantity"
+                            className="form-label"
+                          >
+                            Quantity
+                          </label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="ingredientQuantity"
+                            value={ingredientQuantity}
+                            onChange={handleIngredientQuantityChange}
+                            placeholder="Enter quantity"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={addIngredient}
+                      >
+                        Add Ingredient
+                      </button>
+                      <ul className="mt-3">
+                        {ingredients.map((ing, index) => (
+                          <li key={index}>
+                            {ing.name} - {ing.quantity}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="right-card col p-2">
+                    <h5 className="mb-4">Preparation Method</h5>
+                    <div id="stepsList">
+                      <div className="mb-3">
+                        <label htmlFor="stepDescription" className="form-label">
+                          Step Description
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="stepDescription"
+                          value={stepDescription}
+                          onChange={handleStepDescriptionChange}
+                          placeholder="Enter preparation step"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={addStep}
+                      >
+                        Add Step
+                      </button>
+                      <ol className="mt-3">
+                        {steps.map((step, index) => (
+                          <li key={index}>{step}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Submission */}
+                <div className="text-end pt-4">
+                  <button type="submit" className="btn btn-primary">
+                    Save Recipe
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
