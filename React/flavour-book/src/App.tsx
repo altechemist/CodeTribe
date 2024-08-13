@@ -17,37 +17,16 @@ function App() {
 
   const fetchRecipes = async () => {
     try {
-      const recipesList = await axios.get(`./recipes.json`);
-      if (Array.isArray(recipesList.data.recipes)) {
-        setRecipes(recipesList.data.recipes);
-        console.log("Recipes: " + recipesList.data.recipes);
+      const recipesList = await axios.get(`http://localhost:3001/api/data`);
+      console.log(recipesList);
+      if (Array.isArray(recipesList.data)) {
+        setRecipes(recipesList.data);
+        console.log("Recipes: " + recipesList.data);
       } else {
         console.error("Expected an array but got:", recipesList.data.recipes);
       }
     } catch (error) {
       console.error("Error fetching recipes: ", error);
-    }
-  };
-
-  // Function to post a new recipe
-  const postRecipe = async () => {
-    const newRecipe = {
-      imageURL,
-      name,
-      description,
-      totalTime,
-      calories,
-      servings,
-      ingredients,
-      steps,
-    };
-
-    try {
-      const response = await axios.post(`./recipes.json`, newRecipe);
-      console.log("Recipe posted successfully:", response.data);
-      // Optionally, you can handle the response data here or show a success message
-    } catch (error) {
-      console.error("Error posting recipe:", error);
     }
   };
 
@@ -68,7 +47,6 @@ function App() {
   const [category, setCategory] = useState<string>("");
 
   const selectCategory = (category: string) => {
-    // Sets the selected category
     setCategory(category);
     filterRecipes(category);
   };
@@ -91,18 +69,22 @@ function App() {
 
   // Track selected recipe
   const [selectedRecipe, setSelectedRecipe] = useState({});
+
+  // Sets the selected recipe
   const selectRecipe = (rid: number) => {
-    // Sets the selected recipe
     setSelectedRecipe(recipes.find((recipe) => recipe.id === rid)!);
   };
 
   // State variables for recipe details
-  const [imageURL, setImageURL] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [image, setImage] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [totalTime, setTotalTime] = useState<string>("");
-  const [calories, setCalories] = useState<number | "">("");
-  const [servings, setServings] = useState<number | "">("");
+  const [rCategory, setRCategory] = useState<string>("");
+  const [prepTime, setPrepTime] = useState<string>("");
+  const [cookTime, setCookTime] = useState<string>("");
+  const [totalTime, setTotalTime] = useState<number>(0);
+  const [calories, setCalories] = useState<string>("");
+  const [servings, setServings] = useState<string>("");
 
   // State variables for ingredients
   const [ingredientName, setIngredientName] = useState<string>("");
@@ -114,28 +96,6 @@ function App() {
   // State variables for preparation steps
   const [stepDescription, setStepDescription] = useState<string>("");
   const [steps, setSteps] = useState<string[]>([]);
-
-  // Handlers for input changes
-  const handleImageURLChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setImageURL(e.target.value);
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setName(e.target.value);
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-    setDescription(e.target.value);
-  const handleTotalTimeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setTotalTime(e.target.value);
-  const handleCaloriesChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setCalories(e.target.value);
-  const handleServingsChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setServings(e.target.value);
-  const handleIngredientNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setIngredientName(e.target.value);
-  const handleIngredientQuantityChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => setIngredientQuantity(e.target.value);
-  const handleStepDescriptionChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => setStepDescription(e.target.value);
 
   // Handlers to add ingredients and steps
   const addIngredient = () => {
@@ -156,22 +116,54 @@ function App() {
     }
   };
 
+  // Function to post a new recipe
+  const postRecipe = async () => {
+    // Generate id
+    const id: number = recipes.length;
+
+    // Calculate total time
+    const totalTime = parseInt(prepTime) + parseInt(cookTime);
+    setTotalTime(totalTime);
+
+    const newRecipe = {
+      id,
+      name,
+      category: rCategory,
+      image,
+      description,
+      ingredients,
+      steps,
+      servings,
+      prep_time: prepTime + " mins",
+      cook_time: cookTime + " mins",
+      total_time: totalTime + " mins",
+      calories,
+    };
+
+    // Update recipes array with the new recipe
+    recipes.push(newRecipe);
+    setRecipes(recipes);
+
+    // Post the new recipes
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/data",
+        recipes
+      );
+      console.log("Recipe posted successfully:", response.data);
+      // Optionally, handle response data or show a success message
+    } catch (error) {
+      console.error("Error posting recipe:", error);
+    }
+  };
+
   // Handler for form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Process form submission here
-    console.log({
-      imageURL,
-      name,
-      description,
-      totalTime,
-      calories,
-      servings,
-      ingredients,
-      steps,
-    });
-    postRecipe;
+    postRecipe();
+    fetchRecipes();
   };
+
   return (
     <div className="container">
       {/* Navigation */}
@@ -609,7 +601,7 @@ function App() {
                 <div className="left-card col p-2">
                   {/* Mapping ingredients */}
                   <h5 className="mb-4">Ingredients</h5>
-                  <ul>
+                  <ul className="list-group list-group-flush ms-3">
                     {Array.isArray(selectedRecipe.ingredients) &&
                     selectedRecipe.ingredients.length > 0 ? (
                       selectedRecipe.ingredients.map((ingredient, index) => (
@@ -650,10 +642,15 @@ function App() {
                     <i className="bi bi-clock me-2" />
                     <small>Cook Time: {selectedRecipe.cook_time}</small>
                   </li>
-                  <li className="d-flex align-items-center me-2">
-                    <i className="bi bi-people-fill me-2" />
-                    <small>{selectedRecipe.servings} Servings</small>
-                  </li>
+
+                  <div className="btn-group">
+                    <button type="button" className="btn btn-primary me-2">
+                      <i className="bi bi-pencil-fill"></i>
+                    </button>
+                    <button type="button" className="btn btn-primary me-2">
+                      <i className="bi bi-trash-fill"></i>
+                    </button>
+                  </div>
                 </ul>
               </div>
             </div>
@@ -700,7 +697,7 @@ function App() {
                         className="form-control"
                         id="recipeName"
                         value={name}
-                        onChange={handleNameChange}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="Enter recipe name"
                       />
                     </div>
@@ -712,8 +709,8 @@ function App() {
                       type="text"
                       className="form-control mb-3"
                       id="recipeImage"
-                      value={imageURL}
-                      onChange={handleImageURLChange}
+                      value={image}
+                      onChange={(e) => setImage(e.target.value)}
                       placeholder="Enter image URL"
                     />
 
@@ -725,7 +722,7 @@ function App() {
                         className="form-control"
                         id="recipeDescription"
                         value={description}
-                        onChange={handleDescriptionChange}
+                        onChange={(e) => setDescription(e.target.value)}
                         placeholder="Enter recipe description"
                         rows={3}
                       ></textarea>
@@ -737,16 +734,30 @@ function App() {
                     {/* Additional Information */}
                     <h5 className="mb-4">Additional Information</h5>
                     <div className="mb-3">
-                      <label htmlFor="totalTime" className="form-label">
-                        Total Time
+                      <label htmlFor="prepTime" className="form-label">
+                        Prep Time
                       </label>
                       <input
-                        type="text"
+                        type="number"
                         className="form-control"
-                        id="totalTime"
-                        value={totalTime}
-                        onChange={handleTotalTimeChange}
-                        placeholder="Enter total time"
+                        id="prepTime"
+                        value={prepTime}
+                        onChange={(e) => setPrepTime(e.target.value)}
+                        placeholder="Enter prep time"
+                      />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="cookTime" className="form-label">
+                        Cook Time
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="cookTime"
+                        value={cookTime}
+                        onChange={(e) => setCookTime(e.target.value)}
+                        placeholder="Enter cook time"
                       />
                     </div>
 
@@ -759,7 +770,7 @@ function App() {
                         className="form-control"
                         id="calories"
                         value={calories}
-                        onChange={handleCaloriesChange}
+                        onChange={(e) => setCalories(e.target.value)}
                         placeholder="Enter calories"
                       />
                     </div>
@@ -773,9 +784,28 @@ function App() {
                         className="form-control"
                         id="servings"
                         value={servings}
-                        onChange={handleServingsChange}
+                        onChange={(e) => setServings(e.target.value)}
                         placeholder="Enter number of servings"
                       />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="category" className="form-label">
+                        Category
+                      </label>
+                      <select
+                        className="form-select"
+                        id="category"
+                        value={rCategory}
+                        onChange={(e) => setRCategory(e.target.value)}
+                      >
+                        <option value="">Select a category...</option>
+                        {categoryList.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -798,7 +828,7 @@ function App() {
                             className="form-control"
                             id="ingredientName"
                             value={ingredientName}
-                            onChange={handleIngredientNameChange}
+                            onChange={(e) => setIngredientName(e.target.value)}
                             placeholder="Enter ingredient name"
                           />
                         </div>
@@ -814,7 +844,9 @@ function App() {
                             className="form-control"
                             id="ingredientQuantity"
                             value={ingredientQuantity}
-                            onChange={handleIngredientQuantityChange}
+                            onChange={(e) =>
+                              setIngredientQuantity(e.target.value)
+                            }
                             placeholder="Enter quantity"
                           />
                         </div>
@@ -848,7 +880,7 @@ function App() {
                           className="form-control"
                           id="stepDescription"
                           value={stepDescription}
-                          onChange={handleStepDescriptionChange}
+                          onChange={(e) => setStepDescription(e.target.value)}
                           placeholder="Enter preparation step"
                         />
                       </div>

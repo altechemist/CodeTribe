@@ -1,0 +1,338 @@
+[
+    {
+        "id": "1",
+        "name": "Classic Caesar Salad",
+        "category": "salads",
+        "image": "https://elements-resized.envatousercontent.com/envato-shoebox/d0e0/d940-67c6-4fc0-981b-7581cad9a0a2/IMG_1117.JPG?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=1d201aa479a18b6f7ff96eee25b05ff5eafcb413f23e935f442cae7710bf83f5",
+        "description": "A refreshing salad with a creamy Caesar dressing, croutons, and Parmesan cheese.",
+        "ingredients": [
+            {
+                "name": "Romaine Lettuce",
+                "quantity": "1 head"
+            },
+            {
+                "name": "Caesar Dressing",
+                "quantity": "120 ml"
+            },
+            {
+                "name": "Croutons",
+                "quantity": "100 g"
+            },
+            {
+                "name": "Parmesan Cheese",
+                "quantity": "25 g"
+            },
+            {
+                "name": "Salt",
+                "quantity": "to taste"
+            },
+            {
+                "name": "Black Pepper",
+                "quantity": "to taste"
+            }
+        ],
+        "steps": [
+            "Wash and chop the romaine lettuce.",
+            "In a large bowl, toss the lettuce with Caesar dressing.",
+            "Top with croutons and Parmesan cheese.",
+            "Season with salt and black pepper to taste."
+        ],
+        "servings": 4,
+        "prep_time": "10 mins",
+        "cook_time": "0 mins",
+        "total_time": "10 mins",
+        "calories": 120,
+        "tags": [
+            "Recommended",
+            "Latest"
+        ]
+    },
+    {
+        "id": "2",
+        "name": "Honey Glazed Carrots",
+        "category": "sides",
+        "image": "https://elements-resized.envatousercontent.com/envato-shoebox/d832/2a56-c897-43c4-a48f-25419141e11f/DSC_1524.jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=6e6dd8396f192f3a4f5d2c74cdf188c9abfd15fb9e05c88059bfeff583104e3b",
+        "description": "Sweet and savory carrots with a honey glaze, perfect as a side dish.",
+        "ingredients": [
+            {
+                "name": "Carrots",
+                "quantity": "450 g"
+            },
+            {
+                "name": "Honey",
+                "quantity": "60 ml"
+            },
+            {
+                "name": "Butter",
+                "quantity": "30 g"
+            },
+            {
+                "name": "Salt",
+                "quantity": "1/2 tsp"
+            },
+            {
+                "name": "Black Pepper",
+                "quantity": "1/4 tsp"
+            },
+            {
+                "name": "Water",
+                "quantity": "120 ml"
+            }
+        ],
+        "steps": [
+            "Peel and cut the carrots into bite-sized pieces.",
+            "In a skillet, melt the butter over medium heat.",
+            "Add the carrots and cook for about 5 minutes.",
+            "Pour in the honey, water, salt, and black pepper.",
+            "Simmer for 15-20 minutes, or until the carrots are tender and the glaze has thickened."
+        ],
+        "servings": 4,
+        "prep_time": "10 mins",
+        "cook_time": "20 mins",
+        "total_time": "30 mins",
+        "calories": 78,
+        "tags": [
+            "Popular",
+            "Latest"
+        ]
+    },
+    {
+        "id": "3",
+        "name": "Chicken Teriyaki Stir-Fry",
+        "category": "main",
+        "image": "https://elements-resized.envatousercontent.com/envato-shoebox/b883/2c35-5e7b-4333-ba48-91c55fa5ad50/DSC_2748.jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=824fbad0c893c6980c4192852e644fb0eeb85119344699910418f8dd6870c78d",
+        "description": "Tender chicken and vegetables in a savory teriyaki sauce served over rice.",
+        "ingredients": [
+            {
+                "name": "Chicken Breast",
+                "quantity": "450 g"
+            },
+            {
+                "name": "Teriyaki Sauce",
+                "quantity": "60 ml"
+            },
+            {
+                "name": "Bell Peppers",
+                "quantity": "2"
+            },
+            {
+                "name": "Broccoli Florets",
+                "quantity": "150 g"
+            },
+            {
+                "name": "Carrot",
+                "quantity": "1"
+            },
+            {
+                "name": "Olive Oil",
+                "quantity": "30 ml"
+            },
+            {
+                "name": "Rice",
+                "quantity": "375 g"
+            },
+            {
+                "name": "Salt",
+                "quantity": "to taste"
+            },
+            {
+                "name": "Black Pepper",
+                "quantity": "to taste"
+            }
+        ],
+        "steps": [
+            "Cook the rice according to package instructions.",
+            "Cut the chicken into bite-sized pieces.",
+            "Heat olive oil in a large skillet over medium-high heat.",
+            "Add the chicken and cook until browned and cooked through.",
+            "Remove the chicken and set aside.",
+            "In the same skillet, add sliced bell peppers, broccoli, and carrot.",
+            "Stir-fry for 5-7 minutes until vegetables are tender.",
+            "Return the chicken to the skillet and pour in the teriyaki sauce.",
+            "Cook for an additional 2-3 minutes, stirring to coat everything in the sauce.",
+            "Serve over cooked rice."
+        ],
+        "servings": 4,
+        "prep_time": "15 mins",
+        "cook_time": "15 mins",
+        "total_time": "30 mins",
+        "calories": 48,
+        "tags": [
+            "Recommended",
+            "Latest"
+        ]
+    },
+    {
+        "id": "4",
+        "name": "Blueberry Muffins",
+        "category": "baking",
+        "image": "https://elements-resized.envatousercontent.com/envato-shoebox/8c85/0f04-e7ff-4d44-9cef-8a41cda874c0/lr-9362%20(2).jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=9723bc9f3cb529fefbc26049b3d5121310bb871a40aa24ad9cbc50f374ab0e7d",
+        "description": "Delicious blueberry muffins that are soft and fluffy, perfect for breakfast or a snack.",
+        "ingredients": [
+            {
+                "name": "All-purpose Flour",
+                "quantity": "250 g"
+            },
+            {
+                "name": "Sugar",
+                "quantity": "200 g"
+            },
+            {
+                "name": "Baking Powder",
+                "quantity": "10 g"
+            },
+            {
+                "name": "Salt",
+                "quantity": "2 g"
+            },
+            {
+                "name": "Milk",
+                "quantity": "120 ml"
+            },
+            {
+                "name": "Vegetable Oil",
+                "quantity": "80 ml"
+            },
+            {
+                "name": "Egg",
+                "quantity": "1"
+            },
+            {
+                "name": "Blueberries",
+                "quantity": "150 g"
+            }
+        ],
+        "steps": [
+            "Preheat the oven to 190°C and line a muffin tin with paper liners.",
+            "In a large bowl, combine flour, sugar, baking powder, and salt.",
+            "In another bowl, whisk together milk, vegetable oil, and egg.",
+            "Add the wet ingredients to the dry ingredients and mix until just combined.",
+            "Gently fold in the blueberries.",
+            "Divide the batter evenly among the muffin cups.",
+            "Bake for 20-25 minutes, or until a toothpick inserted into the center comes out clean."
+        ],
+        "servings": 12,
+        "prep_time": "15 mins",
+        "cook_time": "25 mins",
+        "total_time": "40 mins",
+        "calories": 50,
+        "tags": [
+            "Popular",
+            "Latest"
+        ]
+    },
+    {
+        "id": "5",
+        "name": "Spaghetti Carbonara",
+        "category": "main",
+        "image": "https://elements-resized.envatousercontent.com/envato-shoebox/0297/6c3e-71cf-4e08-a32a-e03bfec12dfb/pentola%20carb%20orizz.jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=1d3cd2a33e0af1b2f353e35a52079de731f0a9a225fa8f248ea108c69d8aebe8",
+        "description": "A classic Italian pasta dish made with eggs, cheese, pancetta, and black pepper.",
+        "ingredients": [
+            {
+                "name": "Spaghetti",
+                "quantity": "250 g"
+            },
+            {
+                "name": "Pancetta",
+                "quantity": "150 g"
+            },
+            {
+                "name": "Egg Yolks",
+                "quantity": "3"
+            },
+            {
+                "name": "Parmesan Cheese",
+                "quantity": "100 g"
+            },
+            {
+                "name": "Black Pepper",
+                "quantity": "to taste"
+            },
+            {
+                "name": "Salt",
+                "quantity": "to taste"
+            },
+            {
+                "name": "Olive Oil",
+                "quantity": "30 ml"
+            }
+        ],
+        "steps": [
+            "Cook the spaghetti according to package instructions.",
+            "In a pan, heat olive oil and cook the pancetta until crispy.",
+            "In a bowl, whisk together egg yolks and grated Parmesan cheese.",
+            "Drain the spaghetti and add it to the pan with pancetta.",
+            "Remove the pan from heat and quickly mix in the egg mixture.",
+            "Season with black pepper and salt to taste.",
+            "Serve immediately."
+        ],
+        "servings": 4,
+        "prep_time": "10 mins",
+        "cook_time": "15 mins",
+        "total_time": "25 mins",
+        "calories": 450,
+        "tags": [
+            "Popular",
+            "Italian"
+        ]
+    },
+    {
+        "id": "6",
+        "name": "Chocolate Chip Cookies",
+        "category": "baking",
+        "image": "https://elements-resized.envatousercontent.com/envato-shoebox/db29/effb-33ec-425b-99c7-533165987be4/IMG_0409.jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=9daeb0b7b5b497161204bc3b85bfb25d4ffb3db09ecfe834f08270106160acd4",
+        "description": "Classic chocolate chip cookies with a soft and chewy center and crispy edges.",
+        "ingredients": [
+            {
+                "name": "All-purpose Flour",
+                "quantity": "250 g"
+            },
+            {
+                "name": "Sugar",
+                "quantity": "150 g"
+            },
+            {
+                "name": "Brown Sugar",
+                "quantity": "100 g"
+            },
+            {
+                "name": "Butter",
+                "quantity": "115 g"
+            },
+            {
+                "name": "Egg",
+                "quantity": "1"
+            },
+            {
+                "name": "Baking Soda",
+                "quantity": "5 g"
+            },
+            {
+                "name": "Salt",
+                "quantity": "1/2 tsp"
+            },
+            {
+                "name": "Chocolate Chips",
+                "quantity": "150 g"
+            }
+        ],
+        "steps": [
+            "Preheat the oven to 180°C and line a baking sheet with parchment paper.",
+            "In a bowl, cream together the butter, sugar, and brown sugar until smooth.",
+            "Beat in the egg.",
+            "In another bowl, whisk together flour, baking soda, and salt.",
+            "Gradually mix the dry ingredients into the wet ingredients.",
+            "Fold in the chocolate chips.",
+            "Scoop dough onto the prepared baking sheet and bake for 10-12 minutes, or until golden brown."
+        ],
+        "servings": 24,
+        "prep_time": "15 mins",
+        "cook_time": "12 mins",
+        "total_time": "27 mins",
+        "calories": 200,
+        "tags": [
+            "Popular",
+            "Dessert"
+        ]
+    }
+]
