@@ -37,3 +37,33 @@ button{
 li {
   cursor: pointer !important;
 }
+
+.search-form {
+  position: relative;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  border: 4px solid #164240 !important;
+  border-radius: 5px !important;
+}
+
+.search-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  cursor: pointer;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.search-button i {
+  color: #f7f7f7 !important;
+}
+
+#showRecipeModal {
+  display: none !important;
+}

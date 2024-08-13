@@ -17,9 +17,17 @@ app.use(cors());
 app.get('/api/data', (req, res) => {
     fs.readFile(JSON_FILE_PATH, 'utf8', (err, data) => {
         if (err) {
+            console.error('Error reading file:', err); // Log the error for debugging
             return res.status(500).send('Error reading file');
         }
-        res.json(JSON.parse(data));
+
+        try {
+            const jsonData = JSON.parse(data); // Attempt to parse JSON data
+            res.json(jsonData);
+        } catch (parseError) {
+            console.error('Error parsing JSON:', parseError); // Log the parsing error
+            res.status(500).send('Error parsing JSON');
+        }
     });
 });
 

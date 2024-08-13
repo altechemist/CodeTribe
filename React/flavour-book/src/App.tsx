@@ -45,7 +45,6 @@ function App() {
     "Holiday",
   ];
   const [category, setCategory] = useState<string>("");
-
   const selectCategory = (category: string) => {
     setCategory(category);
     filterRecipes(category);
@@ -151,7 +150,7 @@ function App() {
         recipes
       );
       console.log("Recipe posted successfully:", response.data);
-      // Optionally, handle response data or show a success message
+      fetchRecipes();
     } catch (error) {
       console.error("Error posting recipe:", error);
     }
@@ -161,8 +160,40 @@ function App() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     postRecipe();
-    fetchRecipes();
   };
+
+  // Search for recipes
+  const [inputText, setInputText] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(1);
+
+  const searchRecipe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault;
+
+    try {
+      if (inputText !== "") {
+        const index = recipes.findIndex((recipe) =>
+          recipe.name.toLowerCase().includes(inputText.toLowerCase())
+        );
+        if (index !== -1) {
+          setSelectedIndex(index)
+          alert("Recipe found at: " + index);
+          showModal();
+        } else {
+          alert("Recipe not found");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Function to show the modal
+  function showModal() {
+    const triggerModal = document.getElementById("showRecipeModal");
+    if (triggerModal) {
+      (triggerModal as HTMLElement).click();
+    }
+  }
 
   return (
     <div className="container">
@@ -216,17 +247,24 @@ function App() {
                 </li>
               </ul>
 
-              <form
-                className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+              <div
+                className="search-form col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
                 role="search"
               >
-                <input
-                  type="search"
-                  className="form-control"
-                  placeholder="Search..."
-                  aria-label="Search"
-                />
-              </form>
+                <div className="input-container">
+                  <input
+                    type="search"
+                    className="form-control"
+                    placeholder="Search..."
+                    aria-label="Search"
+                    id="inputText"
+                    onChange={(e) => setInputText(e.target.value)}
+                  />
+                  <button onClick={searchRecipe} className="search-button">
+                    <i className="bi bi-search"></i>
+                  </button>
+                </div>
+              </div>
 
               <div className="dropdown text-end">
                 <a
@@ -256,11 +294,16 @@ function App() {
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
-                      Favorites
+                      My Favorites
                     </a>
                   </li>
                   <li>
                     <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Log in
+                    </a>
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
@@ -273,6 +316,16 @@ function App() {
           </div>
         </header>
       </div>
+
+      {/* Invisible */}
+      <button
+        id="showRecipeModal"
+        data-bs-toggle="modal"
+        data-bs-target="#viewRecipe"
+        className="btn btn-outline-primary rounded-pill px-3 ms-4"
+      >
+        View
+      </button>
 
       {/* Categories */}
       <div className="d-flex gap-2 justify-content-center py-3">
