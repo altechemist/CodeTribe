@@ -12,6 +12,17 @@
   margin-bottom: 5px !important;
 }
 
+.card-sm {
+  display: flex;
+  align-items: center;
+  height: 200px !important;
+  margin-bottom: 5px !important;
+}
+
+.search-results {
+  background-color: rgb(33, 37, 41, 0.1) !important;
+}
+
 .card-header {
   background-color: transparent !important;
 }
@@ -20,16 +31,30 @@
   color: #f7f7f7 !important;
 }
 
-button{
-  background-color: #164240 !important;
-  border: 1px solid #164240 !important;
+button {
+  background-color: #164240;
+  border: 3px solid #164240 !important;
   border-radius: 5px !important;
   color: #f7f7f7 !important;
 }
 
+.green {
+  background-color: #164240;
+  border: 3px solid #164240 !important;
+  border-radius: 30px !important;
+  color: #f7f7f7 !important;
+}
+
+.green:hover {
+  background-color: #9acd32;
+  border: 3px solid #164240 !important;
+  border-radius: 30px !important;
+  color: #164240 !important;
+}
+
 .btn-close {
   background-color: #164240 !important;
-  border: 1px solid #164240 !important;
+  border: 3px solid #164240 !important;
   border-radius: 5px !important;
   color: #f7f7f7 !important;
 }
@@ -62,8 +87,4 @@ li {
 
 .search-button i {
   color: #f7f7f7 !important;
-}
-
-#showRecipeModal {
-  display: none !important;
 }

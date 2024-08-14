@@ -30,7 +30,26 @@ function App() {
     }
   };
 
+  // Button styles
+  const buttonStyles = {
+    default: {
+      backgroundColor: "#164240",
+      border: "3px solid #164240",
+      borderRadius: "5px",
+      color: "#f7f7f7",
+      cursor: "pointer",
+    },
+    active: {
+      backgroundColor: "#9acd32",
+      border: "3px solid #164240",
+      color: "#f7f7f7",
+      fontWeight: "bold",
+      cursor: "pointer",
+    },
+  };
+
   // Show recipes based on category
+  const [activeCategory, setActiveCategory] = useState(null);
   const categoryList: string[] = [
     "All",
     "Main",
@@ -47,6 +66,7 @@ function App() {
   const [category, setCategory] = useState<string>("");
   const selectCategory = (category: string) => {
     setCategory(category);
+    setActiveCategory(category);
     filterRecipes(category);
   };
 
@@ -164,8 +184,7 @@ function App() {
 
   // Search for recipes
   const [inputText, setInputText] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(1);
-
+  const [selectedIndex, setSelectedIndex] = useState<number>();
   const searchRecipe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault;
 
@@ -175,11 +194,11 @@ function App() {
           recipe.name.toLowerCase().includes(inputText.toLowerCase())
         );
         if (index !== -1) {
-          setSelectedIndex(index)
-          alert("Recipe found at: " + index);
-          showModal();
+          setSelectedIndex(index);
+          setInputText("");
         } else {
           alert("Recipe not found");
+          setInputText("");
         }
       }
     } catch (error) {
@@ -194,6 +213,13 @@ function App() {
       (triggerModal as HTMLElement).click();
     }
   }
+
+  // Function to show active category
+
+  // Close the search results
+  const closeSearch = () => {
+    setSelectedIndex(undefined);
+  };
 
   return (
     <div className="container">
@@ -255,6 +281,7 @@ function App() {
                   <input
                     type="search"
                     className="form-control"
+                    value={inputText}
                     placeholder="Search..."
                     aria-label="Search"
                     id="inputText"
@@ -317,15 +344,64 @@ function App() {
         </header>
       </div>
 
-      {/* Invisible */}
-      <button
-        id="showRecipeModal"
-        data-bs-toggle="modal"
-        data-bs-target="#viewRecipe"
-        className="btn btn-outline-primary rounded-pill px-3 ms-4"
-      >
-        View
-      </button>
+      {/* Search results */}
+      {selectedIndex ? (
+        <div className="search-results container-sm px-1 py-2 mt-3 rounded-4">
+          <div className="d-flex justify-content-between align-items-center border-bottom">
+            <h4 className="pb-2 ms-3">Search Results</h4>
+            <button onClick={closeSearch} className="me-2">
+              <i className="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <div className="card-sm p-3">
+            <img
+              className="search-results-image rounded-4"
+              width={250}
+              height={150}
+              src={recipes[selectedIndex].image}
+              alt={recipes[selectedIndex].title}
+            />
+            <div className="card-body p-3">
+              <h6 className="card-header px-0 pb-3">
+                {recipes[selectedIndex].name}
+              </h6>
+              <p className="card-text pt-2">
+                {recipes[selectedIndex].description}
+              </p>
+              <div className="d-flex justify-content-between align-items-center">
+                <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-clock me-2" />
+                    <small>{recipes[selectedIndex].total_time}</small>
+                  </li>
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-fire me-2" />
+                    <small>{recipes[selectedIndex].calories}</small>
+                  </li>
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-people-fill me-2" />
+                    <small>{recipes[selectedIndex].servings}</small>
+                  </li>
+                  <li className="d-flex align-items-center me-2">
+                    <i className="bi bi-bookmark-heart-fill me-2" />
+                  </li>
+                  <button
+                    onClick={() => selectRecipe(recipes[selectedIndex].id)}
+                    data-bs-toggle="modal"
+                    data-bs-target="#viewRecipe"
+                    className="btn btn-outline-primary rounded-pill px-3 ms-4 green"
+                  >
+                    View
+                  </button>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div></div>
+      )}
 
       {/* Categories */}
       <div className="d-flex gap-2 justify-content-center py-3">
@@ -334,6 +410,12 @@ function App() {
             onClick={() => selectCategory(category)}
             className="btn btn-primary rounded-pill px-3"
             type="button"
+            style={
+              activeCategory === category
+                ? buttonStyles.active
+                : buttonStyles.default
+            }
+            id={category}
           >
             {category}
           </button>
@@ -383,7 +465,7 @@ function App() {
                             onClick={() => selectRecipe(recipe.id)}
                             data-bs-toggle="modal"
                             data-bs-target="#viewRecipe"
-                            className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                            className="btn btn-primary rounded-pill px-3 ms-4 green"
                           >
                             View
                           </button>
@@ -426,29 +508,31 @@ function App() {
                             </p>
                             <div className="d-flex justify-content-between align-items-center">
                               <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                                <li className="d-flex align-items-center me-2">
+                                <li className="d-flex align-items-center me-1">
                                   <i className="bi bi-clock me-2" />
                                   <small>{recipe.total_time}</small>
                                 </li>
-                                <li className="d-flex align-items-center me-2">
+                                <li className="d-flex align-items-center me-2 ms-1">
                                   <i className="bi bi-fire me-2" />
                                   <small>{recipe.calories}</small>
                                 </li>
-                                <li className="d-flex align-items-center me-2">
+                                <li className="d-flex align-items-center me-2 ms-1">
                                   <i className="bi bi-people-fill me-2" />
                                   <small>{recipe.servings}</small>
                                 </li>
-                                <li className="d-flex align-items-center me-2">
+                                <li className="d-flex align-items-center me-2 ms-2">
                                   <i className="bi bi-bookmark-heart-fill me-2" />
                                 </li>
-                                <button
-                                  onClick={() => selectRecipe(recipe.id)}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#viewRecipe"
-                                  className="btn btn-outline-primary rounded-pill px-3 ms-4"
-                                >
-                                  View
-                                </button>
+                                <div className="ms-5">
+                                  <button
+                                    onClick={() => selectRecipe(recipe.id)}
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#viewRecipe"
+                                    className="btn btn-outline-primary green rounded-pill px-3 ms-4 green"
+                                  >
+                                    View
+                                  </button>
+                                </div>
                               </ul>
                             </div>
                           </div>
@@ -504,7 +588,7 @@ function App() {
                                   onClick={() => selectRecipe(recipe.id)}
                                   data-bs-toggle="modal"
                                   data-bs-target="#viewRecipe"
-                                  className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                                  className="btn btn-outline-primary rounded-pill px-3 ms-4 green"
                                 >
                                   View
                                 </button>
@@ -563,7 +647,7 @@ function App() {
                                   onClick={() => selectRecipe(recipe.id)}
                                   data-bs-toggle="modal"
                                   data-bs-target="#viewRecipe"
-                                  className="btn btn-outline-primary rounded-pill px-3 ms-4"
+                                  className="btn btn-outline-primary rounded-pill px-3 ms-4 green"
                                 >
                                   View
                                 </button>
@@ -697,10 +781,16 @@ function App() {
                   </li>
 
                   <div className="btn-group">
-                    <button type="button" className="btn btn-primary me-2">
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2 green"
+                    >
                       <i className="bi bi-pencil-fill"></i>
                     </button>
-                    <button type="button" className="btn btn-primary me-2">
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2 green"
+                    >
                       <i className="bi bi-trash-fill"></i>
                     </button>
                   </div>
@@ -906,7 +996,7 @@ function App() {
                       </div>
                       <button
                         type="button"
-                        className="btn btn-secondary"
+                        className="btn btn-primary green"
                         onClick={addIngredient}
                       >
                         Add Ingredient
@@ -939,7 +1029,7 @@ function App() {
                       </div>
                       <button
                         type="button"
-                        className="btn btn-secondary"
+                        className="btn btn-primary green"
                         onClick={addStep}
                       >
                         Add Step
@@ -955,7 +1045,10 @@ function App() {
 
                 {/* Form Submission */}
                 <div className="text-end pt-4">
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn btn-primary green"
+                  >
                     Save Recipe
                   </button>
                 </div>
