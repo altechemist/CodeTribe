@@ -7,9 +7,12 @@
 }
 
 .card {
-  height: 420px !important;
   background-color: rgb(33, 37, 41, 0.1) !important;
   margin-bottom: 5px !important;
+}
+
+.card p {
+  height: 10vh !important;
 }
 
 .card-sm {

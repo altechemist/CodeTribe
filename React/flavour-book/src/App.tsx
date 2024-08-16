@@ -5,8 +5,30 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import Card from "./components/card";
+import ViewRecipe from "./components/viewRecipe";
 
 function App() {
+  interface Ingredient {
+    name: string;
+    quantity: string;
+  }
+  
+  interface Recipe {
+    id: number;
+    image: string;
+    title: string;
+    name: string;
+    description: string;
+    total_time: string;
+    calories: number;
+    servings: number;
+    prep_time: string;
+    cook_time: string;
+    ingredients: Ingredient[];
+    steps: string[];
+  }
+  
   // Recipes data
   const [recipes, setRecipes] = useState([]);
 
@@ -116,7 +138,7 @@ function App() {
   const [stepDescription, setStepDescription] = useState<string>("");
   const [steps, setSteps] = useState<string[]>([]);
 
-  // Handlers to add ingredients and steps
+  // Add ingredients
   const addIngredient = () => {
     if (ingredientName && ingredientQuantity) {
       setIngredients([
@@ -128,6 +150,7 @@ function App() {
     }
   };
 
+  // Add steps
   const addStep = () => {
     if (stepDescription) {
       setSteps([...steps, stepDescription]);
@@ -206,15 +229,31 @@ function App() {
     }
   };
 
-  // Function to show the modal
-  function showModal() {
-    const triggerModal = document.getElementById("showRecipeModal");
-    if (triggerModal) {
-      (triggerModal as HTMLElement).click();
-    }
-  }
+  // Edit selected recipe
+  const editRecipe = (rid: number) => {
+    const recipe = recipes.find((recipe) => recipe.id === rid);
 
-  // Function to show active category
+    if (recipe) {
+      setName(recipe.name);
+      setImage(recipe.image);
+      setDescription(recipe.description);
+      setRCategory(recipe.category);
+      setPrepTime(recipe.prep_time.split(" ")[0]);
+      setCookTime(recipe.cook_time.split(" ")[0]);
+      setCalories(recipe.calories);
+      setServings(recipe.servings);
+      setIngredients(recipe.ingredients);
+      setSteps(recipe.steps);
+      setSelectedRecipe(recipe);
+
+      // Replace the recipe
+    }
+  };
+
+  // Update selected recipe
+  const updateRecipe = async () => {};
+
+  // Delete selected recipe
 
   // Close the search results
   const closeSearch = () => {
@@ -432,48 +471,7 @@ function App() {
               id="recipe-cards"
             >
               {filteredRecipes.map((recipe) => (
-                <div className="col p-2">
-                  <div className="card shadow-sm">
-                    <img
-                      className="bd-placeholder-img card-img-top"
-                      width="100%"
-                      height="225"
-                      src={recipe.image}
-                      alt={recipe.title}
-                    />
-                    <div className="card-body">
-                      <h6 className="card-header px-0 pb-3">{recipe.name}</h6>
-                      <p className="card-text pt-2">{recipe.description}</p>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                          <li className="d-flex align-items-center me-2">
-                            <i className="bi bi-clock me-2" />
-                            <small>{recipe.total_time}</small>
-                          </li>
-                          <li className="d-flex align-items-center me-2">
-                            <i className="bi bi-fire me-2" />
-                            <small>{recipe.calories}</small>
-                          </li>
-                          <li className="d-flex align-items-center me-2">
-                            <i className="bi bi-people-fill me-2" />
-                            <small>{recipe.servings}</small>
-                          </li>
-                          <li className="d-flex align-items-center me-2">
-                            <i className="bi bi-bookmark-heart-fill me-2" />
-                          </li>
-                          <button
-                            onClick={() => selectRecipe(recipe.id)}
-                            data-bs-toggle="modal"
-                            data-bs-target="#viewRecipe"
-                            className="btn btn-primary rounded-pill px-3 ms-4 green"
-                          >
-                            View
-                          </button>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Card recipe={recipe} selectRecipe={selectRecipe} />
               ))}
             </div>
           </div>
@@ -490,54 +488,7 @@ function App() {
                     id="recipe-cards"
                   >
                     {recipes.map((recipe) => (
-                      <div className="col p-2">
-                        <div className="card shadow-sm">
-                          <img
-                            className="bd-placeholder-img card-img-top"
-                            width="100%"
-                            height="225"
-                            src={recipe.image}
-                            alt={recipe.title}
-                          />
-                          <div className="card-body">
-                            <h6 className="card-header px-0 pb-3">
-                              {recipe.name}
-                            </h6>
-                            <p className="card-text pt-2">
-                              {recipe.description}
-                            </p>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                                <li className="d-flex align-items-center me-1">
-                                  <i className="bi bi-clock me-2" />
-                                  <small>{recipe.total_time}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2 ms-1">
-                                  <i className="bi bi-fire me-2" />
-                                  <small>{recipe.calories}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2 ms-1">
-                                  <i className="bi bi-people-fill me-2" />
-                                  <small>{recipe.servings}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2 ms-2">
-                                  <i className="bi bi-bookmark-heart-fill me-2" />
-                                </li>
-                                <div className="ms-5">
-                                  <button
-                                    onClick={() => selectRecipe(recipe.id)}
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#viewRecipe"
-                                    className="btn btn-outline-primary green rounded-pill px-3 ms-4 green"
-                                  >
-                                    View
-                                  </button>
-                                </div>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <Card recipe={recipe} selectRecipe={selectRecipe} />
                     ))}
                   </div>
                 </div>
@@ -551,52 +502,7 @@ function App() {
                     id="recipe-cards"
                   >
                     {recipes.map((recipe) => (
-                      <div className="col p-2">
-                        <div className="card shadow-sm">
-                          <img
-                            className="bd-placeholder-img card-img-top"
-                            width="100%"
-                            height="225"
-                            src={recipe.image}
-                            alt={recipe.title}
-                          />
-                          <div className="card-body">
-                            <h6 className="card-header px-0 pb-3">
-                              {recipe.name}
-                            </h6>
-                            <p className="card-text pt-2">
-                              {recipe.description}
-                            </p>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-clock me-2" />
-                                  <small>{recipe.total_time}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-fire me-2" />
-                                  <small>{recipe.calories}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-people-fill me-2" />
-                                  <small>{recipe.servings}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-bookmark-heart-fill me-2" />
-                                </li>
-                                <button
-                                  onClick={() => selectRecipe(recipe.id)}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#viewRecipe"
-                                  className="btn btn-outline-primary rounded-pill px-3 ms-4 green"
-                                >
-                                  View
-                                </button>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <Card recipe={recipe} selectRecipe={selectRecipe} />
                     ))}
                   </div>
                 </div>
@@ -610,52 +516,7 @@ function App() {
                     id="recipe-cards"
                   >
                     {recipes.map((recipe) => (
-                      <div className="col p-2">
-                        <div className="card shadow-sm">
-                          <img
-                            className="bd-placeholder-img card-img-top"
-                            width="100%"
-                            height="225"
-                            src={recipe.image}
-                            alt={recipe.title}
-                          />
-                          <div className="card-body">
-                            <h6 className="card-header px-0 pb-3">
-                              {recipe.name}
-                            </h6>
-                            <p className="card-text pt-2">
-                              {recipe.description}
-                            </p>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-clock me-2" />
-                                  <small>{recipe.total_time}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-fire me-2" />
-                                  <small>{recipe.calories}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-people-fill me-2" />
-                                  <small>{recipe.servings}</small>
-                                </li>
-                                <li className="d-flex align-items-center me-2">
-                                  <i className="bi bi-bookmark-heart-fill me-2" />
-                                </li>
-                                <button
-                                  onClick={() => selectRecipe(recipe.id)}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#viewRecipe"
-                                  className="btn btn-outline-primary rounded-pill px-3 ms-4 green"
-                                >
-                                  View
-                                </button>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <Card recipe={recipe} selectRecipe={selectRecipe} />
                     ))}
                   </div>
                 </div>
@@ -670,151 +531,26 @@ function App() {
       </div>
 
       {/* View Selected Recipe */}
-      <div
-        className="modal fade"
-        id="viewRecipe"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        aria-labelledby="viewRecipeLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-fullscreen">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="viewRecipeLabel">
-                Flavour Book
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body container-sm">
-              {/* Upper Section */}
-              <div className="upper-section row">
-                {/* Left card */}
-                <div className="left-card col p-2">
-                  <img
-                    className="border rounded-4"
-                    src={selectedRecipe.image}
-                    alt={selectedRecipe.name}
-                    style={{ width: "500px" }}
-                  />
-                </div>
-
-                {/* Right card */}
-                <div className="right-card col p-2">
-                  <h2 className="card-header px-0 pt-5 pb-3">
-                    {selectedRecipe.name}
-                  </h2>
-
-                  {/* Recipe description */}
-                  <p className="card-text pt-2">{selectedRecipe.description}</p>
-
-                  {/* Icon group */}
-                  <div className="icon-group pt-4 pb-4">
-                    <ul className="d-flex list-unstyled mt-auto justify-content-between p-2 gap-2 border rounded-4">
-                      <li className="d-flex align-items-center me-2">
-                        <i className="bi bi-clock me-2" />
-                        <small>{selectedRecipe.total_time}</small>
-                      </li>
-                      <li className="d-flex align-items-center me-2">
-                        <i className="bi bi-fire me-2" />
-                        <small>{selectedRecipe.calories} Calories</small>
-                      </li>
-                      <li className="d-flex align-items-center me-2">
-                        <i className="bi bi-people-fill me-2" />
-                        <small>{selectedRecipe.servings} Servings</small>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mid Section */}
-              <div className="mid-section row pt-5">
-                <div className="left-card col p-2">
-                  {/* Mapping ingredients */}
-                  <h5 className="mb-4">Ingredients</h5>
-                  <ul className="list-group list-group-flush ms-3">
-                    {Array.isArray(selectedRecipe.ingredients) &&
-                    selectedRecipe.ingredients.length > 0 ? (
-                      selectedRecipe.ingredients.map((ingredient, index) => (
-                        <li key={index}>
-                          {ingredient.name} - {ingredient.quantity}
-                        </li>
-                      ))
-                    ) : (
-                      <li>No ingredients available</li>
-                    )}
-                  </ul>
-                </div>
-
-                {/* Instructions */}
-                <div className="right-card col p-2">
-                  <h5 className="mb-4">Preparation method</h5>
-                  <ol className="list-group list-group-flush ms-3">
-                    {Array.isArray(selectedRecipe.steps) &&
-                    selectedRecipe.steps.length > 0 ? (
-                      selectedRecipe.steps.map((step) => (
-                        <li key={step}>{step}</li>
-                      ))
-                    ) : (
-                      <li>No instructions available</li>
-                    )}
-                  </ol>
-                </div>
-              </div>
-
-              {/* Icon group */}
-              <div className="icon-group pt-4 pb-4">
-                <ul className="d-flex list-unstyled mt-auto justify-content-between p-2 gap-2 border rounded-4">
-                  <li className="d-flex align-items-center me-2">
-                    <i className="bi bi-clock me-2" />
-                    <small>Prep Time: {selectedRecipe.prep_time}</small>
-                  </li>
-                  <li className="d-flex align-items-center me-2">
-                    <i className="bi bi-clock me-2" />
-                    <small>Cook Time: {selectedRecipe.cook_time}</small>
-                  </li>
-
-                  <div className="btn-group">
-                    <button
-                      type="button"
-                      className="btn btn-primary me-2 green"
-                    >
-                      <i className="bi bi-pencil-fill"></i>
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-primary me-2 green"
-                    >
-                      <i className="bi bi-trash-fill"></i>
-                    </button>
-                  </div>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ViewRecipe recipe={selectedRecipe} editRecipe={editRecipe} />
+      
 
       {/* Add A Recipe */}
+      
+
+      {/* Edit A Recipe */}
       <div
         className="modal fade"
-        id="addRecipe"
+        id="editRecipe"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
-        aria-labelledby="addRecipeLabel"
+        aria-labelledby="editRecipeLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog modal-fullscreen">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="addRecipeLabel">
-                Add A Recipe...
+              <h1 className="modal-title fs-5" id="editRecipeLabel">
+                Edit Recipe...
               </h1>
               <button
                 type="button"
@@ -831,6 +567,14 @@ function App() {
                   {/* Left card */}
                   <div className="left-card col p-2">
                     <h5 className="mb-4">Recipe Details</h5>
+                    <div className="left-card col mb-4">
+                      <img
+                        className="border rounded-2"
+                        src={selectedRecipe.image}
+                        alt={selectedRecipe.name}
+                        style={{ width: "30vh" }}
+                      />
+                    </div>
                     <div className="mb-3">
                       <label htmlFor="recipeName" className="form-label">
                         Recipe Name
@@ -848,6 +592,7 @@ function App() {
                     <label htmlFor="recipeImage" className="form-label">
                       Recipe Image URL
                     </label>
+
                     <input
                       type="text"
                       className="form-control mb-3"
@@ -856,7 +601,6 @@ function App() {
                       onChange={(e) => setImage(e.target.value)}
                       placeholder="Enter image URL"
                     />
-
                     <div className="mb-3">
                       <label htmlFor="recipeDescription" className="form-label">
                         Description
@@ -942,7 +686,7 @@ function App() {
                         value={rCategory}
                         onChange={(e) => setRCategory(e.target.value)}
                       >
-                        <option value="">Select a category...</option>
+                        <option value="">{selectedRecipe.category}</option>
                         {categoryList.map((category) => (
                           <option key={category} value={category}>
                             {category}
@@ -1004,7 +748,8 @@ function App() {
                       <ul className="mt-3">
                         {ingredients.map((ing, index) => (
                           <li key={index}>
-                            {ing.name} - {ing.quantity}
+                            {ing.name} - {ing.quantity}{" "}
+                            <i className="bi bi-trash text-danger" />
                           </li>
                         ))}
                       </ul>
@@ -1036,7 +781,9 @@ function App() {
                       </button>
                       <ol className="mt-3">
                         {steps.map((step, index) => (
-                          <li key={index}>{step}</li>
+                          <li key={index}>
+                            {step} <i className="bi bi-trash text-danger" />
+                          </li>
                         ))}
                       </ol>
                     </div>
@@ -1049,7 +796,7 @@ function App() {
                     type="submit"
                     className="btn btn-primary btn btn-primary green"
                   >
-                    Save Recipe
+                    Update Recipe
                   </button>
                 </div>
               </form>

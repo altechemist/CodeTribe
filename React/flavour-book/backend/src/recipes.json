@@ -397,5 +397,26 @@
     "cook_time": "15 mins",
     "total_time": "19 mins",
     "calories": "12"
+  },
+  {
+    "id": 9,
+    "name": "Horchata 3",
+    "category": "Breakfast",
+    "image": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
+    "description": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
+    "ingredients": [
+      {
+        "name": "Milk",
+        "quantity": "4"
+      }
+    ],
+    "steps": [
+      "Pour"
+    ],
+    "servings": "2",
+    "prep_time": "5 mins",
+    "cook_time": "15 mins",
+    "total_time": "20 mins",
+    "calories": "15"
   }
 ]
