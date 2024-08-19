@@ -1,14 +1,23 @@
-import React from 'react';
+import React from "react";
 
 interface Recipe {
   id: number;
   image: string;
-  title: string;
   name: string;
   description: string;
   total_time: string;
-  calories: number;
-  servings: number;
+  calories: string;
+  servings: string;
+  prep_time: string;
+  category: string;
+  cook_time: string;
+  ingredients: Ingredient[];
+  steps: string[];
+}
+
+interface Ingredient {
+  name: string;
+  quantity: string;
 }
 
 interface CardProps {
@@ -25,7 +34,7 @@ const Card: React.FC<CardProps> = ({ recipe, selectRecipe }) => {
           width="100%"
           height="225"
           src={recipe.image}
-          alt={recipe.title}
+          alt={recipe.name}
         />
         <div className="card-body">
           <h6 className="card-header px-0 pb-3">{recipe.name}</h6>

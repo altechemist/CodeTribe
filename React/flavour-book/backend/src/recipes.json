@@ -358,65 +358,44 @@
   },
   {
     "id": 7,
-    "name": "Horchata",
-    "category": "Main",
-    "image": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
-    "description": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
+    "name": "Horchata 2",
+    "category": "Drinks",
+    "image": "https://elements-resized.envatousercontent.com/envato-shoebox/d832/2a56-c897-43c4-a48f-25419141e11f/DSC_1524.jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=6e6dd8396f192f3a4f5d2c74cdf188c9abfd15fb9e05c88059bfeff583104e3b",
+    "description": "Sweet and savory carrots with a honey glaze, perfect as a side dish.",
     "ingredients": [
       {
-        "name": "Milk",
-        "quantity": "4"
+        "name": "Honey",
+        "quantity": "10"
       }
     ],
     "steps": [
-      "Pour"
+      "Honey"
     ],
-    "servings": "2",
-    "prep_time": "4 mins",
-    "cook_time": "15 mins",
-    "total_time": "19 mins",
-    "calories": "12"
+    "servings": 4,
+    "prep_time": "8 mins",
+    "cook_time": "7 mins",
+    "total_time": "30 mins mins",
+    "calories": 78
   },
   {
     "id": 8,
-    "name": "Horchata",
-    "category": "Breakfast",
-    "image": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
-    "description": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
+    "name": "New Reciped",
+    "category": "Main",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmEIutiEl_AEqN2YY34UZFu8ASLbkuBBMR2w&s",
+    "description": "new recipe",
     "ingredients": [
       {
-        "name": "Milk",
-        "quantity": "4"
+        "name": "Pasta",
+        "quantity": "5"
       }
     ],
     "steps": [
-      "Pour"
+      "boil water"
     ],
     "servings": "2",
-    "prep_time": "4 mins",
-    "cook_time": "15 mins",
-    "total_time": "19 mins",
-    "calories": "12"
-  },
-  {
-    "id": 9,
-    "name": "Horchata 3",
-    "category": "Breakfast",
-    "image": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
-    "description": "https://tastesbetterfromscratch.com/wp-content/uploads/2019/07/Horchata-Thumbnail-500x500.jpg",
-    "ingredients": [
-      {
-        "name": "Milk",
-        "quantity": "4"
-      }
-    ],
-    "steps": [
-      "Pour"
-    ],
-    "servings": "2",
-    "prep_time": "5 mins",
-    "cook_time": "15 mins",
-    "total_time": "20 mins",
-    "calories": "15"
+    "prep_time": "10 mins",
+    "cook_time": "10 mins",
+    "total_time": "20",
+    "calories": "24"
   }
 ]

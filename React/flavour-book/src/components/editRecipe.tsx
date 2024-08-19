@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface Ingredient {
   name: string;
@@ -15,6 +15,7 @@ interface Recipe {
   calories: string;
   servings: string;
   prep_time: string;
+  category: string;
   cook_time: string;
   ingredients: Ingredient[];
   steps: string[];
@@ -23,22 +24,28 @@ interface Recipe {
 interface RecipeProps {
   categoryList: string[];
   recipes: Recipe[];
+  recipe: Recipe;
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
   fetchRecipes: () => void;
-
 }
 
-const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes, setRecipes }) => {
+const EditRecipe: React.FC<RecipeProps> = ({
+  categoryList,
+  recipes,
+  fetchRecipes,
+  setRecipes,
+  recipe,
+}) => {
   // State variables for recipe details
-  const [name, setName] = useState<string>("");
-  const [image, setImage] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [rCategory, setRCategory] = useState<string>("");
-  const [prepTime, setPrepTime] = useState<string>("");
-  const [cookTime, setCookTime] = useState<string>("");
+  const [name, setName] = useState<string>(recipe.name);
+  const [image, setImage] = useState<string>(recipe.image);
+  const [description, setDescription] = useState<string>(recipe.description);
+  const [rCategory, setRCategory] = useState<string>(recipe.category);
+  const [prepTime, setPrepTime] = useState<string>(recipe.prep_time);
+  const [cookTime, setCookTime] = useState<string>(recipe.cook_time);
   const [totalTime, setTotalTime] = useState<number>(0);
-  const [calories, setCalories] = useState<string>("");
-  const [servings, setServings] = useState<string>("");
+  const [calories, setCalories] = useState<string>(recipe.calories);
+  const [servings, setServings] = useState<string>(recipe.servings);
 
   // State variables for ingredients
   const [ingredientName, setIngredientName] = useState<string>("");
@@ -50,6 +57,19 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
   // State variables for preparation steps
   const [stepDescription, setStepDescription] = useState<string>("");
   const [steps, setSteps] = useState<string[]>([]);
+
+  useEffect(() => {
+    setIngredients(recipe.ingredients);
+    setSteps(recipe.steps);
+    setName(recipe.name);
+    setImage(recipe.image);
+    setDescription(recipe.description);
+    setRCategory(recipe.category);
+    setPrepTime(recipe.prep_time);
+    setCookTime(recipe.cook_time);
+    setCalories(recipe.calories);
+    setServings(recipe.servings);
+  }, [recipe]);
 
   // Add ingredients
   const addIngredient = () => {
@@ -73,30 +93,29 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
 
   // Function to post a new recipe
   const postRecipe = async () => {
-    // Generate id
-    const id: number = recipes.length;
+    // Find the recipe at id
+    const tmpRecipe = recipes.find((r) => r.id === recipe.id);
 
     // Calculate total time
     const TotalTime = parseInt(prepTime) + parseInt(cookTime);
     setTotalTime(TotalTime);
 
-    const newRecipe = {
-      id,
-      name,
-      category: rCategory,
-      image,
-      description,
-      ingredients,
-      steps,
-      servings,
-      prep_time: prepTime + " mins",
-      cook_time: cookTime + " mins",
-      total_time: TotalTime + " mins",
-      calories,
-    };
+    // Update selected recipe
+    if (tmpRecipe) {
+      tmpRecipe.name = name;
+      tmpRecipe.category = rCategory;
+      tmpRecipe.image = image;
+      tmpRecipe.description = description;
+      tmpRecipe.ingredients = ingredients;
+      tmpRecipe.steps = steps;
+      tmpRecipe.servings = servings;
+      tmpRecipe.prep_time = prepTime;
+      tmpRecipe.cook_time = cookTime;
+      tmpRecipe.total_time = totalTime.toString();
+      tmpRecipe.calories = calories;
+    }
 
     // Update recipes array with the new recipe
-    recipes.push(newRecipe);
     setRecipes(recipes);
 
     // Post the new recipes
@@ -110,18 +129,6 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
     } catch (error) {
       console.error("Error posting recipe:", error);
     }
-
-    // Clear fields
-    setName("");
-    setImage("");
-    setDescription("");
-    setRCategory("");
-    setPrepTime("");
-    setCookTime("");
-    setCalories("");
-    setServings("");
-    setIngredients([]);
-    setSteps([]);
   };
 
   // Handler for form submission
@@ -133,17 +140,17 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
   return (
     <div
       className="modal fade"
-      id="addRecipe"
+      id="editRecipe"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
-      aria-labelledby="addRecipeLabel"
+      aria-labelledby="editRecipeLabel"
       aria-hidden="true"
     >
       <div className="modal-dialog modal-fullscreen">
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5" id="addRecipeLabel">
-              Add A Recipe...
+            <h1 className="modal-title fs-5" id="editRecipeLabel">
+              Edit Recipe...
             </h1>
             <button
               type="button"
@@ -160,6 +167,14 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                 {/* Left card */}
                 <div className="left-card col p-2">
                   <h5 className="mb-4">Recipe Details</h5>
+                  <div className="left-card col mb-4">
+                    <img
+                      className="border rounded-2"
+                      src={recipe.image}
+                      alt={recipe.name}
+                      style={{ width: "30vh" }}
+                    />
+                  </div>
                   <div className="mb-3">
                     <label htmlFor="recipeName" className="form-label">
                       Recipe Name
@@ -173,10 +188,10 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                       placeholder="Enter recipe name"
                     />
                   </div>
-
                   <label htmlFor="recipeImage" className="form-label">
                     Recipe Image URL
                   </label>
+
                   <input
                     type="text"
                     className="form-control mb-3"
@@ -185,7 +200,6 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                     onChange={(e) => setImage(e.target.value)}
                     placeholder="Enter image URL"
                   />
-
                   <div className="mb-3">
                     <label htmlFor="recipeDescription" className="form-label">
                       Description
@@ -210,7 +224,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                       Prep Time
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
                       id="prepTime"
                       value={prepTime}
@@ -224,7 +238,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                       Cook Time
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
                       id="cookTime"
                       value={cookTime}
@@ -271,7 +285,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                       value={rCategory}
                       onChange={(e) => setRCategory(e.target.value)}
                     >
-                      <option value="">Select a category...</option>
+                      <option value="">{recipe.category}</option>
                       {categoryList.map((category) => (
                         <option key={category} value={category}>
                           {category}
@@ -283,91 +297,101 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
               </div>
 
               {/* Mid Section */}
-              <div className="mid-section row pt-5">
-                <div className="left-card col p-2">
-                  <h5 className="mb-4">Ingredients</h5>
-                  <div id="ingredientsList">
-                    <div className="row mb-3">
-                      <div className="col-8">
-                        <label htmlFor="ingredientName" className="form-label">
-                          Ingredient Name
+              {recipe.ingredients && recipe.steps ? (
+                <div className="mid-section row pt-5">
+                  <div className="left-card col p-2">
+                    <h5 className="mb-4">Ingredients</h5>
+                    <div id="ingredientsList">
+                      <div className="row mb-3">
+                        <div className="col-8">
+                          <label
+                            htmlFor="ingredientName"
+                            className="form-label"
+                          >
+                            Ingredient Name
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="ingredientName"
+                            value={ingredientName}
+                            onChange={(e) => setIngredientName(e.target.value)}
+                            placeholder="Enter ingredient name"
+                          />
+                        </div>
+                        <div className="col-4">
+                          <label
+                            htmlFor="ingredientQuantity"
+                            className="form-label"
+                          >
+                            Quantity
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="ingredientQuantity"
+                            value={ingredientQuantity}
+                            onChange={(e) =>
+                              setIngredientQuantity(e.target.value)
+                            }
+                            placeholder="Enter quantity"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-primary green"
+                        onClick={addIngredient}
+                      >
+                        Add Ingredient
+                      </button>
+                      <ul className="mt-3">
+                        {recipe.ingredients.map((ing, index) => (
+                          <li key={index}>
+                            {ing.name} - {ing.quantity}{" "}
+                            <i className="bi bi-trash text-danger" />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="right-card col p-2">
+                    <h5 className="mb-4">Preparation Method</h5>
+                    <div id="stepsList">
+                      <div className="mb-3">
+                        <label htmlFor="stepDescription" className="form-label">
+                          Step Description
                         </label>
                         <input
                           type="text"
                           className="form-control"
-                          id="ingredientName"
-                          value={ingredientName}
-                          onChange={(e) => setIngredientName(e.target.value)}
-                          placeholder="Enter ingredient name"
+                          id="stepDescription"
+                          value={stepDescription}
+                          onChange={(e) => setStepDescription(e.target.value)}
+                          placeholder="Enter preparation step"
                         />
                       </div>
-                      <div className="col-4">
-                        <label
-                          htmlFor="ingredientQuantity"
-                          className="form-label"
-                        >
-                          Quantity
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          id="ingredientQuantity"
-                          value={ingredientQuantity}
-                          onChange={(e) =>
-                            setIngredientQuantity(e.target.value)
-                          }
-                          placeholder="Enter quantity"
-                        />
-                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-primary green"
+                        onClick={addStep}
+                      >
+                        Add Step
+                      </button>
+                      <ol className="mt-3">
+                        {recipe.steps.map((step, index) => (
+                          <li key={index}>
+                            {step} <i className="bi bi-trash text-danger" />
+                          </li>
+                        ))}
+                      </ol>
                     </div>
-                    <button
-                      type="button"
-                      className="btn btn-primary green"
-                      onClick={addIngredient}
-                    >
-                      Add Ingredient
-                    </button>
-                    <ul className="mt-3">
-                      {ingredients.map((ing, index) => (
-                        <li key={index}>
-                          {ing.name} - {ing.quantity}
-                        </li>
-                      ))}
-                    </ul>
                   </div>
                 </div>
-
-                <div className="right-card col p-2">
-                  <h5 className="mb-4">Preparation Method</h5>
-                  <div id="stepsList">
-                    <div className="mb-3">
-                      <label htmlFor="stepDescription" className="form-label">
-                        Step Description
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="stepDescription"
-                        value={stepDescription}
-                        onChange={(e) => setStepDescription(e.target.value)}
-                        placeholder="Enter preparation step"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      className="btn btn-primary green"
-                      onClick={addStep}
-                    >
-                      Add Step
-                    </button>
-                    <ol className="mt-3">
-                      {steps.map((step, index) => (
-                        <li key={index}>{step}</li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-              </div>
+              ) : (
+                <p>No ingredients</p>
+              )}
 
               {/* Form Submission */}
               <div className="text-end pt-4">
@@ -375,7 +399,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                   type="submit"
                   className="btn btn-primary btn btn-primary green"
                 >
-                  Save Recipe
+                  Update Recipe
                 </button>
               </div>
             </form>
@@ -386,4 +410,4 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
   );
 };
 
-export default AddRecipe;
+export default EditRecipe;

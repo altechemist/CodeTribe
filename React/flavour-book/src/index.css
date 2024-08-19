@@ -55,6 +55,20 @@ button {
   color: #164240 !important;
 }
 
+.grey {
+  background-color: grey;
+  border: 3px solid #164240 !important;
+  border-radius: 30px !important;
+  color: #f7f7f7 !important;
+}
+
+.grey:hover {
+  background-color: #9acd32;
+  border: 3px solid #164240 !important;
+  border-radius: 30px !important;
+  color: #164240 !important;
+}
+
 .btn-close {
   background-color: #164240 !important;
   border: 3px solid #164240 !important;

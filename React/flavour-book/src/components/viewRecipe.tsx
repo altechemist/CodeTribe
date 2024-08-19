@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Ingredient {
   name: string;
@@ -8,13 +8,13 @@ interface Ingredient {
 interface Recipe {
   id: number;
   image: string;
-  title: string;
   name: string;
   description: string;
   total_time: string;
-  calories: number;
-  servings: number;
+  calories: string;
+  servings: string;
   prep_time: string;
+  category: string;
   cook_time: string;
   ingredients: Ingredient[];
   steps: string[];
@@ -23,9 +23,10 @@ interface Recipe {
 interface RecipeProps {
   recipe: Recipe;
   editRecipe: (id: number) => void;
+  removeRecipe: (id: number) => void;
 }
 
-const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe }) => {
+const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe, removeRecipe }) => {
   return (
     <div
       className="modal fade"
@@ -63,9 +64,7 @@ const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe }) => {
 
               {/* Right card */}
               <div className="right-card col p-2">
-                <h2 className="card-header px-0 pt-5 pb-3">
-                  {recipe.name}
-                </h2>
+                <h2 className="card-header px-0 pt-5 pb-3">{recipe.name}</h2>
 
                 {/* Recipe description */}
                 <p className="card-text pt-2">{recipe.description}</p>
@@ -113,8 +112,7 @@ const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe }) => {
               <div className="right-card col p-2">
                 <h5 className="mb-4">Preparation method</h5>
                 <ol className="list-group list-group-flush ms-3">
-                  {Array.isArray(recipe.steps) &&
-                  recipe.steps.length > 0 ? (
+                  {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
                     recipe.steps.map((step, index) => (
                       <li key={index}>{step}</li>
                     ))
@@ -148,7 +146,11 @@ const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe }) => {
                   >
                     <i className="bi bi-pencil-fill"></i>
                   </button>
-                  <button type="button" className="btn btn-primary me-2 green">
+                  <button
+                    onClick={() => removeRecipe(recipe.id)}
+                    type="button"
+                    className="btn btn-primary me-2 green"
+                  >
                     <i className="bi bi-trash-fill"></i>
                   </button>
                 </div>
@@ -159,6 +161,6 @@ const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe }) => {
       </div>
     </div>
   );
-}
+};
 
 export default ViewRecipe;
