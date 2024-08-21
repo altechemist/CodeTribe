@@ -23,15 +23,16 @@ function App() {
     image: string;
     name: string;
     description: string;
-    total_time: string;
-    calories: string;
-    servings: string;
-    prep_time: string;
+    total_time: number;
+    calories: number;
+    servings: number;
+    prep_time: number;
     category: string;
-    cook_time: string;
+    cook_time: number;
     ingredients: Ingredient[];
     steps: string[];
   }
+  
 
   // Recipes data
   const [recipes, setRecipes] = useState<Recipe[]>([]);

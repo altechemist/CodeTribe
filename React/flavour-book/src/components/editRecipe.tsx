@@ -11,12 +11,12 @@ interface Recipe {
   image: string;
   name: string;
   description: string;
-  total_time: string;
-  calories: string;
-  servings: string;
-  prep_time: string;
+  total_time: number;
+  calories: number;
+  servings: number;
+  prep_time: number;
   category: string;
-  cook_time: string;
+  cook_time: number;
   ingredients: Ingredient[];
   steps: string[];
 }
@@ -41,11 +41,11 @@ const EditRecipe: React.FC<RecipeProps> = ({
   const [image, setImage] = useState<string>(recipe.image);
   const [description, setDescription] = useState<string>(recipe.description);
   const [rCategory, setRCategory] = useState<string>(recipe.category);
-  const [prepTime, setPrepTime] = useState<string>(recipe.prep_time);
-  const [cookTime, setCookTime] = useState<string>(recipe.cook_time);
+  const [prepTime, setPrepTime] = useState<number>(recipe.prep_time);
+  const [cookTime, setCookTime] = useState<number>(recipe.cook_time);
   const [totalTime, setTotalTime] = useState<number>(0);
-  const [calories, setCalories] = useState<string>(recipe.calories);
-  const [servings, setServings] = useState<string>(recipe.servings);
+  const [calories, setCalories] = useState<number>(recipe.calories);
+  const [servings, setServings] = useState<number>(recipe.servings);
 
   // State variables for ingredients
   const [ingredientName, setIngredientName] = useState<string>("");
@@ -97,7 +97,7 @@ const EditRecipe: React.FC<RecipeProps> = ({
     const tmpRecipe = recipes.find((r) => r.id === recipe.id);
 
     // Calculate total time
-    const TotalTime = parseInt(prepTime) + parseInt(cookTime);
+    const TotalTime: number = parseInt(prepTime) + parseInt(cookTime);
     setTotalTime(TotalTime);
 
     // Update selected recipe
@@ -111,7 +111,7 @@ const EditRecipe: React.FC<RecipeProps> = ({
       tmpRecipe.servings = servings;
       tmpRecipe.prep_time = prepTime;
       tmpRecipe.cook_time = cookTime;
-      tmpRecipe.total_time = totalTime.toString();
+      tmpRecipe.total_time = TotalTime;
       tmpRecipe.calories = calories;
     }
 
@@ -224,7 +224,7 @@ const EditRecipe: React.FC<RecipeProps> = ({
                       Prep Time
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       className="form-control"
                       id="prepTime"
                       value={prepTime}
@@ -238,7 +238,7 @@ const EditRecipe: React.FC<RecipeProps> = ({
                       Cook Time
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       className="form-control"
                       id="cookTime"
                       value={cookTime}

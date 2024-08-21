@@ -15,6 +15,8 @@ function Auth() {
 
   // Login in user
   const loginUser = () => {
+    // Clear previous error message
+    setLoginError("");
     let users: User[] = [];
     try {
       const storedUsers = localStorage.getItem("users");
@@ -28,6 +30,18 @@ function Auth() {
     }
 
     // Check if the user exists and the password matches
+    if (email === "") {
+      setLoginError("Enter an email address");
+      return;
+    }
+    if (!email.includes("@")) {
+      setLoginError("Enter a valid email address");
+      return;
+    }
+    if (password === "") {
+      setLoginError("Enter your password");
+      return;
+    }
     const user = users.find(
       (user) => user.email === email && user.password === password
     );
@@ -35,7 +49,8 @@ function Auth() {
     if (user) {
       // Login successful
       console.log("Login successful!");
-      setLoginError(""); // Clear any previous errors
+      setLoginError("");
+
       // Redirect to another page or handle successful login
     } else {
       // Login failed

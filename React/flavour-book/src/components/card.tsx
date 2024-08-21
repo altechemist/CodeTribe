@@ -5,12 +5,12 @@ interface Recipe {
   image: string;
   name: string;
   description: string;
-  total_time: string;
-  calories: string;
-  servings: string;
-  prep_time: string;
+  total_time: number;
+  calories: number;
+  servings: number;
+  prep_time: number;
   category: string;
-  cook_time: string;
+  cook_time: number;
   ingredients: Ingredient[];
   steps: string[];
 }
@@ -43,7 +43,7 @@ const Card: React.FC<CardProps> = ({ recipe, selectRecipe }) => {
             <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
               <li className="d-flex align-items-center me-1">
                 <i className="bi bi-clock me-2" />
-                <small>{recipe.total_time}</small>
+                <small>{recipe.total_time} mins</small>
               </li>
               <li className="d-flex align-items-center me-2 ms-1">
                 <i className="bi bi-fire me-2" />
@@ -53,10 +53,10 @@ const Card: React.FC<CardProps> = ({ recipe, selectRecipe }) => {
                 <i className="bi bi-people-fill me-2" />
                 <small>{recipe.servings}</small>
               </li>
-              <li className="d-flex align-items-center me-2 ms-2">
+              <li className="d-flex align-items-center me-4 ms-2">
                 <i className="bi bi-bookmark-heart-fill me-2" />
               </li>
-              <div className="ms-5">
+              <div className="ms-4">
                 <button
                   onClick={() => selectRecipe(recipe.id)}
                   data-bs-toggle="modal"

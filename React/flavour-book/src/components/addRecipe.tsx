@@ -11,11 +11,12 @@ interface Recipe {
   image: string;
   name: string;
   description: string;
-  total_time: string;
-  calories: string;
-  servings: string;
-  prep_time: string;
-  cook_time: string;
+  total_time: number;
+  calories: number;
+  servings: number;
+  prep_time: number;
+  category: string;
+  cook_time: number;
   ingredients: Ingredient[];
   steps: string[];
 }
@@ -34,11 +35,11 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
   const [image, setImage] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [rCategory, setRCategory] = useState<string>("");
-  const [prepTime, setPrepTime] = useState<string>("");
-  const [cookTime, setCookTime] = useState<string>("");
+  const [prepTime, setPrepTime] = useState<number>(0);
+  const [cookTime, setCookTime] = useState<number>(0);
   const [totalTime, setTotalTime] = useState<number>(0);
-  const [calories, setCalories] = useState<string>("");
-  const [servings, setServings] = useState<string>("");
+  const [calories, setCalories] = useState<number>(0);
+  const [servings, setServings] = useState<number>(0);
 
   // State variables for ingredients
   const [ingredientName, setIngredientName] = useState<string>("");
@@ -77,7 +78,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
     const id: number = recipes.length;
 
     // Calculate total time
-    const TotalTime = parseInt(prepTime) + parseInt(cookTime);
+    const TotalTime: number = prepTime + cookTime;
     setTotalTime(TotalTime);
 
     const newRecipe = {
@@ -89,9 +90,9 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
       ingredients,
       steps,
       servings,
-      prep_time: prepTime + " mins",
-      cook_time: cookTime + " mins",
-      total_time: TotalTime + " mins",
+      prep_time: prepTime,
+      cook_time: cookTime,
+      total_time: totalTime,
       calories,
     };
 
@@ -116,10 +117,10 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
     setImage("");
     setDescription("");
     setRCategory("");
-    setPrepTime("");
-    setCookTime("");
-    setCalories("");
-    setServings("");
+    setPrepTime(0);
+    setCookTime(0);
+    setCalories(0);
+    setServings(0);
     setIngredients([]);
     setSteps([]);
   };

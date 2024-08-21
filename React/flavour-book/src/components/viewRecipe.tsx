@@ -10,12 +10,12 @@ interface Recipe {
   image: string;
   name: string;
   description: string;
-  total_time: string;
-  calories: string;
-  servings: string;
-  prep_time: string;
+  total_time: number;
+  calories: number;
+  servings: number;
+  prep_time: number;
   category: string;
-  cook_time: string;
+  cook_time: number;
   ingredients: Ingredient[];
   steps: string[];
 }
@@ -26,7 +26,11 @@ interface RecipeProps {
   removeRecipe: (id: number) => void;
 }
 
-const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe, removeRecipe }) => {
+const ViewRecipe: React.FC<RecipeProps> = ({
+  recipe,
+  editRecipe,
+  removeRecipe,
+}) => {
   return (
     <div
       className="modal fade"
@@ -74,7 +78,7 @@ const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe, removeRecipe })
                   <ul className="d-flex list-unstyled mt-auto justify-content-between p-2 gap-2 border rounded-4">
                     <li className="d-flex align-items-center me-2">
                       <i className="bi bi-clock me-2" />
-                      <small>{recipe.total_time}</small>
+                      <small>{recipe.total_time} mins</small>
                     </li>
                     <li className="d-flex align-items-center me-2">
                       <i className="bi bi-fire me-2" />
@@ -128,11 +132,11 @@ const ViewRecipe: React.FC<RecipeProps> = ({ recipe, editRecipe, removeRecipe })
               <ul className="d-flex list-unstyled mt-auto justify-content-between p-2 gap-2 border rounded-4">
                 <li className="d-flex align-items-center me-2">
                   <i className="bi bi-clock me-2" />
-                  <small>Prep Time: {recipe.prep_time}</small>
+                  <small>Prep Time: {recipe.prep_time} mins</small>
                 </li>
                 <li className="d-flex align-items-center me-2">
                   <i className="bi bi-clock me-2" />
-                  <small>Cook Time: {recipe.cook_time}</small>
+                  <small>Cook Time: {recipe.cook_time} mins</small>
                 </li>
 
                 <div className="btn-group">
