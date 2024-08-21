@@ -4,10 +4,12 @@ import { useState } from "react";
 // Bootstrap CSS and JS
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 
 function App() {
   // Determine the selected news category
-  const [newsCategory, setCategory] = useState<string>("general");
+  const [newsCategory, setCategory] = useState<string>("General");
 
   const selectedCategory = (category: string) => {
     switch (category) {
@@ -58,22 +60,34 @@ function App() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Business")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Business")}
+                >
                   Business
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Sports")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Sports")}
+                >
                   Sports
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Science")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Science")}
+                >
                   Science
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Technology")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Technology")}
+                >
                   Technology
                 </a>
               </li>
@@ -83,9 +97,13 @@ function App() {
       </nav>
 
       <div>
-        <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">{newsCategory} News</h2>
-        <NewsFeed newsCategory={newsCategory}/>
+        <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">
+          {newsCategory} News
+        </h2>
+        <NewsFeed newsCategory={newsCategory} />
       </div>
+
+      
     </div>
   );
 }
