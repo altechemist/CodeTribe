@@ -4,6 +4,7 @@ import { useState } from "react";
 // Bootstrap CSS and JS
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   // Determine the selected news category
