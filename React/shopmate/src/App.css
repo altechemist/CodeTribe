@@ -1,0 +1,23 @@
+:root {
+    --blue: #0d6efd
+}
+
+.category-buttons {
+    flex-wrap: nowrap;
+    overflow-y: hidden;
+    overflow-x: visible;
+    scrollbar-width: thin;
+    scrollbar-color: var(--blue) white !important; 
+}
+
+.table-row {
+    flex-wrap: nowrap;
+    overflow-y: hidden;
+    overflow-x: visible;
+    scrollbar-width: thin;
+    scrollbar-color: var(--blue) white !important; 
+}
+
+input, select, textarea {
+    border: 3px solid #ccc !important;
+}
