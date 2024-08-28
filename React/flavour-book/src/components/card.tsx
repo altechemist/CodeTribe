@@ -38,12 +38,12 @@ const Card: React.FC<CardProps> = ({ recipe, selectRecipe }) => {
         />
         <div className="card-body">
           <h6 className="card-header px-0 pb-3">{recipe.name}</h6>
-          <p className="card-text pt-2">{recipe.description}</p>
+          <p className="card-text pt-2 text-truncate">{recipe.description}</p>
           <div className="d-flex justify-content-between align-items-center">
             <ul className="d-flex list-unstyled mt-auto justify-content-between gap-1">
               <li className="d-flex align-items-center me-1">
                 <i className="bi bi-clock me-2" />
-                <small>{recipe.total_time} mins</small>
+                <small className="text-nowrap">{recipe.total_time} mins</small>
               </li>
               <li className="d-flex align-items-center me-2 ms-1">
                 <i className="bi bi-fire me-2" />
@@ -53,10 +53,10 @@ const Card: React.FC<CardProps> = ({ recipe, selectRecipe }) => {
                 <i className="bi bi-people-fill me-2" />
                 <small>{recipe.servings}</small>
               </li>
-              <li className="d-flex align-items-center me-4 ms-2">
+              <li className="d-flex align-items-center ">
                 <i className="bi bi-bookmark-heart-fill me-2" />
               </li>
-              <div className="ms-4">
+              <div className="justify-content-end">
                 <button
                   onClick={() => selectRecipe(recipe.id)}
                   data-bs-toggle="modal"

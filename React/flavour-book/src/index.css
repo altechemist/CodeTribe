@@ -11,10 +11,6 @@
   margin-bottom: 5px !important;
 }
 
-.card p {
-  height: 10vh !important;
-}
-
 .card-sm {
   display: flex;
   align-items: center;
@@ -48,6 +44,10 @@ button {
   color: #f7f7f7 !important;
 }
 
+.button-group {
+ flex-wrap: nowrap;
+ overflow: scroll;
+}
 .green:hover {
   background-color: #9acd32;
   border: 3px solid #164240 !important;

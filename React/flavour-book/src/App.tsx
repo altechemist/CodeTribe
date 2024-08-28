@@ -443,7 +443,7 @@ function App() {
       )}
 
       {/* Categories */}
-      <div className="d-flex gap-2 justify-content-center py-3">
+      <div className="d-flex gap-2 justify-content-start py-3 button-group">
         {categoryList.map((category) => (
           <button
             onClick={() => selectCategory(category)}

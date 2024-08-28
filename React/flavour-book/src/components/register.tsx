@@ -24,7 +24,39 @@ function Register() {
         users = JSON.parse(storedUsers) as User[];
       }
     } catch (e) {
-      console.error("Failed to parse users from localStorage", e);
+      console.error("Failed to parse users from local Storage", e);
+    }
+
+    // Simple Validation
+    if (name === "") {
+      setFormError("Enter your name");
+      return;
+    }
+    if (email === "") {
+      setFormError("Enter an email address");
+      return;
+    }
+    if (!email.includes("@")) {
+      setFormError("Enter a valid email address");
+      return;
+    }
+    if (password === "") {
+      setFormError("Enter your password");
+      return;
+    }
+    const user = users.find(
+      (user) => user.email === email && user.password === password
+    );
+    if (user) {
+      setFormError("Email address already exists. Please try a different one.");
+      return;
+    }
+
+    // If everything is valid, save the user to local storage
+    try {
+      localStorage.setItem("users", JSON.stringify(users));
+    } catch (e) {
+      console.error("Failed to save users to localStorage", e);
     }
 
     // Create a new user object
@@ -37,7 +69,7 @@ function Register() {
     // Add the new user to the list
     users.push(newUser);
 
-    // Save the updated list back to localStorage
+    // Save the updated list back to local Storage
     try {
       localStorage.setItem("users", JSON.stringify(users));
     } catch (e) {
@@ -84,6 +116,7 @@ function Register() {
                   </div>
 
                   <div className="col-md-10 mx-auto ">
+                  {formError && <p style={{ color: "red" }}>{formError}</p>}
                     <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary text-center">
                       <div className="form-floating mb-3">
                         <input

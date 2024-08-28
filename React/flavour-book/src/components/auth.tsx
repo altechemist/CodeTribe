@@ -91,6 +91,7 @@ function Auth() {
                   </div>
 
                   <div className="col-md-10 mx-auto ">
+                  {loginError && <p style={{ color: "red" }}>{loginError}</p>}
                     <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary">
                       <div className="form-floating mb-3">
                         <input
@@ -136,12 +137,10 @@ function Auth() {
                         Login
                       </button>
                     </form>
-                    {loginError && <p style={{ color: "red" }}>{loginError}</p>}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="modal-footer"></div>
           </div>
         </div>
       </div>
