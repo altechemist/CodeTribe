@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-import { useState } from "react";
+import React, { useState } from "react";
 
 // Define types for input values
 type InputValue = string | number | undefined;
@@ -16,35 +15,40 @@ interface Task {
 }
 
 interface SearchProps {
-  // Track selected task
-  SelectTask: (id: number) => void;
+  // Function to select a task
+  SelectTask: (id: number | null) => void;
   taskList: Task[];
 }
 
 const SearchTask: React.FC<SearchProps> = ({ SelectTask, taskList }) => {
+  // State for search input
+  const [searchInput, setSearchInput] = useState("");
+
   // Show update modal
   const showUpdateModal = () => {
-    const updateButton = document.querySelector("#closeUpdateTask");
+    const updateButton = document.querySelector("#updateTaskModal");
     if (updateButton) {
       (updateButton as HTMLElement).click();
     }
   };
 
   // Filter tasks based on search input
-  const [searchInput, setSearchInput] = useState("");
-
   const handleSearch = () => {
-    const filteredTask = taskList.find((task) => task.title === searchInput);
+    // Normalize search input and task titles to lower case
+    const normalizedSearchInput = searchInput.trim().toLowerCase();
+    const filteredTask = taskList.find(
+      (task) => (task.title as string).toLowerCase() === normalizedSearchInput
+    );
 
     if (filteredTask) {
       SelectTask(filteredTask.id);
-      alert("Task " + filteredTask.title);
+      alert("Task: " + filteredTask.title);
 
       // Show update modal dialog
       showUpdateModal();
     } else {
       // Clear selected task if no matching task found
-      SelectTask(0);
+      SelectTask(null);
       alert("Task not found");
     }
 
@@ -83,23 +87,3 @@ const SearchTask: React.FC<SearchProps> = ({ SelectTask, taskList }) => {
 };
 
 export default SearchTask;
-=======
-export default function SearchTask() {
-  return (
-    <div className="d-flex justify-content-center">
-      <div className="input-group w-75 mt-4 align-items-center streak search-bar">
-        <input
-          type="text"
-          className="form-control search"
-          placeholder="Task Name..."
-          aria-label="Task Name"
-        />
-        <button className="btn btn-secondary-outline" type="button" id="button-addon2">
-          <i className="bi bi-search me-2 search-btn"></i>
-          Search
-        </button>
-      </div>
-    </div>
-  );
-}
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038

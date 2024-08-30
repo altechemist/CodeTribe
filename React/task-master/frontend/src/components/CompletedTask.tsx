@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 
 // Define types for input values
@@ -19,8 +19,6 @@ interface TaskProps {
   userID: number | undefined;
   SelectTask: (id: number) => void;
   taskList: Task[];
-
-  // Updates a task
   setTaskList: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
@@ -29,6 +27,7 @@ const CompletedTask: React.FC<TaskProps> = ({
   SelectTask,
   taskList,
   setTaskList,
+  UpdatesTask,
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +48,7 @@ const CompletedTask: React.FC<TaskProps> = ({
 
       if (Array.isArray(response.data)) {
         // Map the response data to include an 'id' property for each task
-        const tasksWithIds: Task[] = response.data.map((task: Task) => ({
+        const tasksWithIds: Task[] = response.data.map((task: any) => ({
           id: task.taskid,
           title: task.title,
           date: task.date,
@@ -74,7 +73,7 @@ const CompletedTask: React.FC<TaskProps> = ({
   // Call fetchTasks initially and whenever userID changes
   useEffect(() => {
     fetchTasks();
-  }, [fetchTasks, userID, setTaskList]);
+  }, [fetchTasks, userID]);
 
   // Handle submission to delete a task
   const handleDelete = useCallback(
@@ -120,10 +119,13 @@ const CompletedTask: React.FC<TaskProps> = ({
   );
 
   // Filter completed tasks
-  const completedTasks = taskList.filter((task) => task.status === "Completed");
+  const completedTasks = useMemo(
+    () => taskList.filter((task) => task.status === "Completed"),
+    [taskList]
+  );
 
   // Determine background color based on task priority
-  const colorPicker = (priority: InputValue) => {
+  const colorPicker = useCallback((priority: InputValue) => {
     switch (priority) {
       case "High":
         return "#dc3545";
@@ -134,7 +136,7 @@ const CompletedTask: React.FC<TaskProps> = ({
       default:
         return "gray";
     }
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -151,6 +153,22 @@ const CompletedTask: React.FC<TaskProps> = ({
       </div>
     );
   }
+
+  // Mark task as completed
+  const handleCompletedTask = (taskId: number) => {
+    alert("inCompleted " + taskId);
+    if (taskId !== undefined) {
+      const selectedTaskDetails = taskList.find((task) => task.id === taskId);
+
+      if (selectedTaskDetails) {
+        const { title, date, time, priority } = selectedTaskDetails;
+        const status = "Incomplete";
+
+        UpdatesTask(taskId, title, date, time, priority, status, userID);
+      }
+    }
+  };
+  
 
   return (
     <div className="d-flex justify-content-center">
@@ -169,53 +187,59 @@ const CompletedTask: React.FC<TaskProps> = ({
                   Completed Tasks
                 </h1>
               </div>
-              {completedTasks.map((task, index) => (
-                <label
-                  key={index}
-                  className="list-group-item d-flex align-items-center justify-content-between rounded-4 streak text-light"
-                  style={{ backgroundColor: colorPicker(task.priority) }}
-                >
-                  <div className="d-flex gap-4">
-                    <input
-                      className="form-check-input flex-shrink-0 outline mt-3"
-                      type="checkbox"
-                      checked
-                      style={{ fontSize: "1.375em" }}
-                    />
-                    <span className="pt-1 form-checked-content">
-                      <strong className="text-light">{task.title}</strong>
-                      <small className="d-block text-body-primary mb-2">
-                        <i className="bi bi-alarm me-1"></i>
-                        {task.time}, {task.date}
-                      </small>
-                    </span>
-                  </div>
-                  <span
-                    className="badge outline mx-1"
+              {completedTasks.map((task) => {
+                // Choose the id to use, preferring task.id over task.taskid
+                const taskId = task.id ?? task.taskid;
+
+                return (
+                  <label
+                    key={taskId}
+                    className="list-group-item d-flex align-items-center mb-2  justify-content-between rounded-4 streak text-light"
                     style={{ backgroundColor: colorPicker(task.priority) }}
                   >
-                    {task.priority}
-                    <br />
-                    Priority
-                  </span>
-                  <div className="btn-group gap-1" role="group">
-                    <button
-                      onClick={() => SelectTask(task.id)}
-                      className="btn btn-secondary btn-sm outline"
-                      data-bs-toggle="modal"
-                      data-bs-target="#updateTaskModal"
+                    <div className="d-flex gap-4">
+                      <input
+                        onClick={() => handleCompletedTask(taskId)}
+                        className="form-check-input flex-shrink-0 outline mt-3"
+                        type="checkbox"
+                        checked={task.status === "Completed" ? true : false}
+                        style={{ fontSize: "1.375em" }}
+                      />
+                      <span className="pt-1 form-checked-content">
+                        <strong className="text-light">{task.title}</strong>
+                        <small className="d-block text-body-primary mb-2">
+                          <i className="bi bi-alarm me-1"></i>
+                          {task.time}, {task.date}
+                        </small>
+                      </span>
+                    </div>
+                    <span
+                      className="badge outline mx-1"
+                      style={{ backgroundColor: colorPicker(task.priority) }}
                     >
-                      <i className="bi bi-pencil p-1"></i>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(task.id)}
-                      className="btn btn-danger btn-sm outline"
-                    >
-                      <i className="bi bi-trash p-1"></i>
-                    </button>
-                  </div>
-                </label>
-              ))}
+                      {task.priority}
+                      <br />
+                      Priority
+                    </span>
+                    <div className="btn-group gap-1" role="group">
+                      <button
+                        onClick={() => SelectTask(taskId)}
+                        className="btn btn-secondary btn-sm outline"
+                        data-bs-toggle="modal"
+                        data-bs-target="#updateTaskModal"
+                      >
+                        <i className="bi bi-pencil p-1"></i>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(taskId)}
+                        className="btn btn-danger btn-sm outline"
+                      >
+                        <i className="bi bi-trash p-1"></i>
+                      </button>
+                    </div>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>

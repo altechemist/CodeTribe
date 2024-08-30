@@ -28,36 +28,31 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
     const newErrors: string[] = [];
 
     if (title === "") {
-      newErrors.push("Please provide a title...");
+      newErrors.push("Please provide a title.");
     }
     if (date === "") {
-      newErrors.push("Please select a date...");
+      newErrors.push("Please select a date.");
     }
     if (time === "") {
-      newErrors.push("Please select a time...");
+      newErrors.push("Please select a time.");
     }
     if (priority === "") {
-      newErrors.push("Please choose priority...");
+      newErrors.push("Please choose a priority.");
     }
 
     setErrorList(newErrors);
 
-    // Return validity based on errors and field values
     return newErrors.length === 0;
   };
 
-<<<<<<< HEAD
   // Function to close the modal
   const closeModal = () => {
     const closeButton = document.querySelector("#closeAddTask");
-    //const closeButton = document.querySelector("#closeAddTask");
     if (closeButton) {
       (closeButton as HTMLElement).click();
     }
   };
 
-=======
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
   // Function to handle creating a task
   const handleCreateTask = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -78,12 +73,9 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
 
     // Update submitted state
     setSubmitted(true);
-<<<<<<< HEAD
 
     // Close modal after successful creation
-    closeModal(); 
-=======
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
+    closeModal();
   };
 
   // Function to reset submitted state
@@ -91,14 +83,13 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
     setSubmitted(false);
   };
 
-
   return (
     <div className="AddTask">
       <form onSubmit={handleCreateTask}>
         {/* Display errors here */}
         {errorList.length > 0 && (
           <div className="mb-3 alert error-list">
-            <h6>Whoops! There were some problems with your input</h6>
+            <h6>Whoops! There were some problems with your input:</h6>
             <ul className="list-group">
               {errorList.map((error, index) => (
                 <li key={index} className="error">
@@ -111,7 +102,10 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
 
         {/* Confirmation */}
         {submitted && (
-          <div className="mb-3 alert alert-success alert-dismissible" role="alert">
+          <div
+            className="mb-3 alert alert-success alert-dismissible"
+            role="alert"
+          >
             <h6>Task Successfully Added!</h6>
             <button
               onClick={resetSubmitted}
@@ -182,7 +176,10 @@ const NewTask: React.FC<TaskProps> = ({ CreateTask }) => {
         </div>
 
         <div className="d-grid gap-2 d-md-flex justify-content-md-center mt-3">
-          <button type="submit" className="btn btn-primary me-md-2">
+          <button
+            type="submit"
+            className="btn btn-primary me-md-2 floating-button"
+          >
             <i className="bi bi-plus-lg me-2"></i>
             Create Task
           </button>

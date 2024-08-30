@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
@@ -7,7 +6,7 @@ type InputValue = string | number | undefined;
 
 // Define types for task and props
 interface Task {
-  id: number;
+  taskid: number;
   title: InputValue;
   date: InputValue;
   time: InputValue;
@@ -21,7 +20,7 @@ interface TaskProps {
   SelectTask: (id: number) => void;
   taskList: Task[];
 
-  // Updates a task
+  // Function to update task list state
   setTaskList: React.Dispatch<React.SetStateAction<Task[]>>;
 
   // Function to update a task
@@ -48,23 +47,22 @@ const CurrentTask: React.FC<TaskProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
 
   // Fetch tasks from the API when userID changes
   const fetchTasks = useCallback(async () => {
+    if (userID === undefined) {
+      setError("User ID is undefined");
+      setLoading(false);
+      return;
+    }
+
     try {
-      setLoading(true);
-
-      if (userID === undefined) {
-        setError("User ID is undefined");
-        return;
-      }
-
       const response = await axios.get(
         `http://localhost:3001/users/${userID}/tasks`
       );
 
       if (Array.isArray(response.data)) {
-        // Map the response data to include an 'id' property for each task
         const tasksWithIds: Task[] = response.data.map((task: Task) => ({
           id: task.taskid,
           title: task.title,
@@ -77,71 +75,50 @@ const CurrentTask: React.FC<TaskProps> = ({
 
         setTaskList(tasksWithIds);
       } else {
-        setError("Unexpected data format");
+        setError("Unexpected data format from the server.");
       }
     } catch (error) {
       console.error("Error fetching tasks:", error);
-      setError("Error fetching tasks");
+      setError("Error fetching tasks.");
     } finally {
       setLoading(false);
     }
   }, [userID, setTaskList]);
 
-  // Call fetchTasks initially and whenever userID changes
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks, userID, setTaskList]);
-
-  // Handle submission to delete a task
+  // Handle task deletion
   const handleDelete = useCallback(
     async (taskId: number) => {
       try {
-        // Make the API request to delete the task
         await axios.delete(
           `http://localhost:3001/users/${userID}/tasks/${taskId}`
         );
 
-        // Update the task list state to reflect deletion
         setTaskList((prevTaskList) =>
-          prevTaskList.filter((task) => task.id !== taskId)
+          prevTaskList.filter((task) => task.taskid !== taskId)
         );
         console.log("Task deletion successful.");
       } catch (error) {
         if (axios.isAxiosError(error)) {
           if (error.response) {
-            console.error(
-              "Request failed with status code",
-              error.response.status
-            );
             setError(
               `Request failed with status code ${error.response.status}`
             );
           } else if (error.request) {
-            console.error(
-              "Request made but no response received",
-              error.request
-            );
-            setError("Request made but no response received");
+            setError("Request made but no response received.");
           } else {
-            console.error("Error setting up request", error.message);
-            setError("Error setting up request");
+            setError("Error setting up request.");
           }
         } else {
-          console.error("Error during task deletion:", error);
-          setError("Error during task deletion");
+          setError("Error during task deletion.");
         }
       }
     },
     [userID, setTaskList]
   );
 
-  // Filter completed tasks
-  const incompleteTasks = taskList.filter(
-    (task) => task.status !== "Completed"
-  );
-
-  // Changes the task status to completed
-  const handleCompletedTask = (taskId: number) => {
+  // Mark task as completed
+  const handleCompletedTask = useCallback((taskId: number) => {
+    alert("Completed " + taskId);
     if (taskId !== undefined) {
       const selectedTaskDetails = taskList.find((task) => task.id === taskId);
 
@@ -152,54 +129,13 @@ const CurrentTask: React.FC<TaskProps> = ({
         UpdatesTask(taskId, title, date, time, priority, status, userID);
       }
     }
-  };
+  });
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks, handleCompletedTask]);
 
   // Determine background color based on task priority
-=======
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-// Prop types for the component
-type InputValue = string | number | undefined;
-interface TaskProps {
-  userID: number | undefined;
-  SelectTask: (id: InputValue) => void;
-}
-
-const CurrentTask: React.FC<TaskProps> = ({ userID, SelectTask }) => {
-  const [taskList, setTaskList] = useState<
-    {
-      title: InputValue;
-      date: InputValue;
-      time: InputValue;
-      priority: InputValue;
-      status: InputValue;
-    }[]
-  >([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Fetch tasks from the API
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`/users/${userID}/tasks`);
-        setTaskList(response.data);
-      } catch (error) {
-        setError("Error fetching tasks");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userID) {
-      fetchTasks();
-    }
-  }, [userID]);
-
-  // Change the color based on priority
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
   const colorPicker = (priority: InputValue) => {
     switch (priority) {
       case "High":
@@ -213,18 +149,15 @@ const CurrentTask: React.FC<TaskProps> = ({ userID, SelectTask }) => {
     }
   };
 
-<<<<<<< HEAD
-  // Try to load existing tasks
+  // Filter tasks based on the search query
+  const filteredTasks = taskList.filter((task) =>
+    task.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center p-4 py-md-5">
         Loading...
-=======
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center p-4 py-md-5">
-        Loading... {userID}
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
       </div>
     );
   }
@@ -237,11 +170,14 @@ const CurrentTask: React.FC<TaskProps> = ({ userID, SelectTask }) => {
     );
   }
 
+  const incompleteTasks = filteredTasks.filter(
+    (task) => task.status !== "Completed"
+  );
+
   return (
     <div className="d-flex justify-content-center">
       <div className="w-75 flex-md-row p-4 py-md-5 align-items-center">
         <div className="list-group gap-2">
-<<<<<<< HEAD
           {incompleteTasks.length === 0 ? (
             <div>
               <h3 className="d-flex justify-content-center p-4 py-md-5">
@@ -254,112 +190,70 @@ const CurrentTask: React.FC<TaskProps> = ({ userID, SelectTask }) => {
                 <h1 className="display-5 fw-bold text-body-emphasis">
                   Current Tasks
                 </h1>
+
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="form-control mb-3"
+                />
               </div>
-              {incompleteTasks.map((task, index) => (
-                <label
-                  key={index}
-                  className="list-group-item d-flex align-items-center justify-content-between rounded-4 streak text-light"
-                  style={{ backgroundColor: colorPicker(task.priority) }}
-                >
-                  <div className="d-flex gap-4">
-                    <input
-                      onClick={() => handleCompletedTask(task.id)}
-                      className="form-check-input flex-shrink-0 outline mt-3"
-                      type="checkbox"
-                      value=""
-                      style={{ fontSize: "1.375em" }}
-                    />
-                    <span className="pt-1 form-checked-content">
-                      <strong className="text-light">{task.title}</strong>
-                      <small className="d-block text-body-primary mb-2">
-                        <i className="bi bi-alarm me-1"></i>
-                        {task.time}, {task.date}
-                      </small>
-                    </span>
-                  </div>
-                  <span
-                    className="badge outline mx-1"
+              {incompleteTasks.map((task) => {
+                // Choose the id to use, preferring task.id over task.taskid
+                const taskId = task.id ?? task.taskid;
+
+                return (
+                  <label
+                    key={taskId}
+                    className="list-group-item d-flex align-items-center mb-2 justify-content-between rounded-4 streak text-light"
                     style={{ backgroundColor: colorPicker(task.priority) }}
                   >
-                    {task.priority}
-                    <br />
-                    Priority
-                  </span>
-                  <div className="btn-group gap-1" role="group">
-                    <button
-                      onClick={() => SelectTask(task.id)}
-                      className="btn btn-secondary btn-sm outline"
-                      data-bs-toggle="modal"
-                      data-bs-target="#updateTaskModal"
+                    <div className="d-flex gap-4">
+                      <input
+                        onClick={() => handleCompletedTask(taskId)}
+                        className="form-check-input flex-shrink-0 outline mt-3"
+                        type="checkbox"
+                        value=""
+                        style={{ fontSize: "1.375em" }}
+                      />
+                      <span className="pt-1 form-checked-content">
+                        <strong className="text-light">{task.title}</strong>
+                        <small className="d-block text-body-primary mb-2">
+                          <i className="bi bi-alarm me-1"></i>
+                          {task.time}, {task.date}
+                        </small>
+                      </span>
+                    </div>
+                    <span
+                      className="badge outline mx-1"
+                      style={{ backgroundColor: colorPicker(task.priority) }}
                     >
-                      <i className="bi bi-pencil p-1"></i>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(task.id)}
-                      className="btn btn-danger btn-sm outline"
-                    >
-                      <i className="bi bi-trash p-1"></i>
-                    </button>
-                  </div>
-                </label>
-              ))}
+                      {task.priority}
+                      <br />
+                      Priority {taskId}
+                    </span>
+                    <div className="btn-group gap-1" role="group">
+                      <button
+                        onClick={() => SelectTask(taskId)}
+                        className="btn btn-secondary btn-sm outline"
+                        data-bs-toggle="modal"
+                        data-bs-target="#updateTaskModal"
+                      >
+                        <i className="bi bi-pencil p-1"></i>{taskId}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(taskId)}
+                        className="btn btn-danger btn-sm outline"
+                      >
+                        <i className="bi bi-trash p-1"></i>
+                      </button>
+                    </div>
+                  </label>
+                );
+              })}
             </div>
           )}
-=======
-          {/* Render the task list */}
-          <div className="list-group gap-2">
-            {taskList.map((task, index) => (
-              <label
-                key={index}
-                className="list-group-item d-flex align-items-center justify-content-between rounded-4 streak text-light"
-                style={{ backgroundColor: colorPicker(task.priority) }}
-              >
-                <div className="d-flex gap-4">
-                  <input
-                    className="form-check-input flex-shrink-0 outline mt-3"
-                    type="checkbox"
-                    value=""
-                    style={{ fontSize: "1.375em" }}
-                  />
-                  <span className="pt-1 form-checked-content">
-                    <strong className="text-light">{task.title}</strong>
-                    <small className="d-block text-body-primary mb-2">
-                      <i className="bi bi-alarm me-1"></i>
-                      {task.time}, {task.date}
-                    </small>
-                  </span>
-                </div>
-                <span
-                  className="badge outline mx-1"
-                  style={{ backgroundColor: colorPicker(task.priority) }}
-                >
-                  {task.priority}
-                  <br />
-                  Priority
-                </span>
-                <div className="btn-group gap-1" role="group">
-                  <button
-                    onClick={() => SelectTask(index)}
-                    className="btn btn-secondary btn-sm outline"
-                    data-bs-toggle="modal"
-                    data-bs-target="#updateTaskModal"
-                  >
-                    <i className="bi bi-pencil me-1"></i>
-                    Edit
-                  </button>
-                  <button className="btn btn-danger btn-sm outline">
-                    <i className="bi bi-trash me-1"></i>
-                    Delete
-                  </button>
-                  <button className="btn btn-success btn-sm outline">
-                    <i className="bi bi-check-lg me-1"></i>
-                    Done
-                  </button>
-                </div>
-              </label>
-            ))}
-          </div>
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
         </div>
       </div>
     </div>

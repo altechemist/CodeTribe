@@ -18,7 +18,7 @@ const createTables = () => {
     password TEXT NOT NULL
   );`;
   const createTaskTable = `CREATE TABLE IF NOT EXISTS tasks (
-    tid INTEGER PRIMARY KEY AUTOINCREMENT,
+    taskid INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     time TEXT NOT NULL,
     date TEXT NOT NULL,
@@ -59,13 +59,9 @@ app.post("/register", (req, res) => {
     }
   } catch (error) {
     // Handle errors
-<<<<<<< HEAD
     res
       .status(500)
       .json({ error: "An error occurred while registering the user" });
-=======
-    res.status(500).json({ error: "An error occurred while registering the user" });
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
   }
 });
 
@@ -89,18 +85,14 @@ app.post("/login", (req, res) => {
       res.json({ uid: user.uid, message: "Login successful" });
     } else {
       res.status(401).json({ error: "Invalid email or password" });
-<<<<<<< HEAD
       alert("Invalid email or password");
       return;
-=======
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
     }
   } catch (error) {
     // Handle errors
     res.status(500).json({ error: "An error occurred while logging in" });
   }
 });
-
 
 // Get user details by uid
 app.get("/users/:uid", (req, res) => {
@@ -138,7 +130,6 @@ app.get("/users/:uid/tasks", (req, res) => {
 app.put("/users/:uid/tasks/:taskid", (req, res) => {
   const { uid, taskid } = req.params;
   const { title, time, date, priority, status } = req.body;
-<<<<<<< HEAD
 
   // Basic validation
   if (!title || !time || !date || !priority || !status) {
@@ -158,20 +149,10 @@ app.put("/users/:uid/tasks/:taskid", (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: "Database error" });
-=======
-  const sql = `UPDATE tasks SET title = ?, time = ?, date = ?, priority = ?, status = ? WHERE tid = ? AND uid = ?`;
-  const stmt = db.prepare(sql);
-  const info = stmt.run(title, time, date, priority, status, taskid, uid);
-  if (info.changes > 0) {
-    res.json({ message: "Task updated successfully" });
-  } else {
-    res.status(404).json({ error: "Task not found for this user" });
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
   }
 });
 
 // Delete a task by taskid
-<<<<<<< HEAD
 app.delete("/users/:uid/tasks/:taskid", async (req, res) => {
   const { uid, taskid } = req.params;
 
@@ -193,19 +174,8 @@ app.delete("/users/:uid/tasks/:taskid", async (req, res) => {
       res.status(404).json({ error: "Task not found for this user" });
     }
   } catch (error) {
-    console.error("Error deleting task:", error); // Log the error
+    console.error("Error deleting task:", error);
     res.status(500).json({ error: "Internal Server Error" });
-=======
-app.delete("/users/:uid/tasks/:taskid", (req, res) => {
-  const { uid, taskid } = req.params;
-  const sql = `DELETE FROM tasks WHERE tid = ? AND uid = ?`;
-  const stmt = db.prepare(sql);
-  const info = stmt.run(taskid, uid);
-  if (info.changes > 0) {
-    res.json({ message: "Task deleted successfully" });
-  } else {
-    res.status(404).json({ error: "Task not found for this user" });
->>>>>>> bf088ad7ae39fd261b67ab9c2436e0a73d95e038
   }
 });
 
