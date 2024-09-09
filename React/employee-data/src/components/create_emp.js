@@ -44,9 +44,20 @@ function CreateEmployee(props) {
     }
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        uploadImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div id="Add" className="container-sm form">
-      <form className="EmployeeForm">
+      <form className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg">
         <h3>Add Employee Information</h3>
 
         {/* Display errors */}
@@ -181,16 +192,18 @@ function CreateEmployee(props) {
             class="form-control"
             type="file"
             id="formFile"
-            onChange={(event) => uploadImage(event.target.value)}
-            value={image}
+            accept="image/*"
+            onChange={handleImageUpload}
             required
           />
         </div>
+        <div className="text-end">
+          <button className="btn btn-primary my-1" onClick={AddEmployee}>
+            <i class="bi bi-floppy me-2"></i>
+            Create
+          </button>
+        </div>
       </form>
-      <button className="btn btn-primary centered" onClick={AddEmployee}>
-        <i class="bi bi-floppy me-2"></i>
-        Create
-      </button>
     </div>
   );
 }

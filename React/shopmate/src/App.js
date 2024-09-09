@@ -58,42 +58,42 @@ function App() {
                 </a>
                 <ul className="dropdown-menu text-small">
                   <li>
-                    <a
+                    <button
                       className="dropdown-item"
                       href="#"
                       data-bs-toggle="modal"
                       data-bs-target="#addItemModal"
                     >
                       Add Item...
-                    </a>
+                    </button>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">
-                      My Favorites
-                    </a>
+                    <button className="dropdown-item" href="#">
+                      New List
+                    </button>
                   </li>
                   <li>
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <a
+                    <button
                       className="dropdown-item"
                       href="#"
                       data-bs-toggle="modal"
                       data-bs-target="#registerModal"
                     >
                       Register
-                    </a>
+                    </button>
                   </li>
                   <li>
-                    <a
+                    <button
                       className="dropdown-item"
                       href="#"
                       data-bs-toggle="modal"
                       data-bs-target="#loginModal"
                     >
                       Log in
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -122,6 +122,7 @@ function App() {
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="modal"
+                  id="closeModal"
                   aria-label="Close"
                 ></button>
               </div>

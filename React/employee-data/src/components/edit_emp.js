@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 function EditEmployee(props) {
   // Create state variables for text fields
@@ -10,38 +9,36 @@ function EditEmployee(props) {
   const [eMailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [position, setPosition] = useState("");
-  const [image, uploadImage] = useState("");
+  const [image, setImage] = useState(null); // Changed to handle File object
 
   // Filter the employee data
   const FilterEmployees = (employeeID) => {
-    // Find the employee
-    const tmpEmployeeData = props.EmployeeData.filter(
-      (employee) => employee.employeeID === employeeID
+    if (!employeeID) {
+      alert("Employee ID cannot be empty");
+      return;
+    }
+
+    const filteredEmp = props.EmployeeData.filter((employee) =>
+      employee.employeeID.toLowerCase().includes(employeeID.toLowerCase())
     );
 
-    // If user is not found
-    if (employeeID === "") {
-      alert("Employee ID cannot be empty");
-    } else if (tmpEmployeeData[0] == null) {
+    if (filteredEmp.length === 0) {
       alert("User Not Found!");
+      return;
     }
 
-    // Update text fields
-    if (tmpEmployeeData[0]) {
-      setEmployeeID(tmpEmployeeData[0].employeeID);
-      setFirstName(tmpEmployeeData[0].firstName);
-      setLastName(tmpEmployeeData[0].lastName);
-      setEmailAddress(tmpEmployeeData[0].eMailAddress);
-      setPhoneNumber(tmpEmployeeData[0].phoneNumber);
-      setPosition(tmpEmployeeData[0].position);
-      uploadImage(tmpEmployeeData[0].image);
-    } else {
-      props.SelectEmployee(null);
-    }
+    // Update text fields with the filtered employee data
+    setEmployeeID(filteredEmp[0].employeeID);
+    setFirstName(filteredEmp[0].firstName);
+    setLastName(filteredEmp[0].lastName);
+    setEmailAddress(filteredEmp[0].eMailAddress);
+    setPhoneNumber(filteredEmp[0].phoneNumber);
+    setPosition(filteredEmp[0].position);
+    setImage(filteredEmp[0].image); // Assuming `image` is a URL or path
   };
 
   // If employee already selected
-  const isEmployeeSelected = props.SelectedEmployee.length === 1 ? true : false;
+  const isEmployeeSelected = props.SelectedEmployee.length === 1;
 
   // Cancel edit
   const CancelEdit = () => {
@@ -51,12 +48,15 @@ function EditEmployee(props) {
     setEmailAddress("");
     setPhoneNumber("");
     setPosition("");
-
+    setImage(null); // Clear the image state
     props.SelectEmployee(null);
   };
 
   // Add user input to data object
-  const UpdateEmployee = () => {
+  const UpdateEmployee = (event) => {
+    // Prevent form submission
+    event.preventDefault();
+
     const isFormValid = props.FormValidation(
       employeeID,
       firstName,
@@ -74,7 +74,8 @@ function EditEmployee(props) {
         lastName,
         eMailAddress,
         phoneNumber,
-        position
+        position,
+        image
       );
 
       // Clear fields
@@ -84,171 +85,166 @@ function EditEmployee(props) {
       setEmailAddress("");
       setPhoneNumber("");
       setPosition("");
+      setImage(null);
       CancelEdit();
     }
   };
 
+  // Handle file upload
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setImage(file);
+  };
+
   return (
     <div id="Edit" className="container-sm">
-      <div className="EmployeeForm">
+      {/* Editing information */}
+      <form className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg">
         <h3>Update Employee Information</h3>
+        {isEmployeeSelected ? (
+          <div className="modal-content d-flex gap-2">
+            <p>
+              Are you sure you want to edit{" "}
+              {props.SelectedEmployee[0].firstName}'s details?{" "}
+              {props.SelectedEmployee[0].employeeID}
+            </p>
+            <div>
+              <button
+                className="btn btn-success"
+                onClick={() =>
+                  FilterEmployees(props.SelectedEmployee[0].employeeID)
+                }
+              >
+                Yes
+              </button>
+              <button className="btn btn-danger mx-2 my-2" onClick={CancelEdit}>
+                No
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-3"></div>
+        )}
+
         {/* Display errors */}
         {props.errorList.length > 0 ? (
-          <div class="mb-3 alert alert-danger">
+          <div className="mb-3 alert alert-danger">
             <h6>Whoops! There were some problems with your input</h6>
             <ul>
-              {props.errorList.map((errors) => (
-                <li>{errors}</li>
+              {props.errorList.map((errors, index) => (
+                <li key={index}>{errors}</li>
               ))}
             </ul>
           </div>
-        ) : (
-          <div>
-            {props.isFormValid ? (
-              <div class="mb-3 alert alert-success">
-                <h6>Employee Successfully Updated!</h6>
-              </div>
-            ) : (
-              <div></div>
-            )}
+        ) : props.isFormValid ? (
+          <div className="mb-3 alert alert-success">
+            <h6>Employee Info Successfully Updated!</h6>
           </div>
-        )}
+        ) : null}
 
-        <div>
-          {isEmployeeSelected ? (
-            <div className="modal-content d-flex gap-2">
-              <p>
-                Are you sure you want to edit{" "}
-                {props.SelectedEmployee[0].firstName}'s details?
-              </p>
-              <div>
-                <button
-                  className="btn btn-success"
-                  onClick={() =>
-                    FilterEmployees(props.SelectedEmployee[0].employeeID)
-                  }
-                >
-                  Yes
-                </button>
-                <button
-                  className="btn btn-danger mx-2 my-2"
-                  onClick={() => CancelEdit()}
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div class="mb-3">
-              <div class="row g-3 align-items-center">
-                <div class="col-sm-6">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="searchID"
-                    placeholder={"Enter Employee ID..."}
-                    onChange={(event) => setSearchID(event.target.value)}
-                    value={searchID}
-                    required
-                  />
-                </div>
-
-                <div class="col-sm-6">
-                  <button
-                    className="btn btn-primary mx-2 my-2"
-                    onClick={() => FilterEmployees(searchID)}
-                  >
-                    <i class="bi bi-search me-2"></i>
-                    Search
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <form className="EmployeeForm">
         {/* Full Names */}
-        <div class="mb-3">
-          <label for="fname" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="fname" className="form-label">
             Full Names
           </label>
-
-          <div class="row g-3 align-items-center">
-            <div class="col-sm-6">
+          <div className="row g-3 align-items-center">
+            <div className="col-sm-6">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="fname"
                 placeholder="Jon"
                 onChange={(event) => setFirstName(event.target.value)}
                 value={firstName}
+                required
               />
             </div>
-            <div class="col-sm-6">
+            <div className="col-sm-6">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="lname"
                 placeholder="Doe"
                 onChange={(event) => setLastName(event.target.value)}
                 value={lastName}
+                required
               />
             </div>
           </div>
         </div>
 
         {/* Email Address */}
-        <div class="mb-3">
-          <label for="email" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
             Email Address
           </label>
           <input
             type="email"
-            class="form-control"
+            className="form-control"
             id="email"
             placeholder="name@example.com"
             onChange={(event) => setEmailAddress(event.target.value)}
             value={eMailAddress}
+            required
           />
         </div>
 
         {/* Phone Number */}
-        <div class="mb-3">
-          <label for="phone" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="phone" className="form-label">
             Phone Number
           </label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             id="phone"
             placeholder="0612345678"
             onChange={(event) => setPhoneNumber(event.target.value)}
             value={phoneNumber}
+            required
           />
         </div>
 
         {/* Position */}
-        <div class="mb-3">
-          <label for="position" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="position" className="form-label">
             Position
           </label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             id="position"
             placeholder="Developer"
             onChange={(event) => setPosition(event.target.value)}
             value={position}
+            required
           />
         </div>
-      </form>
 
-      <button className="btn btn-success centered" onClick={UpdateEmployee}>
-        <i class="bi bi-file-arrow-up me-2"></i>
-        Update
-      </button>
+        {/* Image Picker */}
+        <div className="mb-3">
+          <label htmlFor="formFile" className="form-label">
+            Upload picture
+          </label>
+          <input
+            className="form-control"
+            type="file"
+            id="formFile"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        <div className="text-end">
+          <button
+            className="btn btn-success my-1"
+            type="button"
+            onClick={() => UpdateEmployee()}
+          >
+            <i className="bi bi-file-arrow-up me-2"></i>
+            Update
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -21,6 +21,10 @@ const usersSlice = createSlice({
     },
     registerUser(state, action) {
       const { name, email, password, password2 } = action.payload;
+      if (!email || !password || !password2 || !name){
+        state.registerError = 'All fields are required.';
+        return;
+      }
       if (password !== password2) {
         state.registerError = 'Passwords do not match.';
         return;
@@ -38,6 +42,10 @@ const usersSlice = createSlice({
     },
     loginUser(state, action) {
       const { email, password } = action.payload;
+      if (!email && !password) {
+        state.loginError = 'All fields are required.';
+        return;
+      }
       const user = state.users.find(user => user.email === email && user.password === password);
       if (user) {
         state.loginError = '';

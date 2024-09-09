@@ -47,7 +47,7 @@ const CurrentTask: React.FC<TaskProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Fetch tasks from the API when userID changes
   const fetchTasks = useCallback(async () => {

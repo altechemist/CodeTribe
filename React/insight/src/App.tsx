@@ -8,7 +8,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   // Determine the selected news category
-  const [newsCategory, setCategory] = useState<string>("general");
+  const [newsCategory, setCategory] = useState<string>("General");
 
   const selectedCategory = (category: string) => {
     switch (category) {

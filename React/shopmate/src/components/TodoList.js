@@ -208,7 +208,7 @@ function TodoListItems() {
                     <td>{item.quantity}</td>
                     <td>{item.category}</td>
                     <td>
-                      <div className="d-flex btn-group">
+                      <div className="d-flex btn-group col-1 ms-3">
                         <button
                           type="button"
                           className="btn btn-primary btn-sm"

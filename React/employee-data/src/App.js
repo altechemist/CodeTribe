@@ -180,6 +180,23 @@ function App() {
 
   const [currPage, setCurrPage] = useState("Home");
 
+  // Button styles
+  const buttonStyles = {
+    default: {
+      backgroundColor: "#f7f7f7",
+      borderRadius: "5px",
+      color: "#0d6efd",
+      cursor: "pointer",
+    },
+    active: {
+      backgroundColor: "#0d6efd",
+      border: "3x solid #0d6efd",
+      color: "#f7f7f7",
+      fontWeight: "bold",
+      cursor: "pointer",
+    },
+  };
+
   return (
     <div className="App">
       <div class="container-sm">
@@ -199,20 +216,38 @@ function App() {
 
           <ul class="nav">
             <li class="nav-item">
-              <button onClick={AddPage} class="btn btn-outline-primary me-2">
+              <button
+                onClick={AddPage}
+                class="btn btn-outline-primary me-2"
+                style={
+                  currPage === "Add"
+                    ? buttonStyles.active
+                    : buttonStyles.default
+                }
+              >
                 <i class="bi bi-person-plus me-2"></i>
                 Add Employees
               </button>
             </li>
 
             <li class="nav-item">
-              <button onClick={ViewPage} class="btn btn-outline-primary me-2">
+              <button onClick={ViewPage} class="btn btn-outline-primary me-2"
+              style={
+                currPage === "View"
+                  ? buttonStyles.active
+                  : buttonStyles.default
+              }>
                 <i class="bi bi-search me-2"></i>
                 View Employees
               </button>
             </li>
             <li class="nav-item">
-              <button onClick={UpdatePage} class="btn btn-outline-primary me-2">
+              <button onClick={UpdatePage} class="btn btn-outline-primary me-2"
+              style={
+                currPage === "Update"
+                  ? buttonStyles.active
+                  : buttonStyles.default
+              }>
                 <i class="bi bi-file-arrow-up me-2"></i>
                 Update Employees
               </button>
