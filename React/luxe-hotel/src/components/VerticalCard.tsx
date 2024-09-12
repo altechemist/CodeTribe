@@ -1,9 +1,9 @@
-import image from "../assets/bedroom.jpg"
+import image from "../assets/bedroom.jpg";
 function VerticalCard() {
   return (
     <div>
       <div className="col p-2">
-        <div className="card shadow-sm">
+        <div className="card shadow-sm border-3">
           <img
             className="bd-placeholder-img card-img-top"
             width="100%"
@@ -15,36 +15,32 @@ function VerticalCard() {
               <h6 className="px-0 p-0">Title</h6>
               <h6 className="fw-bold px-0 pb-0">R9 999</h6>
             </div>
-            <hr/>
+            <hr />
             <p className="card-text pt-2 text-truncate">Description...</p>
             <div className="d-flex justify-content-between align-items-center">
-              <ul className="d-flex list-unstyled mt-auto gap-4">
-              <li className="d-flex align-items-center me-1">
-                <i className="bi bi-clock me-2" />
-                <small className="text-nowrap">3 Beds</small>
-              </li>
-              <li className="d-flex align-items-center me-2 ms-1">
-                <i className="bi bi-fire me-2" />
-                <small>4 Guests</small>
-              </li>
-              <li className="d-flex align-items-center me-2 ms-1">
-                <i className="bi bi-people-fill me-2" />
-                <small># Pets</small>
-              </li>
-              <li className="d-flex align-items-center ">
-                <i className="bi bi-bookmark-heart-fill me-2" />
-              </li>
-                
-                <div className="justify-content-end">
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#viewRecipe"
-                    className="btn btn-outline-primary green rounded-pill px-3 ms-4 green"
-                  >
-                    View
-                  </button>
-                </div>
+              <ul className="d-flex list-unstyled border mt-auto gap-4">
+                <li className="d-flex align-items-center me-1 border">
+                  <i className="bi bi-clock me-2" />
+                  <small className="text-nowrap">3 Beds</small>
+                </li>
+                <li className="d-flex align-items-center me-1 border">
+                  <i className="bi bi-fire me-2" />
+                  <small>4 Guests</small>
+                </li>
+                <li className="d-flex align-items-center  me-1 border">
+                  <i className="bi bi-people-fill me-2" />
+                  <small># Pets</small>
+                </li>
               </ul>
+            </div>
+            <div className="d-flex justify-content-end">
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#viewRecipe"
+                className="btn btn-outline-primary rounded-pill px-3"
+              >
+                View
+              </button>
             </div>
           </div>
         </div>

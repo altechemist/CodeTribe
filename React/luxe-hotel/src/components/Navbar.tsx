@@ -23,7 +23,11 @@ function Navbar() {
         <span className="navbar-toggler-icon"></span>
       </button>
 
-      <div>
+      <button className="btn btn-lg">
+      <i className="bi bi-list"></i>
+      </button>
+
+      <div className="nav-links">
         <div
           className="collapse navbar-collapse border justify-content-end"
           id="navbarNav"
