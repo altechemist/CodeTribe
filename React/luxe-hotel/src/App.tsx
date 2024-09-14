@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route,  } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // import pages
 import Home from "./pages/Home";
@@ -26,9 +26,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
-        <Route path="/rooms" element={<Rooms />}>
-          <Route path="room" element={<Room />} />
-        </Route>
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/room" element={<Room />} />
         <Route path="/events" element={<Events />} />
         <Route path="/about" element={<About />} />
         <Route path="/profile" element={<Profile />} />

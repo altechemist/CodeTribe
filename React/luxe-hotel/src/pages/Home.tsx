@@ -2,20 +2,15 @@ import HorizontalCard from "../components/HorizontalCard";
 import VerticalCard from "../components/VerticalCard";
 
 import logo from "../assets/logo.png";
+import HeroSection from "../components/Hero";
+import Footer from "../components/Footer";
 
 function Home() {
   return (
     <div className="container-fluid">
       {/* <!-- Hero Banner --> */}
-      <div
-        className="container-fluid hero-banner rounded-5 py-4"
-      >
-        <div className="hero-text">
-          <h1 className="display-5 fw-bold">Welcome to Luxe Hotel</h1>
-          <p className="lead mb-4">
-            The perfect place for leisure or business travelers.
-          </p>
-        </div>
+      <div>
+      <HeroSection heading="Welcome to Luxe Hotel"/>
       </div>
 
       {/* <!-- Carousel --> */}
@@ -237,70 +232,7 @@ function Home() {
 
       {/* Footer */}
       <div className="d-flex mb-3 mt-4">
-        <footer className="text-dark py-3 d-flex justify-content-between mx-auto">
-          <div className="about-us col-3 justify-content-center border p-2">
-            <h4>Luxe Haven</h4>
-            <img className="img-fluid" src={logo} alt={logo} />
-            <p>Best hotel</p>
-            <div className="social-login">
-              <div className="d-flex justify-content-around">
-                <a href="#">
-                  <i className="bi bi-facebook"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-twitter"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-instagram"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-linkedin"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-envelope"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="useful-links p-2 border">
-            <h4>Useful Links</h4>
-            <div>
-              <ul>
-                <li>
-                  <a href="#">Home</a>
-                </li>
-                <li>
-                  <a href="#">Rooms</a>
-                </li>
-                <li>
-                  <a href="">Gallery</a>
-                </li>
-                <li>
-                  <a href="">Events</a>
-                </li>
-                <li>
-                  <a href="">Bookings</a>
-                </li>
-                <li>
-                  <a href="">My Favorites</a>
-                </li>
-                <li>
-                  <a href="">Contact Us</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="our-location p-2 border">
-            <h4 className="text-wrap">Our Location</h4>
-            <p>
-              The Kimberley Big Hole, West Circular Road, Kimberley, South
-              Africa, 8300
-            </p>
-            <div>
-              <img className="img-fluid" src={logo} alt="map" />
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </div>
   );
