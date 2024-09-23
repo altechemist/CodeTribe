@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // import pages
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,8 +16,9 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
+import Admin from "./pages/Dashboard/Admin";
+import Reservation from "./pages/Dashboard/Reservation";
 
-import Navbar from "./components/Navbar";
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
         <Route path="/bookings" element={<Bookings />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/dashboard" element={<Admin />} />
+        <Route path="/dashboard/reservations" element={<Reservation />} />
       </Routes>
     </Router>
   );

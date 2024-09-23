@@ -1,7 +1,8 @@
 import logo from "../assets/logo.png";
 function Footer() {
   return (
-    <div className="container">
+    <div className="container-xxl mt-4">
+      <hr className="mx-auto"/>
       <footer className="py-5">
         <div className="row justify-content-between">
           <div className="col-6 col-md-2 mb-3">

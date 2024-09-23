@@ -1,105 +1,125 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
-
 function Navbar() {
   return (
-    <nav className="navbar navbar-expand sticky-top bg-body-tertiary">
-    <div className="container-fluid">
-      <a className="navbar-brand">
-        <Link to="/">
-          <img className="w-25" src={logo} alt="logo" />
+    <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary border-bottom">
+      <div className="container-fluid">
+        <Link className="navbar-brand" to="/">
+          <img className="img-fluid w-25" src={logo} alt="logo" />
         </Link>
-      </a>
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
 
-      <button className="btn btn-lg">
-      <i className="bi bi-list"></i>
-      </button>
-
-      <div className="nav-links">
-        <div
-          className="collapse navbar-collapse border justify-content-end"
-          id="navbarNav"
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page">
-                <Link to="/">Home</Link>
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/gallery">Gallery</Link>
-              </a>
-            </li>
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
+        <div className="collapse navbar-collapse row align-content-center" id="navbarNav">
+          <ul className="navbar-nav mb-2 mb-lg-0 justify-content-end">
             <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/rooms">Rooms</Link>
-              </a>
+              <Link className="nav-link active" to="/" aria-current="page">
+                Home
+              </Link>
             </li>
-
             <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/events">Events</Link>
-              </a>
+              <Link className="nav-link" to="/gallery">
+                Gallery
+              </Link>
             </li>
-
             <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/about">About</Link>
-              </a>
+              <Link className="nav-link" to="/rooms">
+                Rooms
+              </Link>
             </li>
-
             <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/contact">Contact</Link>
-              </a>
+              <Link className="nav-link" to="/events">
+                Events
+              </Link>
             </li>
-
             <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/profile">
-                  <i className="bi bi-person-circle"></i>
+              <Link className="nav-link" to="/about">
+                About
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/contact">
+                Contact
+              </Link>
+            </li>
+            <div className="dropdown">
+            <a
+              href="#"
+              className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img
+                src="https://github.com/mdo.png"
+                alt="Profile"
+                width="32"
+                height="32"
+                className="rounded-circle"
+              />
+            </a>
+            <ul
+              className="dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownMenuButton"
+            >
+              <li>
+                <Link className="dropdown-item" to="#">
+                  My Bookings...
                 </Link>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div className="d-flex border justify-content-end" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/contact">
-                  <i className="bi bi-geo-alt" />
-                  {"  "}View Map
+              </li>
+              <li>
+                <Link className="dropdown-item" to="#">
+                  Favorites
                 </Link>
-              </a>
-            </li>
+              </li>
+              <li>
+                <Link className="dropdown-item" to="#">
+                  Profile
+                </Link>
+              </li>
+              <li>
+                <hr className="dropdown-divider" />
+              </li>
+              <li>
+                <Link className="dropdown-item" to="#">
+                  Sign out
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-            <li className="nav-item">
-              <a className="nav-link">
-                <Link to="/profile"><i className="bi bi-telephone" />
-                {"  "}+27 53-802-8200</Link>
-              </a>
-            </li>
           </ul>
+         
+          
+          <div className="d-flex align-items-center justify-content-end ">
+            <ul className="navbar-nav ms-3">
+              <li className="nav-item">
+                <Link className="nav-link" to="/contact">
+                  <i className="bi bi-geo-alt"></i> View Map
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/profile">
+                  <i className="bi bi-telephone"></i> +27 53-802-8200
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
-  )
+    </nav>
+  );
 }
 
-export default Navbar
+export default Navbar;

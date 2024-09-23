@@ -1,121 +1,161 @@
-import React from "react";
-import image from "../assets/bedroom-2.jpg";
+import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
+import Heading from "../components/Heading";
+import ImageGrid from "../components/ImageGrid";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setSelectedRoom } from "../store/slices/dbSlice";
+import { setAdults, setCheckIn, setCheckOut, setChildren, setDuration, setSubtotal } from "../store/slices/bookingSlice";
+import RoomSummary from "../components/RoomSummary";
+
+interface Room {
+  id: string;
+  bed: string;
+  size: number;
+  amenities: string;
+  beds: number;
+  description: string;
+  guests: number;
+  image: string;
+  images: string[];
+  price: number;
+  sofa: string;
+  type: string;
+}
 
 function Room() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const days = useSelector((state) => state.booking.duration);
+  const checkIn = useSelector((state) => state.booking.checkIn);
+  const checkOut = useSelector((state) => state.booking.checkOut);
+  const adults = useSelector((state) => state.booking.adults);
+  const children = useSelector((state) => state.booking.children);
+  const room: Room = useSelector((state) => state.db.selectedRoom);
+
+  // Calculate duration
+  useEffect(() => {
+    if (checkIn && checkOut) {
+      const checkInDate = new Date(checkIn);
+      const checkOutDate = new Date(checkOut);
+      const duration = checkOutDate - checkInDate;
+
+      if (!isNaN(duration)) {
+        const days = Math.floor(duration / (1000 * 60 * 60 * 24));
+        if (days >= 0) {
+          dispatch(setDuration(days));
+        }
+      } else {
+        console.log("Invalid date");
+      }
+    }
+  }, [checkIn, checkOut,adults, children]);
+ 
+  const handleView = (room: Room) => {
+    // Set the room type in the URL query parameters
+    dispatch(setSelectedRoom(room));
+    dispatch(setSubtotal((room.price * days).toFixed(2)))
+    // Navigate to room details page
+    navigate(`/bookings`);
+  };
+
   return (
     <div className="container-fluid">
-      <div className="sub-heading d-flex justify-content-center align-items-center gap-2 mt-4">
-        <hr className="col-1" />
-        <h1 className="display-5 fw-bold text-center mb-4">Room 1</h1>
-        <hr className="col-1" />
+      <div id="intro">
+        <Heading title={room.type} />
       </div>
 
-      {/* Main Card */}
-      <div className="d-flex container-fluid rounded-5 p-1 gap-1 mb-4 text-center">
-        <div className="d-flex img-fluid w-25 col">
-          <img src={image} className="card-img-top rounded-5" alt="..." />
-        </div>
-        <div className="col align-content-center justify-content-end">
-          <div className="card-body">
-            <h5 className="card-title">Room 1</h5>
-            <p className="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
-            <div className="d-inline-flex gap-2">
-              <button className="btn btn-primary-outline">
-                <i className="bi bi-tv"></i>
-              </button>
-              <button className="btn btn-primary-outline">
-                <i className="bi bi-fan"></i>
-              </button>
-              <button className="btn btn-primary-outline">
-                <i className="bi bi-wifi"></i>
-              </button>
-              <button className="btn btn-primary-outline">
-                <i className="bi bi-safe2"></i>
-              </button>
-              <button className="btn btn-primary-outline">
-                <i className="bi bi-fire"></i>
-              </button>
-            </div>
-          </div>
-          <div className="d-inline-flex gap-2 mt-4">
-            <button className="btn btn-primary">
-              <i className="bi bi-share"></i>
-            </button>
-            <button className="btn btn-primary">
-              <i className="bi bi-heart-fill"></i>
-            </button>
-            <button className="btn btn-primary">Reserve Now</button>
-          </div>
-        </div>
-      </div>
+      {/* Room Card */}
+      <RoomSummary />
 
-      {/* Gallery */}
-      <div className="d-flex container-fluid rounded-5 p-1 gap-1 mb-4 text-center">
-        <div className="d-flex img-fluid w-25 col">
-          <img src={image} className="card-img-top rounded-5" alt="..." />
-        </div>
-        <div className="col align-content-baseline">
-          <div className="d-inline-flex gap-1">
-            <img src={image} className="card-img-top rounded-5" alt="..." />
-            <img src={image} className="card-img-top rounded-5" alt="..." />
-          </div>
-          <div className="d-inline-flex gap-1">
-            <img src={image} className="card-img-top rounded-5" alt="..." />
-            <img src={image} className="card-img-top rounded-5" alt="..." />
-          </div>
-        </div>
-      </div>
+      {/* Room Images */}
+      <ImageGrid />
 
       {/* Check Availability */}
-      <div className="sub-heading d-flex justify-content-center align-items-center gap-2 mt-4">
-        <hr className="col-1" />
-        <h1 className="display-5 fw-bold text-center mb-4">
-          Check Availability
-        </h1>
-        <hr className="col-1" />
-      </div>
+      <Heading title="Check Availability" />
 
-      <div className="d-flex container-fluid row rounded-5 p-1 gap-1 mb-4 align-items-center text-center">
+      <div
+        className="d-flex container-fluid row rounded-3 p-1 gap-1 mb-4 align-items-center text-center"
+        id="CheckAvailability"
+      >
         <div className="col">
-          <h4>Available Dates</h4>
+          <h3 className="display-7 fw-bold text-center">Available Dates</h3>
+
           <p>Calendar</p>
-          <button className="btn btn-primary">Confirm Reservation</button>
+          <p>Check In: {checkIn}</p>
+          <p>Check Out: {checkOut}</p>
+          <p>Duration: {days} Days</p>
+          <p>
+            <strong>Note:</strong> We are currently unavailable for this room.
+            Please try another date.
+          </p>
+          <button onClick={() => handleView(room)} className="btn btn-primary">
+            Confirm Reservation
+          </button>
         </div>
 
         <div className="col">
-          <h4>Choose Dates</h4>
-          <div className="row gap-2">
+          <h3 className="display-7 fw-bold text-center">Choose Dates</h3>
+
+          <div className="col gap-2">
             <div className="col mb-3">
-              <label htmlFor="formGroupExampleInput" className="form-label">
+              <label htmlFor="checkIn" className="form-label">
                 Check In
               </label>
               <input
                 type="date"
                 className="form-control"
-                id="formGroupExampleInput"
+                id="checkIn"
                 placeholder="Example input placeholder"
+                value={checkIn}
+                onChange={(e) => dispatch(setCheckIn(e.target.value))}
               />
             </div>
             <div className="col mb-3">
-              <label htmlFor="formGroupExampleInput2" className="form-label">
+              <label htmlFor="checkOut" className="form-label">
                 Check Out
               </label>
               <input
                 type="date"
                 className="form-control"
-                id="formGroupExampleInput2"
+                id="checkOut"
                 placeholder="Another input placeholder"
+                value={checkOut}
+                onChange={(e) => dispatch(setCheckOut(e.target.value))}
+              />
+            </div>
+            <div className="col mb-3">
+              <label htmlFor="checkOut" className="form-label">
+                Children
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="children"
+                placeholder="0"
+                value={children}
+                onChange={(e) => dispatch(setChildren(e.target.value))}
+              />
+            </div>
+            <div className="col mb-3">
+              <label htmlFor="checkOut" className="form-label">
+                Adults
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="adults"
+                placeholder="0"
+                value={adults}
+                onChange={(e) => dispatch(setAdults(e.target.value))}
               />
             </div>
             <div className="d-flex justify-content-center">
-            <button className="btn btn-primary">Search</button>
+              <button className="btn btn-primary">Search</button>
             </div>
           </div>
-          
         </div>
       </div>
 

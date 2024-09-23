@@ -1,7 +1,7 @@
 
 const HeroSection = ({ heading }: {heading: string}) => {
   return (
-    <div className="container-fluid hero-banner rounded-5 py-4">
+    <div className="hero-banner py-4">
       <div className="hero-text">
         <h1 className="display-5 fw-bold">{heading}</h1>
         <p className="lead mb-4">

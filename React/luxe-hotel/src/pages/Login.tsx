@@ -1,22 +1,56 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
+
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Heading from "../components/Heading";
+
+import { login } from '../store/slices/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+
 function Login() {
+  // State for form inputs
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const error = useSelector((state) => state.auth.error);
+
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Handle form submission
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    // Attempt to login
+    setLoading(true);
+    dispatch(login(email, password));
+   
+    // Redirect to home page after successful login
+    setLoading(false);
+    if (user) {
+      navigate("/");
+    }
+
+  };
+
+
   return (
     <div className="container-sm">
-      <h1 className="display-4 fw-bold lh-1 text-body-emphasis mb-3 text-center">
-        Welcome Back!
-      </h1>
+      <Heading title="Welcome Back!" />
 
       {/* Main Content */}
-      <div className="d-flex justify-content-evenly align-items-center mb-3">
+      <div className="d-flex justify-content-evenly align-items-center mb-3 auth-form">
         {/* Left Container */}
-        <div className="left-container p-1">
-          <img src={logo} alt="logo" />
+        <div className="left-container p-2 d-flex justify-content-center">
+          <img className="img-fluid" src={logo} alt="logo" />
         </div>
 
         {/* Right Container */}
-        <div className="right-container p-2">
+        <div className="right-container p-2 justify-content-center">
           <h6 className="fw-bold text-center my-3">
             Hey, Good to see you again!
           </h6>
@@ -31,10 +65,11 @@ function Login() {
                 id="emailInput"
                 placeholder="E-mail"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-
-
+            
             <div className="input-group mb-1">
               <button className="btn left-icon" type="button">
                 <i className="bi bi-lock"></i>
@@ -45,6 +80,8 @@ function Login() {
                 id="passwordInput"
                 placeholder="Password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <button className="btn right-icon" type="button">
                 <i className="bi bi-eye"></i>
@@ -57,7 +94,7 @@ function Login() {
               </small>
             </Link>
 
-            <button className="w-100 btn btn-primary" type="submit">
+            <button className="w-100 btn btn-primary" type="submit" onClick={handleSubmit}>
               <i className="bi bi-box-arrow-in-left me-2"></i>
               Login
             </button>
@@ -68,15 +105,15 @@ function Login() {
             <div className="social-login my-3">
               <h5 className="text-center">Login with</h5>
               <div className="d-flex justify-content-around">
-                <button className="btn">
+                <a className="btn">
                   <i className="bi bi-facebook"></i>
-                </button>
-                <button className="btn">
+                </a>
+                <a className="btn">
                   <i className="bi bi-google"></i>
-                </button>
-                <button className="btn">
+                </a>
+                <a className="btn">
                   <i className="bi bi-twitter-x"></i>
-                </button>
+                </a>
               </div>
             </div>
 
