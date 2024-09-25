@@ -4,11 +4,12 @@ import { getAnalytics, Analytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCRIUqE1flK-gKeQu_fxmjZqygncbi0Np0",
+  apiKey: apiKey,
   authDomain: "luxe-hotel-e17c1.firebaseapp.com",
   projectId: "luxe-hotel-e17c1",
   storageBucket: "luxe-hotel-e17c1.appspot.com",

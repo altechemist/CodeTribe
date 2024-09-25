@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
-
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Heading from "../components/Heading";
 
-import { login } from '../store/slices/authSlice';
+import { login } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Login() {
@@ -18,25 +17,33 @@ function Login() {
   const user = useSelector((state) => state.auth.user);
   const error = useSelector((state) => state.auth.error);
 
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Handle form submission
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     // Attempt to login
     setLoading(true);
     dispatch(login(email, password));
-   
-    // Redirect to home page after successful login
     setLoading(false);
-    if (user) {
-      navigate("/");
-    }
-
   };
 
+  useEffect(() => {
+    // Redirect to home page after successful login
+    if (user) {
+      // Check if user is admin
+      if (user.role === 'admin') {
+        navigate("/dashboard"); // Redirect to admin dashboard
+      } else {
+        navigate("/"); // Redirect to home page
+      };
+    }
+
+    if (error) {
+      alert(error); // Display error message to the user
+    }
+  }, [user, error, navigate]);
 
   return (
     <div className="container-sm">
@@ -55,6 +62,11 @@ function Login() {
             Hey, Good to see you again!
           </h6>
           <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary">
+            {error && (
+              <div className="alert alert-danger" role="alert">
+                {error}
+              </div>
+            )}
             <div className="input-group mb-3">
               <button className="btn left-icon" type="button">
                 <i className="bi bi-envelope"></i>
@@ -69,7 +81,7 @@ function Login() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            
+
             <div className="input-group mb-1">
               <button className="btn left-icon" type="button">
                 <i className="bi bi-lock"></i>
@@ -89,12 +101,14 @@ function Login() {
             </div>
 
             <Link className="nav-link text-end mb-2" to="/reset-password">
-              <small className="text-body-secondary">
-                Forgot Password?
-              </small>
+              <small className="text-body-secondary">Forgot Password?</small>
             </Link>
 
-            <button className="w-100 btn btn-primary" type="submit" onClick={handleSubmit}>
+            <button
+              className="w-100 btn btn-primary"
+              type="submit"
+              onClick={handleSubmit}
+            >
               <i className="bi bi-box-arrow-in-left me-2"></i>
               Login
             </button>

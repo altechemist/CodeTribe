@@ -8,8 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 function Register() {
   // Registration variables
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<number | string>("");
+
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.user);
@@ -28,7 +31,7 @@ function Register() {
     }
 
     setLoading(true);
-    dispatch(register(email, password));
+    dispatch(register(email, password, name, phoneNumber));
 
     // Reset loading state after registration
     setLoading(false);
@@ -78,6 +81,8 @@ function Register() {
                 id="NamesInput"
                 placeholder="Full Names"
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
@@ -106,6 +111,8 @@ function Register() {
                 id="phoneInput"
                 placeholder="Phone Number"
                 required
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </div>
 

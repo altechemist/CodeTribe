@@ -10,7 +10,7 @@ console.log("PayPal Client ID:", clientId);
 
 const initialOptions = {
   clientId: clientId,
-  currency: "ZAR",
+  currency: "USD",
   intent: "capture",
 };
 
@@ -35,6 +35,7 @@ export default function PayPalButtonComponent() {
     return actions
       .capture()
       .then(() => {
+        alert("Payment success!");
         setSuccess(true);
         setLoading(false);
       })
@@ -64,7 +65,7 @@ export default function PayPalButtonComponent() {
           }}
           onApprove={handleApprove}
           onCancel={() => setError("Payment was canceled.")}
-          onError={(err) => setError("An unexpected error occurred.")}
+         // onError={(err) => setError("An unexpected error occurred.")}
           style={{ layout: "vertical", fundingSource: "paypal" }}
           disabled={loading} // Disable button while loading
         />

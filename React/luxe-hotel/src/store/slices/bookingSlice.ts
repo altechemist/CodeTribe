@@ -13,6 +13,7 @@ export interface bookingState {
   checkOut: null | string;
   children: null | number;
   adults: null | number;
+  guests: null | number;
   subtotal: number,
 }
 
@@ -26,6 +27,7 @@ const initialState: bookingState = {
   checkOut: null,
   children: 0,
   adults: 0,
+  guests: 0,  // Total guests (adults + children)
   subtotal: 0,
 };
 
@@ -67,6 +69,9 @@ export const bookingSlice = createSlice({
     setSubtotal(state, action) {
       state.subtotal = action.payload;
     },
+    setGuests(state, action) {
+      state.guests = action.payload;
+    },
     
   },
 });
@@ -85,6 +90,6 @@ export const fetchData = () => async (dispatch: AppDispatch) => {
 
 
 // Action creators are generated for each case reducer function
-export const { setLoading, setData, setError, setSelectedRoom, setDuration, setCheckIn, setCheckOut, setAdults, setChildren, setSubtotal } = bookingSlice.actions;
+export const { setLoading, setData, setError, setSelectedRoom, setDuration, setCheckIn, setCheckOut, setAdults, setChildren, setGuests, setSubtotal } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

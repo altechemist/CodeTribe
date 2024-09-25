@@ -32,8 +32,8 @@ function Home() {
   useEffect(() => {
     dispatch(fetchData());
   }, [dispatch]);
+
   const roomList = useSelector((state) => state.db.data);
- 
   
   return (
     <div>

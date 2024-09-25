@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Heading from "../components/Heading";
 import ImageGrid from "../components/ImageGrid";
@@ -6,7 +6,7 @@ import ImageGrid from "../components/ImageGrid";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../store/slices/dbSlice";
-import { setAdults, setCheckIn, setCheckOut, setChildren, setDuration, setSubtotal } from "../store/slices/bookingSlice";
+import { setAdults, setCheckIn, setCheckOut, setChildren, setDuration, setGuests, setSubtotal } from "../store/slices/bookingSlice";
 import RoomSummary from "../components/RoomSummary";
 
 interface Room {
@@ -33,6 +33,7 @@ function Room() {
   const checkOut = useSelector((state) => state.booking.checkOut);
   const adults = useSelector((state) => state.booking.adults);
   const children = useSelector((state) => state.booking.children);
+  const guests = useSelector((state) => state.booking.guests);
   const room: Room = useSelector((state) => state.db.selectedRoom);
 
   // Calculate duration
@@ -51,7 +52,13 @@ function Room() {
         console.log("Invalid date");
       }
     }
-  }, [checkIn, checkOut,adults, children]);
+
+    if (adults >= 0 && children >= 0){
+      
+      dispatch(setGuests(parseInt(adults) + parseInt(children)));
+    }
+
+  }, [checkIn, checkOut, adults]);
  
   const handleView = (room: Room) => {
     // Set the room type in the URL query parameters
@@ -60,6 +67,8 @@ function Room() {
     // Navigate to room details page
     navigate(`/bookings`);
   };
+
+  
 
   return (
     <div className="container-fluid">
@@ -86,7 +95,9 @@ function Room() {
           <p>Calendar</p>
           <p>Check In: {checkIn}</p>
           <p>Check Out: {checkOut}</p>
+          <p>Guests: {guests} guests</p>
           <p>Duration: {days} Days</p>
+
           <p>
             <strong>Note:</strong> We are currently unavailable for this room.
             Please try another date.
