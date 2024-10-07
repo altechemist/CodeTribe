@@ -1,75 +1,70 @@
 import React, { useState, useEffect } from "react";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useSelector } from "react-redux";
 
-// Get the client ID from the environment variable
-const clientId = import.meta.env.VITE_SANDBOX_CLIENT_ID;
-
-// Log the client ID for debugging
-console.log("PayPal Client ID:", clientId);
-
-const initialOptions = {
-  clientId: clientId,
-  currency: "USD",
-  intent: "capture",
-};
-
-export default function PayPalButtonComponent() {
+const PayPalButtonComponent = () => {
   const subtotal = useSelector((state) => state.booking.subtotal);
   const [amount, setAmount] = useState("0.01");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  // Get subtotal from redux state
   useEffect(() => {
     if (subtotal) {
       setAmount(subtotal.toString());
     }
   }, [subtotal]);
 
-  const handleApprove = (data, actions) => {
-    setLoading(true);
-    setError(null); // Reset error
+  const onCreateOrder = (data, actions) => {
+    return actions.order.create({
+      purchase_units: [
+        {
+          amount: {
+            value: amount, // Use the dynamic amount from state
+          },
+        },
+      ],
+    });
+  };
 
-    return actions
+  const onApproveOrder = (data, actions) => {
+    setLoading(true);
+    return actions.order
       .capture()
-      .then(() => {
-        alert("Payment success!");
+      .then((details) => {
+        const name = details.payer.name.given_name;
+        alert(`Transaction completed by ${name}`);
         setSuccess(true);
-        setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Payment could not be processed. Please try again.");
+      })
+      .finally(() => {
         setLoading(false);
       });
   };
 
   return (
-    <PayPalScriptProvider options={initialOptions}>
-      <div>
+    <PayPalScriptProvider
+      options={{
+        "client-id": import.meta.env.VITE_SANDBOX_CLIENT_ID,
+        currency: "USD",
+      }}
+    >
+      <div className="checkout">
         {loading && <div>Loading...</div>}
         {error && <div style={{ color: "red" }}>{error}</div>}
         {success && <div>Payment successful!</div>}
         <PayPalButtons
-          createOrder={(data, actions) => {
-            return actions.order.create({
-              purchase_units: [
-                {
-                  amount: {
-                    value: amount, // Use the dynamic amount from state
-                  },
-                },
-              ],
-            });
-          }}
-          onApprove={handleApprove}
+          style={{ layout: "vertical" }}
+          createOrder={onCreateOrder}
+          onApprove={onApproveOrder}
           onCancel={() => setError("Payment was canceled.")}
-         // onError={(err) => setError("An unexpected error occurred.")}
-          style={{ layout: "vertical", fundingSource: "paypal" }}
-          disabled={loading} // Disable button while loading
+          onError={() => setError("An unexpected error occurred.")}
         />
       </div>
     </PayPalScriptProvider>
   );
-}
+};
+
+export default PayPalButtonComponent;

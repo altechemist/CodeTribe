@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, Container, Alert } from "react-bootstrap";
+import { Button, Table, Container, Alert, Modal } from "react-bootstrap";
 
+
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedRoom, updateRoom } from "../../store/slices/dbSlice";
+import { fetchData } from "../../store/slices/bookingSlice";
+
+
+import EditForm from "./EditForm";
+
+
+// Define the Room interface for type safety
 interface Room {
-  id: string; // This would typically be the Firestore document ID
+  id: string;
   amenities: string;
   bed: string;
   beds: number;
@@ -20,34 +30,39 @@ const ManageRooms: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [message, setMessage] = useState<string>("");
 
-  useEffect(() => {
-    // Fetch rooms from the database (replace with actual data fetching)
-    const fetchRooms = async () => {
-      // Example fetch (replace with your database call)
-      const roomData = await fetch("/api/rooms"); // Replace with your API endpoint
-      const rooms = await roomData.json();
-      setRooms(rooms);
-    };
+  const [show, setShow] = useState(false);
 
-    fetchRooms();
-  }, []);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+
+  // Fetch data from firebase
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+
+  const roomList = useSelector((state) => state.booking.data);
+
+  console.log(roomList);
+
 
   const handleDelete = async (id: string) => {
     // Logic to delete the room (replace with your database call)
-    await fetch(`/api/rooms/${id}`, { method: "DELETE" }); // Replace with your API endpoint
+    await fetch(`/api/rooms/${id}`, { method: "DELETE" });
     setRooms(rooms.filter((room) => room.id !== id));
     setMessage("Room deleted successfully!");
   };
 
-  const handleEdit = (id: string) => {
-    // Logic to navigate to the edit room page
-    // You can use react-router or similar for navigation
-    console.log("Edit room with ID:", id);
+  const handleEdit = (room: Room) => {
+    dispatch(setSelectedRoom(room));
+    handleShow();
   };
+
+  
 
   return (
     <Container className="mt-5">
-      <h2>Manage Rooms</h2>
       {message && <Alert variant="success">{message}</Alert>}
       <Table striped bordered hover>
         <thead>
@@ -63,7 +78,7 @@ const ManageRooms: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {rooms.map((room) => (
+          {roomList.map((room) => (
             <tr key={room.id}>
               <td>{room.id}</td>
               <td>{room.amenities}</td>
@@ -71,23 +86,40 @@ const ManageRooms: React.FC = () => {
               <td>{room.beds}</td>
               <td>{room.description}</td>
               <td>{room.guests}</td>
-              <td>${room.price}</td>
+              <td>{room.price}</td>
               <td>
-                <Button variant="warning" onClick={() => handleEdit(room.id)}>
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleDelete(room.id)}
-                  className="ms-2"
-                >
-                  Delete
-                </Button>
+                <div className="btn-group">
+                  <Button variant="warning" onClick={() => handleEdit(room)}>
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(room.id)}
+                    className="ms-2"
+                  >
+                    Delete
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+ 
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Room Information</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <EditForm />
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };

@@ -1,25 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Container, Row, Col, Alert } from "react-bootstrap";
 
-import { useDispatch } from "react-redux";
-import { addRoom } from "../../store/slices/dbSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchData, updateRoom } from "../../store/slices/dbSlice";
 
-const RoomForm: React.FC = () => {
+const EditForm: React.FC = () => {
   const dispatch = useDispatch();
+  const room = useSelector((state) => state.db.selectedRoom);
 
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [room, dispatch]);
+
+  // Initialize form data with current room details
   const [formData, setFormData] = useState({
-    amenities: "",
-    bed: "",
-    beds: 1,
-    description: "",
-    guests: 1,
-    image: "",
-    images: [""],
-    price: 0,
-    size: 0,
-    sofa: "",
-    type: "",
-    rooms: 1,
+    amenities: room.amenities,
+    bed: room.bed,
+    beds: room.beds,
+    description: room.description,
+    guests: room.guests,
+    image: room.image,
+    images: room.images,
+    price: room.price,
+    size: room.size,
+    sofa: room.sofa,
+    type: room.type,
+    rooms: room.totalRooms,
   });
 
   const [message, setMessage] = useState("");
@@ -43,7 +49,7 @@ const RoomForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Logic to handle form submission, e.g., send data to the backend
-    dispatch(addRoom(formData));
+    dispatch(updateRoom(room.id, formData));
 
     // Reset form fields after successful submission
     setFormData({
@@ -62,16 +68,15 @@ const RoomForm: React.FC = () => {
     });
     setMessage("");
 
-    console.log("Room Data Submitted:", formData);
-    setMessage("Room information added successfully!");
+    console.log("Room Data Updated:", formData);
+    setMessage("Room information updated successfully!");
   };
 
   return (
     <Container className="mt-5">
       {message && <Alert variant="success">{message}</Alert>}
       <Form onSubmit={handleSubmit}>
-    
-      <Form.Group controlId="formType">
+        <Form.Group controlId="formType">
           <Form.Label>Room Type</Form.Label>
           <Form.Control
             type="text"
@@ -214,11 +219,11 @@ const RoomForm: React.FC = () => {
         </Form.Group>
 
         <Button variant="primary mt-2" type="submit">
-          Add Room
+          Update Room
         </Button>
       </Form>
     </Container>
   );
 };
 
-export default RoomForm;
+export default EditForm;

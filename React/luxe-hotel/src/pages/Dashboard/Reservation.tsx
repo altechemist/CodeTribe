@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Container, Alert, Form } from 'react-bootstrap';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchData, fetchReservations } from '../../store/slices/bookingSlice';
 
 interface Reservation {
   id: string; // Firestore document ID
@@ -30,12 +32,20 @@ const Reservations: React.FC = () => {
     guests: 1,
   });
 
+  const dispatch = useDispatch();
+
+  // Featch reservation data
   useEffect(() => {
-    const fetchReservations = async () => {
-      const response = await fetch('/api/reservations'); // Replace with your API endpoint
-      const data = await response.json();
-      setReservations(data);
-    };
+    dispatch(fetchReservations());
+    dispatch(fetchData());
+  }, [dispatch]);
+
+  const reservationsList = useSelector((state) => state.booking.reservations);
+  const roomList = useSelector((state) => state.db.data);
+  
+
+useEffect(() => {
+    
 
     const fetchRooms = async () => {
       const response = await fetch('/api/rooms'); // Replace with your API endpoint
@@ -187,25 +197,29 @@ const Reservations: React.FC = () => {
             <th>Check-In Date</th>
             <th>Check-Out Date</th>
             <th>Guests</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {reservations.map(reservation => (
+          {reservationsList.map(reservation => (
             <tr key={reservation.id}>
               <td>{reservation.id}</td>
-              <td>{reservation.guestName}</td>
+              <td>{reservation.fullname}</td>
               <td>{reservation.roomType}</td>
-              <td>{reservation.checkInDate}</td>
-              <td>{reservation.checkOutDate}</td>
+              <td>{reservation.checkIn}</td>
+              <td>{reservation.checkOut}</td>
               <td>{reservation.guests}</td>
+              <td>{reservation.status ? "Confirmed" : "Pending"}</td>
               <td>
-                <Button variant="warning" onClick={() => handleEdit(reservation)}>
-                  Edit
-                </Button>
-                <Button variant="danger" onClick={() => handleDelete(reservation.id)} className="ms-2">
-                  Delete
-                </Button>
+                <div className='btn-group'>
+                  <Button variant="warning" onClick={() => handleEdit(reservation)}>
+                    Edit
+                  </Button>
+                  <Button variant="danger" onClick={() => handleDelete(reservation.id)} className="ms-2">
+                    Delete
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}
