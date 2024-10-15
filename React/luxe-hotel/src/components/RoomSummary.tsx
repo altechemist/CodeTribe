@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../store/slices/dbSlice";
-import Subheading from "./Subheading";
+import Heading from "./Heading";
 
+// Define the Room interface
 interface Room {
   id: string;
   bed: string;
@@ -18,16 +19,22 @@ interface Room {
   type: string;
 }
 
+// Define the shape of your Redux state
+interface RootState {
+  db: {
+    selectedRoom: Room;
+  };
+}
+
 export default function RoomSummary() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const room: Room = useSelector((state) => state.db.selectedRoom);
+  // Use the RootState type for the state
+  const room: Room = useSelector((state: RootState) => state.db.selectedRoom);
   
   const handleView = (room: Room) => {
-    // Set the room type in the URL query parameters
     dispatch(setSelectedRoom(room));
-    // Navigate to room details page
     navigate(`/room#CheckAvailability`);
   }
 
@@ -39,12 +46,12 @@ export default function RoomSummary() {
           <img
             src={room.image}
             className="card-img-top img-fluid rounded-3"
-            alt="..."
+            alt="Room"
           />
         </div>
         <div className="col align-content-center justify-content-end">
+        <Heading title={room.type} />
           <div className="card-body">
-            <Subheading title={room.type} />
             <p className="card-text">{room.description}</p>
             <p className="card-text">{room.amenities}</p>
             <div className="d-inline-flex gap-2">
@@ -65,7 +72,6 @@ export default function RoomSummary() {
               </button>
             </div>
             <h2 className="display-6 fw-bold text-center">R{room.price}</h2>
-            
           </div>
           <div className="d-inline-flex gap-2 mt-4">
             <button className="btn btn-primary">
@@ -74,7 +80,9 @@ export default function RoomSummary() {
             <button className="btn btn-primary">
               <i className="bi bi-heart-fill"></i>
             </button>
-            <button onClick={() => handleView(room)} className="btn btn-primary">Check Availability</button>
+            <button onClick={() => handleView(room)} className="btn btn-primary">
+              Check Availability
+            </button>
           </div>
         </div>
       </div>

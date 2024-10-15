@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
 import Footer from "../components/Footer";
 import Heading from "../components/Heading";
 import ImageGrid from "../components/ImageGrid";
@@ -6,7 +6,15 @@ import ImageGrid from "../components/ImageGrid";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../store/slices/dbSlice";
-import { setAdults, setCheckIn, setCheckOut, setChildren, setDuration, setGuests, setSubtotal } from "../store/slices/bookingSlice";
+import {
+  setAdults,
+  setCheckIn,
+  setCheckOut,
+  setChildren,
+  setDuration,
+  setGuests,
+  setSubtotal,
+} from "../store/slices/bookingSlice";
 import RoomSummary from "../components/RoomSummary";
 
 interface Room {
@@ -36,7 +44,6 @@ function Room() {
   const guests = useSelector((state) => state.booking.guests);
   const room: Room = useSelector((state) => state.db.selectedRoom);
 
-  // Calculate duration
   useEffect(() => {
     if (checkIn && checkOut) {
       const checkInDate = new Date(checkIn);
@@ -48,56 +55,53 @@ function Room() {
         if (days >= 0) {
           dispatch(setDuration(days));
         }
-      } else {
-        console.log("Invalid date");
       }
     }
 
-    if (adults >= 0 && children >= 0){
-      
+    if (adults >= 0 && children >= 0) {
       dispatch(setGuests(parseInt(adults) + parseInt(children)));
     }
+  }, [checkIn, checkOut, adults, children]);
 
-  }, [checkIn, checkOut, adults]);
- 
   const handleView = (room: Room) => {
-    // Set the room type in the URL query parameters
     dispatch(setSelectedRoom(room));
-    dispatch(setSubtotal((room.price * days).toFixed(2)))
-    // Navigate to room details page
+    dispatch(setSubtotal((room.price * days).toFixed(2)));
     navigate(`/bookings`);
   };
 
-  
+  const handleCheckInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = e.target.value;
+    dispatch(setCheckIn(selectedDate));
+
+    // If check-out is before check-in, reset it
+    if (checkOut && new Date(selectedDate) > new Date(checkOut)) {
+      dispatch(setCheckOut("")); // Reset check-out date
+    }
+  };
+
+  const handleCheckOutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = e.target.value;
+    dispatch(setCheckOut(selectedDate));
+  };
 
   return (
     <div className="container-fluid">
-      <div id="intro">
-        <Heading title={room.type} />
-      </div>
 
-      {/* Room Card */}
       <RoomSummary />
-
-      {/* Room Images */}
       <ImageGrid />
 
-      {/* Check Availability */}
       <Heading title="Check Availability" />
 
       <div
-        className="d-flex container-fluid row rounded-3 p-1 gap-1 mb-4 align-items-center text-center"
+        className="d-flex flex-row align-items-center justify-content-evenly mb-4"
         id="CheckAvailability"
       >
-        <div className="col">
-          <h3 className="display-7 fw-bold text-center">Available Dates</h3>
-
-          <p>Calendar</p>
+        <div className="col-4 text-center mb-4">
+          <h3 className="display-7 fw-bold">Available Dates</h3>
           <p>Check In: {checkIn}</p>
           <p>Check Out: {checkOut}</p>
           <p>Guests: {guests} guests</p>
           <p>Duration: {days} Days</p>
-
           <p>
             <strong>Note:</strong> We are currently unavailable for this room.
             Please try another date.
@@ -107,11 +111,10 @@ function Room() {
           </button>
         </div>
 
-        <div className="col">
-          <h3 className="display-7 fw-bold text-center">Choose Dates</h3>
-
-          <div className="col gap-2">
-            <div className="col mb-3">
+        <div className="col-4 text-center mb-4">
+          <h3 className="display-7 fw-bold">Choose Dates</h3>
+          <div className="row g-3 mb-3 justify-content-center">
+            <div className="col-md-6">
               <label htmlFor="checkIn" className="form-label">
                 Check In
               </label>
@@ -119,12 +122,12 @@ function Room() {
                 type="date"
                 className="form-control"
                 id="checkIn"
-                placeholder="Example input placeholder"
                 value={checkIn}
-                onChange={(e) => dispatch(setCheckIn(e.target.value))}
+                onChange={handleCheckInChange}
+                min={new Date().toISOString().split("T")[0]} // Disable past dates
               />
             </div>
-            <div className="col mb-3">
+            <div className="col-md-6">
               <label htmlFor="checkOut" className="form-label">
                 Check Out
               </label>
@@ -132,13 +135,20 @@ function Room() {
                 type="date"
                 className="form-control"
                 id="checkOut"
-                placeholder="Another input placeholder"
                 value={checkOut}
-                onChange={(e) => dispatch(setCheckOut(e.target.value))}
+                onChange={handleCheckOutChange}
+                min={
+                  checkIn
+                    ? new Date(checkIn).toISOString().split("T")[0]
+                    : new Date().toISOString().split("T")[0]
+                } // Disable past and invalid dates
               />
             </div>
-            <div className="col mb-3">
-              <label htmlFor="checkOut" className="form-label">
+          </div>
+
+          <div className="row g-3 mb-3 justify-content-center">
+            <div className="col-md-6">
+              <label htmlFor="children" className="form-label">
                 Children
               </label>
               <input
@@ -150,27 +160,27 @@ function Room() {
                 onChange={(e) => dispatch(setChildren(e.target.value))}
               />
             </div>
-            <div className="col mb-3">
-              <label htmlFor="checkOut" className="form-label">
-                Adults
-              </label>
-              <input
-                type="number"
-                className="form-control"
-                id="adults"
-                placeholder="0"
-                value={adults}
-                onChange={(e) => dispatch(setAdults(e.target.value))}
-              />
-            </div>
-            <div className="d-flex justify-content-center">
-              <button className="btn btn-primary">Search</button>
-            </div>
+            <div className="col-md-6">
+            <label htmlFor="adults" className="form-label">
+              Adults
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="adults"
+              placeholder="0"
+              value={adults}
+              onChange={(e) => dispatch(setAdults(e.target.value))}
+            />
+          </div>
+          </div>
+
+          <div className="d-flex justify-content-center">
+            <button className="btn btn-primary">Search</button>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

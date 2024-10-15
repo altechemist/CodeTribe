@@ -96,9 +96,12 @@ hr {
   height: 50% !important;
 }
 
-.slider img {
-  width: 50% !important;
+.slider .text-center {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  padding: 20px;
+  border-radius: 10px;
 }
+
 
 .recommendations {
   flex-wrap: nowrap;

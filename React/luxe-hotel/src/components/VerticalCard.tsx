@@ -24,13 +24,12 @@ interface CardProps {
 const VerticalCard: React.FC<CardProps> = ({ room }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
+  // Navigate to room details page
   const handleView = (room: Room) => {
-    // Set the room type in the URL query parameters
     dispatch(setSelectedRoom(room));
-    // Navigate to room details page
-    navigate(`room#intro`);
-  }
+    navigate(`/room/#intro`);
+  };
 
   return (
     <div>
@@ -40,10 +39,11 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
             <img
               className="card-img-top img-fluid card-image p-1 rounded-3"
               src={room.image}
+              alt={`Image of ${room.type}`}
             />
             <div className="card-body">
               <div className="d-flex justify-content-between">
-                <h4 className="px-0 p-0 ">{room.type}</h4>
+                <h4 className="px-0 p-0">{room.type}</h4>
                 <h4 className="fw-bold px-0 pb-0">R {room.price}</h4>
               </div>
               <hr />
@@ -58,7 +58,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
                     <i className="bi bi-fire me-2" />
                     <small className="text-nowrap">{room.beds} Bed(s)</small>
                   </li>
-                  <li className="d-flex align-items-center  me-1 border">
+                  <li className="d-flex align-items-center me-1 border">
                     <i className="bi bi-people-fill me-2" />
                     <small className="text-nowrap">{room.guests} Guests</small>
                   </li>
@@ -67,7 +67,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
               <div className="d-flex justify-content-end">
                 <button
                   onClick={() => handleView(room)}
-                  className="btn btn-outline-primary rounded-pill px-3"
+                  className="btn btn-primary rounded-pill px-3"
                 >
                   View
                 </button>
@@ -76,7 +76,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
           </div>
         </div>
       ) : (
-        <></>
+        <div className="text-center">Room information is not available.</div> // Fallback message
       )}
     </div>
   );
