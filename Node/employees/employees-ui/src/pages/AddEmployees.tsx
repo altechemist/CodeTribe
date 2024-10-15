@@ -2,29 +2,31 @@ import React, { useState } from "react";
 
 interface CreateEmployeeProps {
   AddEmployee: (
-    employeeID: string,
+    idNumber: string,
     firstName: string,
     lastName: string,
     eMailAddress: string,
     phoneNumber: string,
     position: string,
-    image: string
+    image: string,
+    id?: string
   ) => void;
   FormValidation: (
-    employeeID: string,
+    idNumber: string,
     firstName: string,
     lastName: string,
     eMailAddress: string,
     phoneNumber: string,
     position: string,
-    image: string
+    image: string,
+    id?: string
   ) => boolean;
   errorList: string[];
   isFormValid: boolean | null;
 }
 
 const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
-  const [employeeID, setemployeeID] = useState<string>("");
+  const [id, setId] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [eMailAddress, setEmailAddress] = useState<string>("");
@@ -46,7 +48,7 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Prevent default form submission
     const isFormValid = props.FormValidation(
-      employeeID,
+      id,
       firstName,
       lastName,
       eMailAddress,
@@ -57,7 +59,7 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
 
     if (isFormValid) {
       props.AddEmployee(
-        employeeID,
+        id,
         firstName,
         lastName,
         eMailAddress,
@@ -67,7 +69,7 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
       );
 
       // Clear fields after submission
-      setemployeeID("");
+      setId("");
       setFirstName("");
       setLastName("");
       setEmailAddress("");
@@ -113,8 +115,8 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
             className="form-control"
             id="empID"
             placeholder="101"
-            onChange={(event) => setemployeeID(event.target.value)}
-            value={employeeID}
+            onChange={(event) => setId(event.target.value)}
+            value={id}
             required
           />
         </div>

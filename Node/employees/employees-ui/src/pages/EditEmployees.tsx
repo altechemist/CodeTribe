@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 
 interface Employee {
-  employeeID: string;
+  idNumber: string;
   firstName: string;
   lastName: string;
   eMailAddress: string;
   phoneNumber: string;
   position: string;
-  image: string; 
+  image: string;
+  id?: string;
 }
 
 interface EditEmployeeProps {
   EmployeeData: Employee[];
   SelectedEmployee: Employee | null;
   FormValidation: (
-    employeeID: string,
+    id: string,
     firstName: string,
     lastName: string,
     eMailAddress: string,
@@ -23,22 +24,16 @@ interface EditEmployeeProps {
     image: File | null
   ) => boolean;
   UpdateEmployee: (
-    employeeID: string,
-    firstName: string,
-    lastName: string,
-    eMailAddress: string,
-    phoneNumber: string,
-    position: string,
-    image: File | null
-  ) => void;
+    updatedEmployee: Employee
+  ) => Promise<boolean>;
   
-  SelectEmployee: (empID: string | null) => void;
+  SelectEmployee: (empID: string) => void;
   errorList: string[];
-  isFormValid: boolean;
+  isFormValid: boolean | null;
 }
 
 const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
-  const [employeeID, setEmployeeID] = useState<string>("");
+  const [id, setId] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [eMailAddress, setEmailAddress] = useState<string>("");
@@ -49,7 +44,7 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
   // Load selected employee data into state
   useEffect(() => {
     if (props.SelectedEmployee) {
-      setEmployeeID(props.SelectedEmployee.employeeID);
+     
       setFirstName(props.SelectedEmployee.firstName);
       setLastName(props.SelectedEmployee.lastName);
       setEmailAddress(props.SelectedEmployee.eMailAddress);
@@ -61,14 +56,13 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
 
   // Cancel edit and clear form
   const CancelEdit = () => {
-    setEmployeeID("");
+    setId("");
     setFirstName("");
     setLastName("");
     setEmailAddress("");
     setPhoneNumber("");
     setPosition("");
     setImage(null);
-    props.SelectEmployee(null);
   };
 
   // Update employee data
@@ -76,7 +70,7 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
     event.preventDefault();
     
     const isFormValid = props.FormValidation(
-      employeeID,
+      id,
       firstName,
       lastName,
       eMailAddress,
@@ -85,15 +79,19 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
       image
     );
 
+    const employeeDetails = {
+      idNumber: id,
+      firstName,
+      lastName,
+      eMailAddress,
+      phoneNumber,
+      position,
+      image};
+      
+    // Update employee data in the database
     if (isFormValid) {
       props.UpdateEmployee(
-        employeeID,
-        firstName,
-        lastName,
-        eMailAddress,
-        phoneNumber,
-        position,
-        image
+        employeeDetails
       );
 
       // Clear fields after submission
@@ -109,11 +107,13 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
 
   return (
     <div id="Edit" className="container-sm">
+      
       <form
         className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg"
         onSubmit={UpdateEmployee}
       >
         <h3>Update Employee Information</h3>
+        <p>{props.SelectedEmployee.id}</p>
 
         {/* Display errors or success messages */}
         {props.errorList.length > 0 ? (

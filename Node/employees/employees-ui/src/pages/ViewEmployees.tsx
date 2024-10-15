@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 
 interface Employee {
-  employeeID: string;
+  idNumber: string;
   firstName: string;
   lastName: string;
   eMailAddress: string;
   phoneNumber: string;
   position: string;
   image: string;
+  id?: string;
 }
 
 interface ViewEmployeeProps {
   EmployeeData: Employee[];
-  RemoveEmployee: (empID: string) => void;
-  SelectEmployee: (empID: string) => void;
+  RemoveEmployee: (id: string) => void;
+  SelectEmployee: (id: string) => void;
   UpdatePage: () => void;
 }
 
@@ -22,18 +23,24 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Filter employees based on the search query
-  const filteredEmployees = props.EmployeeData.filter((employee) =>
-    employee.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+const filteredEmployees = props.EmployeeData.filter((employee) => {
+  const lowerCaseSearchQuery = searchQuery.toLowerCase();
+  return (
+    searchQuery && 
+    (employee.firstName.toLowerCase() === lowerCaseSearchQuery ||
+     employee.lastName.toLowerCase() === lowerCaseSearchQuery)
   );
+});
+
 
   // Remove employee by ID
-  const removeEmployee = (empID: string) => {
-    props.RemoveEmployee(empID);
+  const removeEmployee = (id: string) => {
+    props.RemoveEmployee(id);
   };
 
   // Edit employee by ID
-  const editEmployee = (empID: string) => {
-    props.SelectEmployee(empID);
+  const editEmployee = (id: string) => {
+    props.SelectEmployee(id);
     props.UpdatePage();
   };
 
@@ -58,7 +65,6 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                       id="searchID"
                       placeholder="Enter Employee First Name..."
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      required
                     />
                   </div>
                 </div>
@@ -82,8 +88,11 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredEmployees.map((empData) => (
-                    <tr key={empData.employeeID} className="align-middle">
+                  {(filteredEmployees.length > 0
+                    ? filteredEmployees
+                    : props.EmployeeData
+                  ).map((empData) => (
+                    <tr key={empData.id} className="align-middle">
                       <td>
                         <img
                           className="Thumbnail"
@@ -98,7 +107,7 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                       </td>
                       <td>{empData.firstName}</td>
                       <td>{empData.lastName}</td>
-                      <td>{empData.employeeID}</td>
+                      <td>{empData.idNumber}</td>
                       <td>{empData.eMailAddress}</td>
                       <td>{empData.phoneNumber}</td>
                       <td>{empData.position}</td>
@@ -106,14 +115,15 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                         <div className="btn-group" role="group">
                           <button
                             className="btn btn-secondary"
-                            onClick={() => editEmployee(empData.employeeID)}
+                            onClick={() => editEmployee(empData.id)}
+                            
                           >
                             <i className="bi bi-pencil me-2"></i>
                             Edit
                           </button>
                           <button
                             className="btn btn-danger"
-                            onClick={() => removeEmployee(empData.employeeID)}
+                            onClick={() => removeEmployee(empData.id)}
                           >
                             <i className="bi bi-trash me-2"></i>
                             Delete

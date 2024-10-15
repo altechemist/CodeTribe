@@ -4,7 +4,7 @@ import EditEmployees from "./pages/EditEmployees";
 import ViewEmployees from "./pages/ViewEmployees";
 import Home from "./pages/Home";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -20,7 +20,7 @@ interface Employee {
   phoneNumber: string;
   position: string;
   image: string;
-  employeeID?: string;
+  id?: string;
 }
 
 function App() {
@@ -36,16 +36,17 @@ function App() {
 
   // Employee CRUD operations
   const AddEmployee = async (
-    employeeID: string,
+    idNumber: string,
     firstName: string,
     lastName: string,
     eMailAddress: string,
     phoneNumber: string,
     position: string,
-    image: string
+    image: string,
+   // id?: string
   ) => {
     const newEmployee: Employee = {
-      idNumber: employeeID,
+      idNumber,
       firstName,
       lastName,
       eMailAddress,
@@ -53,13 +54,14 @@ function App() {
       position,
       image,
     };
-    
+
     try {
       const response = await axios.post(
         "http://localhost:3001/api/addEmployee",
         newEmployee
       );
-      setEmployeeData((prevData) => [...prevData, newEmployee]);
+      const allEmployees = response.data.employees;
+      setEmployeeData(() => [...allEmployees]);
       console.log(response);
       return true;
     } catch (error) {
@@ -68,26 +70,63 @@ function App() {
     }
   };
 
-  const RemoveEmployee = (employeeID: string) => {
-    setEmployeeData((prevData) =>
-      prevData.filter((employee) => employee.employeeID !== employeeID)
-    );
+  // Get employee data
+  const FetchEmployees = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/api/getAllEmployees"
+      );
+      console.log(response);
+      const allEmployees = response.data.employees;
+      setEmployeeData(() => [...allEmployees]);
+      console.log(allEmployees);
+      return true;
+    } catch (error) {
+      console.error("Error fetching employees: ", error);
+      return false;
+    }
   };
 
-  const UpdateEmployee = (updatedEmployee: Employee) => {
-    setEmployeeData((prevData) =>
-      prevData.map((employee) =>
-        employee.employeeID === updatedEmployee.employeeID
-          ? updatedEmployee
-          : employee
-      )
-    );
+  
+  // Remove employee
+  const RemoveEmployee = async (id: string) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3001/api/deleteEmployee/${id}/`,
+        { data: { id } }
+      );
+      console.log(response);
+      setEmployeeData((prevData) =>
+        prevData.filter((employee) => employee.id !== id)
+      );
+      return true;
+    } catch (error) {
+      console.error("Error deleting employee: ", error);
+      return false;
+    }
   };
 
-  const SelectEmployee = (employeeID: string) => {
-    const emp =
-      employeeData.find((employee) => employee.employeeID === employeeID) ||
-      null;
+  const UpdateEmployee = async (updatedEmployee: Employee) => {
+    try {
+    
+       const id = selectedEmployee.id
+
+      const response = await axios.put(
+        `http://localhost:3001/api/updateEmployee/${id}`,
+        { id, updates: updatedEmployee }
+      );
+
+      console.log(response);
+
+      return true;
+    } catch (error) {
+      console.error("Error updating employee: ", error);
+      return false;
+    }
+  };
+
+  const SelectEmployee = (id: string) => {
+    const emp = employeeData.find((employee) => employee.id === id) || null;
     setSelectedEmployee(emp);
   };
 
@@ -104,6 +143,11 @@ function App() {
     setVisibility(page);
     setCurrPage(page);
   };
+
+  // Reload collection on action
+  useEffect(() => {
+    FetchEmployees();
+  }, [employeeData, UpdateEmployee]);
 
   return (
     <div className="App">
