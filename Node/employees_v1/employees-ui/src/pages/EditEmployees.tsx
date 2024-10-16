@@ -7,15 +7,14 @@ interface Employee {
   eMailAddress: string;
   phoneNumber: string;
   position: string;
-  image: string;
+  image: File | null;
   id?: string;
 }
 
 interface EditEmployeeProps {
-  EmployeeData: Employee[];
   SelectedEmployee: Employee | null;
   FormValidation: (
-    id: string,
+    idNumber: string,
     firstName: string,
     lastName: string,
     eMailAddress: string,
@@ -24,10 +23,8 @@ interface EditEmployeeProps {
     image: File | null
   ) => boolean;
   UpdateEmployee: (
-    updatedEmployee: Employee
-  ) => Promise<boolean>;
-  
-  SelectEmployee: (empID: string) => void;
+    formData: FormData
+  ) => Promise<void>; // Update signature to accept FormData
   errorList: string[];
   isFormValid: boolean | null;
 }
@@ -39,22 +36,35 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
   const [eMailAddress, setEmailAddress] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [position, setPosition] = useState<string>("");
-  const [image, setImage] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  // Handle image files
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImageFile(file); // Store the file for upload
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Load selected employee data into state
   useEffect(() => {
     if (props.SelectedEmployee) {
-     
+      setId(props.SelectedEmployee.idNumber);
       setFirstName(props.SelectedEmployee.firstName);
       setLastName(props.SelectedEmployee.lastName);
       setEmailAddress(props.SelectedEmployee.eMailAddress);
       setPhoneNumber(props.SelectedEmployee.phoneNumber);
       setPosition(props.SelectedEmployee.position);
-      // Handle image loading if necessary
     }
   }, [props.SelectedEmployee]);
 
-  // Cancel edit and clear form
+  // Clear fields after submission
   const CancelEdit = () => {
     setId("");
     setFirstName("");
@@ -62,13 +72,14 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
     setEmailAddress("");
     setPhoneNumber("");
     setPosition("");
-    setImage(null);
+    setImagePreview("");
+    setImageFile(null);
   };
 
   // Update employee data
-  const UpdateEmployee = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     const isFormValid = props.FormValidation(
       id,
       firstName,
@@ -76,46 +87,40 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
       eMailAddress,
       phoneNumber,
       position,
-      image
+      imageFile
     );
 
-    const employeeDetails = {
-      idNumber: id,
-      firstName,
-      lastName,
-      eMailAddress,
-      phoneNumber,
-      position,
-      image};
-      
-    // Update employee data in the database
     if (isFormValid) {
-      props.UpdateEmployee(
-        employeeDetails
-      );
+      const formData = new FormData();
+      formData.append("idNumber", id);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("eMailAddress", eMailAddress);
+      formData.append("phoneNumber", phoneNumber);
+      formData.append("position", position);
+      if (imageFile) {
+        formData.append("imageFile", imageFile); // Append the image file if exists
+      }
 
-      // Clear fields after submission
-      CancelEdit();
+      try {
+        await props.UpdateEmployee(formData);
+        CancelEdit(); // Clear the form after successful update
+      } catch (error) {
+        console.error("Error updating employee:", error);
+        alert("Failed to update employee. Please try again.");
+      }
     }
   };
 
-  // Handle file upload
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    setImage(file);
-  };
-
   return (
-    <div id="Edit" className="container-sm">
-      
+    <div id="Edit" className="container-sm form">
       <form
         className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg"
-        onSubmit={UpdateEmployee}
+        onSubmit={handleSubmit}
       >
         <h3>Update Employee Information</h3>
-        <p>{props.SelectedEmployee.id}</p>
 
-        {/* Display errors or success messages */}
+        {/* Display error or success messages */}
         {props.errorList.length > 0 ? (
           <div className="mb-3 alert alert-danger">
             <h6>Whoops! There were some problems with your input</h6>
@@ -125,21 +130,22 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
               ))}
             </ul>
           </div>
-        ) : props.isFormValid ? (
-          <div className="mb-3 alert alert-success">
-            <h6>Employee Info Successfully Updated!</h6>
-          </div>
-        ) : null}
+        ) : (
+          props.isFormValid && (
+            <div className="mb-3 alert alert-success">
+              <h6>Employee Successfully Updated!</h6>
+            </div>
+          )
+        )}
 
         {/* Full Names Input */}
         <div className="mb-3">
-          <label htmlFor="fname" className="form-label">Full Names</label>
+          <label className="form-label">Full Names</label>
           <div className="row g-3 align-items-center">
             <div className="col-sm-6">
               <input
                 type="text"
                 className="form-control"
-                id="fname"
                 placeholder="First Name"
                 onChange={(event) => setFirstName(event.target.value)}
                 value={firstName}
@@ -150,7 +156,6 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
               <input
                 type="text"
                 className="form-control"
-                id="lname"
                 placeholder="Last Name"
                 onChange={(event) => setLastName(event.target.value)}
                 value={lastName}
@@ -162,7 +167,9 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
 
         {/* Email Address Input */}
         <div className="mb-3">
-          <label htmlFor="email" className="form-label">Email Address</label>
+          <label htmlFor="email" className="form-label">
+            Email Address
+          </label>
           <input
             type="email"
             className="form-control"
@@ -176,7 +183,9 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
 
         {/* Phone Number Input */}
         <div className="mb-3">
-          <label htmlFor="phone" className="form-label">Phone Number</label>
+          <label htmlFor="phone" className="form-label">
+            Phone Number
+          </label>
           <input
             type="text"
             className="form-control"
@@ -190,7 +199,9 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
 
         {/* Position Input */}
         <div className="mb-3">
-          <label htmlFor="position" className="form-label">Position</label>
+          <label htmlFor="position" className="form-label">
+            Position
+          </label>
           <input
             type="text"
             className="form-control"
@@ -202,19 +213,31 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
           />
         </div>
 
-        {/* Image Picker */}
+        {/* Image Upload Input */}
         <div className="mb-3">
-          <label htmlFor="formFile" className="form-label">Upload picture</label>
+          <label htmlFor="formFile" className="form-label">
+            Upload picture
+          </label>
           <input
             className="form-control"
             type="file"
             id="formFile"
-            onChange={handleFileChange}
+            accept="image/*"
+            onChange={handleImageUpload}
           />
         </div>
 
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="Image Preview"
+            style={{ width: "100px", height: "100px" }}
+          />
+        )}
+
+        {/* Submit Button */}
         <div className="text-end">
-          <button className="btn btn-success my-1" type="submit">
+          <button type="submit" className="btn btn-success my-1">
             <i className="bi bi-file-arrow-up me-2"></i>
             Update
           </button>

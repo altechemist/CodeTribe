@@ -8,7 +8,7 @@ interface CreateEmployeeProps {
     eMailAddress: string,
     phoneNumber: string,
     position: string,
-    image: string,
+    image: File | null,
     id?: string
   ) => void;
   FormValidation: (
@@ -18,7 +18,7 @@ interface CreateEmployeeProps {
     eMailAddress: string,
     phoneNumber: string,
     position: string,
-    image: string,
+    image: File | null,
     id?: string
   ) => boolean;
   errorList: string[];
@@ -32,11 +32,14 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
   const [eMailAddress, setEmailAddress] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [position, setPosition] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
 
+  // Handle image files
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setImageFile(file); // Store the file for upload
       const reader = new FileReader();
       reader.onload = () => {
         setImagePreview(reader.result as string);
@@ -45,8 +48,14 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent default form submission
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+  
+    if (!imageFile) {
+      alert("Please select an image.");
+      return;
+    }
+  
     const isFormValid = props.FormValidation(
       id,
       firstName,
@@ -54,30 +63,33 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
       eMailAddress,
       phoneNumber,
       position,
-      imagePreview
+      imageFile
     );
-
+  
     if (isFormValid) {
-      props.AddEmployee(
-        id,
-        firstName,
-        lastName,
-        eMailAddress,
-        phoneNumber,
-        position,
-        imagePreview
-      );
+    
+      try {
+        // Call the AddEmployee prop function
+        await props.AddEmployee(id, firstName, lastName, eMailAddress, phoneNumber, position, imageFile);
 
-      // Clear fields after submission
-      setId("");
-      setFirstName("");
-      setLastName("");
-      setEmailAddress("");
-      setPhoneNumber("");
-      setPosition("");
-      setImagePreview("");
+        // Clear fields after submission
+        setId("");
+        setFirstName("");
+        setLastName("");
+        setEmailAddress("");
+        setPhoneNumber("");
+        setPosition("");
+        setImagePreview("");
+        setImageFile(null);
+        
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to add employee. Please try again.");
+      }
     }
   };
+  
+  
 
   return (
     <div id="Add" className="container-sm form">
@@ -210,6 +222,14 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
             required
           />
         </div>
+
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="Image Preview"
+            style={{ width: "100px", height: "100px" }}
+          />
+        )}
 
         {/* Submit Button */}
         <div className="text-end">
