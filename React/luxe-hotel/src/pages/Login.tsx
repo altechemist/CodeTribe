@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Heading from "../components/Heading";
 
-import { login } from "../store/slices/authSlice";
+import { login, facebookLogin, googleLogin, twitterLogin } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Login() {
@@ -29,19 +29,40 @@ function Login() {
     setLoading(false);
   };
 
+  // Handle Google login
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    await dispatch(googleLogin());
+    setLoading(false);
+  };
+
+  // Handle Facebook login
+  const handleFacebookLogin = async () => {
+    setLoading(true);
+    await dispatch(facebookLogin());
+    setLoading(false);
+  };
+
+  // Handle Twitter login
+  const handleTwitterLogin = async () => {
+    setLoading(true);
+    await dispatch(twitterLogin());
+    setLoading(false);
+  };
+
   useEffect(() => {
     // Redirect to home page after successful login
     if (user) {
       // Check if user is admin
       if (user.role === 'admin') {
-        navigate("/dashboard"); // Redirect to admin dashboard
+        navigate("/dashboard");
       } else {
-        navigate("/"); // Redirect to home page
+        navigate("/");
       };
     }
 
     if (error) {
-      alert(error); // Display error message to the user
+      alert(error);
     }
   }, [user, error, navigate]);
 
@@ -119,13 +140,13 @@ function Login() {
             <div className="social-login my-3">
               <h5 className="text-center">Login with</h5>
               <div className="d-flex justify-content-around">
-                <a className="btn">
+                <a className="btn" onClick={handleFacebookLogin}>
                   <i className="bi bi-facebook"></i>
                 </a>
-                <a className="btn">
+                <a className="btn" onClick={handleGoogleLogin}>
                   <i className="bi bi-google"></i>
                 </a>
-                <a className="btn">
+                <a className="btn" onClick={handleTwitterLogin}>
                   <i className="bi bi-twitter-x"></i>
                 </a>
               </div>

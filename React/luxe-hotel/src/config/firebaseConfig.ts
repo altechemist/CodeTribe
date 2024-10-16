@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, FirebaseApp } from "firebase/app";
 import { getAnalytics, Analytics } from "firebase/analytics";
-import { getAuth, Auth } from "firebase/auth";
+import { getAuth, Auth, FacebookAuthProvider, TwitterAuthProvider, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
@@ -24,6 +24,11 @@ const app: FirebaseApp = initializeApp(firebaseConfig);
 export const analytics: Analytics = getAnalytics(app);
 export const auth: Auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Social logins
+export const facebookLogin = new FacebookAuthProvider();
+export const twitterLogin = new TwitterAuthProvider();
+export const googleLogin = new GoogleAuthProvider();
 
 
 export default app;
