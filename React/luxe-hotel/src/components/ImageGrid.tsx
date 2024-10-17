@@ -33,12 +33,14 @@ export default function ImageGrid() {
       <div className="col align-content-center">
         <div className="d-inline-flex gap-1">
           {room.images.map((img, index) => (
-            <img
-              key={index}
-              src={img || image}
-              className="card-img-top rounded-3"
-              alt={`Room image ${index + 1}`}
-            />
+            <div className="d-flex img-fluid col">
+              <img
+                key={index}
+                src={img || image}
+                className="card-img-top img-fluid rounded-3 shadow"
+                alt={`Room image ${index + 1}`}
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -1,6 +1,10 @@
+import DatePicker from "../../components/DatePicker";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setSelectedRoom } from "../store/slices/dbSlice";
+import { setSelectedRoom } from "../../store/slices/dbSlice";
+
+import roomImage from "../../assets/bedroom-2.jpg";
 
 interface Room {
   id: string;
@@ -21,7 +25,7 @@ interface CardProps {
   room: Room;
 }
 
-const VerticalCard: React.FC<CardProps> = ({ room }) => {
+const MyReservation: React.FC<CardProps> = ({ room }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -30,11 +34,14 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
     dispatch(setSelectedRoom(room));
     navigate(`/room/#intro`);
   };
-
   return (
-    <div>
-      {room ? (
-        <div className="col p-2">
+    <div className="d-flex justify-content-center">
+      <div className="col-sm-4 p-2">
+        <DatePicker />
+      </div>
+
+      <div>
+      <div className="col p-2">
           <div className="card shadow-sm border-3">
             <div style={{ position: "relative", display: "inline-block" }}>
               <div
@@ -52,10 +59,11 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
               </div>
               <img
                 className="card-img-top img-fluid card-image p-1 rounded-3"
-                src={room.image}
+                src={roomImage}
                 alt={`Image of ${room.type}`}
               />
             </div>
+
             <div className="card-body">
               <div className="d-flex justify-content-between">
                 <h4 className="px-0 p-0">{room.type}</h4>
@@ -90,11 +98,8 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="text-center">Room information is not available.</div> // Fallback message
-      )}
+      </div>
     </div>
   );
-};
-
-export default VerticalCard;
+}
+export default MyReservation;

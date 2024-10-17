@@ -64,6 +64,9 @@ export const register =
         phone: phoneNumber,
         email: user.email,
         role: "client", // Default role
+        favorites: [{}], // Empty list
+        reservations : [{}],
+
       });
 
       alert("User registered successfully!");
@@ -85,6 +88,7 @@ export const login =
         password
       );
       const user = userCredential.user;
+      
 
       // Fetch user role from Firestore
       const userDoc = await getDoc(doc(db, "Users", user.uid));
@@ -121,6 +125,20 @@ export const facebookLogin = () => async (dispatch: AppDispatch) => {
     // Get signed-in user info
     const user = result.user; 
 
+    // Use setDoc to create a document with the user's UID as the ID
+    await setDoc(doc(db, "Users", user.uid), {
+      uid: user.uid,
+      userName: user.email,
+      displayName: user.displayName,
+      phone: "",
+      email: user.email,
+      photoURL: user.photoURL,
+      role: "client", // Default role
+      favorites: [{}], // Empty list
+      reservations : [{}],
+    });
+    
+
     // Fetch user role from Firestore
     const userDoc = await getDoc(doc(db, "Users", user.uid));
     if (userDoc.exists()) {
@@ -129,6 +147,7 @@ export const facebookLogin = () => async (dispatch: AppDispatch) => {
 
       alert(`User signed in successfully! Role: ${role}`);
       console.log("User signed in successfully!", { ...user, role });
+      
 
       // Dispatch the user along with their role
       dispatch(setUser({ ...user, role }));
@@ -157,6 +176,19 @@ export const googleLogin = () => async (dispatch: AppDispatch) => {
     // The signed-in user info.
     const user = result.user;
 
+    // Use setDoc to create a document with the user's UID as the ID
+    await setDoc(doc(db, "Users", user.uid), {
+      uid: user.uid,
+      userName: user.email,
+      displayName: user.displayName,
+      phone: "",
+      email: user.email,
+      photoURL: user.photoURL,
+      role: "client", // Default role
+      favorites: [{}], // Empty list
+      reservations : [{}],
+    });
+
     // Fetch user role from Firestore
     const userDoc = await getDoc(doc(db, "Users", user.uid));
     if (userDoc.exists()) {
@@ -168,7 +200,9 @@ export const googleLogin = () => async (dispatch: AppDispatch) => {
 
       // Dispatch the user along with their role
       dispatch(setUser({ ...user, role }));
+      console.log("user: ", user);
     } else {
+      // Create new profile
       alert("User data not found. Please contact support.");
       console.error("No user data found in Firestore for UID:", user.uid);
       dispatch(setError("User data not found."));
@@ -177,6 +211,7 @@ export const googleLogin = () => async (dispatch: AppDispatch) => {
     handleAuthError(error, dispatch);
   }
 };
+
 
 // Twitter login
 export const twitterLogin = () => async (dispatch: AppDispatch) => {
@@ -213,6 +248,8 @@ export const twitterLogin = () => async (dispatch: AppDispatch) => {
   }
 };
 
+
+// Get user profile
 
 
 // User Friendly Error Handler

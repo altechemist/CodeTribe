@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setSelectedRoom } from "../store/slices/dbSlice";
+import { setSelectedRoom } from "../../store/slices/dbSlice";
 
 interface Room {
   id: string;
@@ -21,7 +21,7 @@ interface CardProps {
   room: Room;
 }
 
-const VerticalCard: React.FC<CardProps> = ({ room }) => {
+const Favorites: React.FC<CardProps> = ({ room }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -32,7 +32,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
   };
 
   return (
-    <div>
+    <div id="favorites">
       {room ? (
         <div className="col p-2">
           <div className="card shadow-sm border-3">
@@ -56,6 +56,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
                 alt={`Image of ${room.type}`}
               />
             </div>
+
             <div className="card-body">
               <div className="d-flex justify-content-between">
                 <h4 className="px-0 p-0">{room.type}</h4>
@@ -91,10 +92,10 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
           </div>
         </div>
       ) : (
-        <div className="text-center">Room information is not available.</div> // Fallback message
+        <div className="text-center">Favorite rooms not available.</div> // Fallback message
       )}
     </div>
   );
 };
 
-export default VerticalCard;
+export default Favorites;

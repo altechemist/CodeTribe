@@ -48,7 +48,7 @@ const ManageRooms: React.FC = () => {
 
 
   const handleDelete = async (id: string) => {
-    // Logic to delete the room (replace with your database call)
+    // Delete room
     await fetch(`/api/rooms/${id}`, { method: "DELETE" });
     setRooms(rooms.filter((room) => room.id !== id));
     setMessage("Room deleted successfully!");
@@ -67,7 +67,7 @@ const ManageRooms: React.FC = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Room Type</th>
             <th>Amenities</th>
             <th>Bed Type</th>
             <th>Number of Beds</th>
@@ -80,7 +80,7 @@ const ManageRooms: React.FC = () => {
         <tbody>
           {roomList.map((room) => (
             <tr key={room.id}>
-              <td>{room.id}</td>
+              <td>{room.type}</td>
               <td>{room.amenities}</td>
               <td>{room.bed}</td>
               <td>{room.beds}</td>

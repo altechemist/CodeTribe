@@ -18,9 +18,27 @@ import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
 import Admin from "./pages/Dashboard/Admin";
 import Reservation from "./pages/Dashboard/Reservation";
+import Account from "./pages/Profile/Account";
+import Favorites from "./pages/Profile/Favorites";
+import MyReservation from "./pages/Profile/MyReservation";
 
+interface Room {
+  id: string;
+  bed: string;
+  size: number;
+  amenities: string;
+  beds: number;
+  description: string;
+  guests: number;
+  image: string;
+  images: string[];
+  price: number;
+  sofa: string;
+  type: string;
+}
 
 function App() {
+
   return (
     <Router>
       <Navbar />
@@ -42,6 +60,10 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/dashboard" element={<Admin />} />
         <Route path="/dashboard/reservations" element={<Reservation />} />
+        <Route path="/profile/account" element={ <Account /> } />
+        <Route path="/profile/reservations" element={ <MyReservation /> } />
+        <Route path="/profile/favorites" element={ <Profile/> } />
+
       </Routes>
     </Router>
   );

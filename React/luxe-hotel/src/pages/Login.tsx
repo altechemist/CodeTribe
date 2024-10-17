@@ -23,6 +23,7 @@ function Login() {
   // Handle form submission
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    
     // Attempt to login
     setLoading(true);
     dispatch(login(email, password));

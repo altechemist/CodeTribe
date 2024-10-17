@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../store/slices/dbSlice";
-import Heading from "./Heading";
+import Subheading from "./Subheading";
 
 // Define the Room interface
 interface Room {
@@ -45,12 +45,12 @@ export default function RoomSummary() {
         <div className="d-flex img-fluid col">
           <img
             src={room.image}
-            className="card-img-top img-fluid rounded-3"
+            className="card-img-top img-fluid rounded-3 shadow"
             alt="Room"
           />
         </div>
         <div className="col align-content-center justify-content-end">
-        <Heading title={room.type} />
+        <Subheading title={room.type} />
           <div className="card-body">
             <p className="card-text">{room.description}</p>
             <p className="card-text">{room.amenities}</p>
@@ -74,12 +74,14 @@ export default function RoomSummary() {
             <h2 className="display-6 fw-bold text-center">R{room.price}</h2>
           </div>
           <div className="d-inline-flex gap-2 mt-4">
-            <button className="btn btn-primary">
-              <i className="bi bi-share"></i>
-            </button>
-            <button className="btn btn-primary">
-              <i className="bi bi-heart-fill"></i>
-            </button>
+            <div className="btn-group gap-1">
+              <button className="btn btn-primary">
+                <i className="bi bi-share"></i>
+              </button>
+              <button className="btn btn-primary">
+                <i className="bi bi-heart-fill"></i>
+              </button>
+            </div>
             <button onClick={() => handleView(room)} className="btn btn-primary">
               Check Availability
             </button>

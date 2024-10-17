@@ -9,7 +9,7 @@ function CustomNavbar() {
         bg="light"
         expand="lg"
         sticky="top"
-        className="bg-light d-flex align-items-center p-1"
+        className="bg-light d-flex align-items-center p-1 shadow"
       >
         <Link className="navbar-brand" to="/">
           <img
@@ -58,13 +58,13 @@ function CustomNavbar() {
                 id="profile-dropdown"
                 align="end"
               >
-                <NavDropdown.Item as={Link} to="#">
+                <NavDropdown.Item as={Link} to="/profile/#reservations">
                   My Bookings...
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="#">
+                <NavDropdown.Item as={Link} to="/profile/#favorites">
                   Favorites
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="#">
+                <NavDropdown.Item as={Link} to="/profile/#account">
                   Profile
                 </NavDropdown.Item>
                 <NavDropdown.Divider />

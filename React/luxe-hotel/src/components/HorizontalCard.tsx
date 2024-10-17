@@ -61,7 +61,7 @@ const HorizontalCard = () => {
       <div className="rounded-5 p-3 mb-3 mt-4 slider position-relative">
         <div className="d-flex justify-content-center align-items-center">
           <img
-            className="img-fluid d-block rounded-5"
+            className="img-fluid d-block rounded-5 shadow"
             src={currentAmenity.image}
             alt={currentAmenity.title}
             style={{ width: '80rem', height: '40rem', objectFit: 'cover' }}

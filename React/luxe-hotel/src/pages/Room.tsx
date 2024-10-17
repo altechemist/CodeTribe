@@ -16,6 +16,7 @@ import {
   setSubtotal,
 } from "../store/slices/bookingSlice";
 import RoomSummary from "../components/RoomSummary";
+import DatePicker from "../components/DatePicker";
 
 interface Room {
   id: string;
@@ -85,8 +86,7 @@ function Room() {
   };
 
   return (
-    <div className="container-fluid">
-
+    <div className="container-fluid mt-4">
       <RoomSummary />
       <ImageGrid />
 
@@ -98,6 +98,9 @@ function Room() {
       >
         <div className="col-4 text-center mb-4">
           <h3 className="display-7 fw-bold">Available Dates</h3>
+
+          <DatePicker />
+
           <p>Check In: {checkIn}</p>
           <p>Check Out: {checkOut}</p>
           <p>Guests: {guests} guests</p>
@@ -161,18 +164,18 @@ function Room() {
               />
             </div>
             <div className="col-md-6">
-            <label htmlFor="adults" className="form-label">
-              Adults
-            </label>
-            <input
-              type="number"
-              className="form-control"
-              id="adults"
-              placeholder="0"
-              value={adults}
-              onChange={(e) => dispatch(setAdults(e.target.value))}
-            />
-          </div>
+              <label htmlFor="adults" className="form-label">
+                Adults
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="adults"
+                placeholder="0"
+                value={adults}
+                onChange={(e) => dispatch(setAdults(e.target.value))}
+              />
+            </div>
           </div>
 
           <div className="d-flex justify-content-center">
