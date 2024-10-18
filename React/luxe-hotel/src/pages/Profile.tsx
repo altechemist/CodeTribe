@@ -1,8 +1,12 @@
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Heading from "../components/Heading";
 import Account from "./Profile/Account";
 import Favorites from "./Profile/Favorites";
 import MyReservation from "./Profile/MyReservation";
+import { useNavigate } from "react-router-dom";
+import VerticalCard from "../components/VerticalCard";
+import Subheading from "../components/Subheading";
 
 interface Room {
   id: string;
@@ -22,6 +26,7 @@ interface Room {
 function Profile() {
   const roomList = useSelector((state) => state.db.data);
   const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
 
   // Reserved room
   const room: Room = {
@@ -38,36 +43,97 @@ function Profile() {
     sofa: "Single",
     type: "Standard",
   };
+
+  // Filter rooms by favorites
+  const favoriteRooms = roomList.filter((room: Room) =>
+    user.favorites.includes(room.id)
+  );
+
+  // Redirect to login if no user is logged in
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  // State to manage the active tab
+  const [activeTab, setActiveTab] = useState("account");
+
   return (
-    
     <div>
-      {/* Account Details */}
-      <div className="container-fluid">
-        <Heading title="Account Details" />
-        <Account />
-      </div>
+      {user ? (
+        <div className="container-fluid">
+          <Heading title="Manage Account" />
+          <ul className="nav nav-pills profile-tabs gap-2">
+            <li className="nav-item">
+              <button
+                className={`btn btn-primary rounded-pill px-3 ${
+                  activeTab === "account" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("account")}
+              >
+                Account Details
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`btn btn-primary rounded-pill px-3 ${
+                  activeTab === "account" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("favorites")}
+              >
+                My Favorites
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`btn btn-primary rounded-pill px-3 ${
+                  activeTab === "account" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("reservations")}
+              >
+                My Reservations
+              </button>
+            </li>
+          </ul>
 
-      {/* Favorites */}
-      <div className="container-fluid">
-        <Heading title="My Favorites" />
-        <p className="text-center">View and manage your favorite rooms.</p>
-        {roomList.length > 0 && (
-          <div className="d-flex recommendations">
-            {roomList.map((room: Room) => (
-              <Favorites room={room} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Reservations */}
-      <div className="container-fluid">
-        <Heading title="My Reservations" />
-        <p className="text-center">
-          View and manage your hotel reservations here.
-        </p>
-        <MyReservation room={room} />
-      </div>
+          {/* Tab Content */}
+          {activeTab === "account" && (
+            <div>
+              <Subheading title="User Profile" />
+              <Account />
+            </div>
+          )}
+          {activeTab === "favorites" && (
+            <div>
+              <Subheading title="My Favorites" />
+              <p className="text-center">
+                View and manage your favorite rooms.
+              </p>
+              {roomList.length > 0 && (
+                <div className="d-flex recommendations">
+                  {favoriteRooms.map((room: Room) => (
+                    <VerticalCard key={room.id} room={room} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {activeTab === "reservations" && (
+            <div>
+              <Subheading title="My Reservations" />
+              <p className="text-center">
+                View and manage your hotel reservations here.
+              </p>
+              <MyReservation room={room} />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          <p>Please log in</p>
+        </div>
+      )}
     </div>
   );
 }

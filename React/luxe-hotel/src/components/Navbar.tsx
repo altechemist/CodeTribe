@@ -1,8 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 function CustomNavbar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   return (
     <>
       <Navbar
@@ -68,7 +78,7 @@ function CustomNavbar() {
                   Profile
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item as={Link} to="#">
+                <NavDropdown.Item as={Link} to="#" onClick={handleLogout}>
                   Sign out
                 </NavDropdown.Item>
               </NavDropdown>

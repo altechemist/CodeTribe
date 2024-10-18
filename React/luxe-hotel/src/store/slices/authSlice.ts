@@ -7,13 +7,49 @@ import {
   FacebookAuthProvider,
   TwitterAuthProvider,
   GoogleAuthProvider,
+  signOut,
 } from "firebase/auth";
 import { auth, db } from "../../config/firebaseConfig";
 import { AppDispatch } from "../store";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, addDoc, collection, arrayRemove } from "firebase/firestore";
+
+// Define custom user type
+type inputValue = string | null;
+interface User {
+  uid: string;
+  userName: inputValue;
+  displayName: string;
+  phoneNumber: string;
+  email: inputValue;
+  photoURL: string;
+  role: string;
+  favorites: string[];
+  reservations: string[];
+  reviews: string[];
+}
+
+interface Room {
+  id: string;
+  bed: string;
+  size: number;
+  amenities: string;
+  beds: number;
+  description: string;
+  guests: number;
+  image: string;
+  images: string[];
+  price: number;
+  sofa: string;
+  type: string;
+}
+
+interface Review {
+  rating: number;
+  comment: string;
+}
 
 export interface AuthState {
-  user: null | object;
+  user: null | User;
   loading: boolean;
   error: null | string;
 }
@@ -24,17 +60,32 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const authSlice = createSlice({
+// Function to retrieve user from local storage
+const loadUserFromLocalStorage = (): User | null => {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+};
+
+const authSlice = createSlice({
   name: "auth",
-  initialState,
+  initialState: {
+    ...initialState,
+    user: loadUserFromLocalStorage(), // Check local storage on app load
+  },
   reducers: {
     setLoading(state) {
       state.loading = true;
       state.error = null;
     },
-    setUser(state, action: PayloadAction<object | null>) {
+    setUser(state, action: PayloadAction<User | null>) {
       state.user = action.payload;
       state.loading = false;
+      // Save user to localStorage
+      if (action.payload) {
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem("user");
+      }
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
@@ -43,128 +94,212 @@ export const authSlice = createSlice({
   },
 });
 
-// Async actions for user registration
-export const register =
-  (email: string, password: string, fullname: string, phoneNumber: string) =>
-  async (dispatch: AppDispatch) => {
-    dispatch(setLoading());
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      // Use setDoc to create a document with the user's UID as the ID
-      await setDoc(doc(db, "Users", user.uid), {
-        uid: user.uid,
-        userName: email,
-        displayName: fullname,
-        phone: phoneNumber,
-        email: user.email,
-        role: "client", // Default role
-        favorites: [{}], // Empty list
-        reservations : [{}],
-
-      });
-
-      alert("User registered successfully!");
-      console.log("User registered successfully!", user);
-      dispatch(setUser(user));
-    } catch (error) {
-      handleAuthError(error, dispatch);
-    }
-  };
-
-// Async actions for user login
-export const login =
-  (email: string, password: string) => async (dispatch: AppDispatch) => {
-    dispatch(setLoading());
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      
-
-      // Fetch user role from Firestore
-      const userDoc = await getDoc(doc(db, "Users", user.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const role = userData?.role;
-
-        alert(`User signed in successfully! Role: ${role}`);
-        console.log("User signed in successfully!", { ...user, role });
-
-        // Dispatch the user along with their role
-        dispatch(setUser({ ...user, role }));
-      } else {
-        alert("User data not found. Please contact support.");
-        console.error("No user data found in Firestore for UID:", user.uid);
-        dispatch(setError("User data not found."));
-      }
-    } catch (error) {
-      handleAuthError(error, dispatch);
-    }
-  };
-
-
-// Facebook login
-export const facebookLogin = () => async (dispatch: AppDispatch) => {
-  dispatch(setLoading());
-
-  const provider = new FacebookAuthProvider();
-
-  // Sign in with Facebook
+// Function to create a user profile in Firestore
+const createUserProfile = async (user: User) => {
   try {
-    const result = await signInWithPopup(auth, provider); 
-    
-    // Get signed-in user info
-    const user = result.user; 
-
-    // Use setDoc to create a document with the user's UID as the ID
     await setDoc(doc(db, "Users", user.uid), {
       uid: user.uid,
       userName: user.email,
-      displayName: user.displayName,
-      phone: "",
+      displayName: user.displayName || "",
+      phoneNumber: user.phoneNumber || "No number",
       email: user.email,
-      photoURL: user.photoURL,
+      photoURL: user.photoURL || "",
       role: "client", // Default role
-      favorites: [{}], // Empty list
-      reservations : [{}],
+      favorites: [],
+      reservations: [],
+      reviews: [],
     });
-    
+    console.log("User profile created successfully:", user.uid);
+  } catch (error) {
+    console.error("Error creating user profile:", error);
+  }
+};
 
-    // Fetch user role from Firestore
+// Register action
+export const register = (email: string, password: string, fullname: string, phoneNumber: string) => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await createUserProfile({
+      uid: user.uid,
+      userName: email,
+      displayName: fullname,
+      phoneNumber,
+      email: user.email,
+      photoURL: user.photoURL || "",
+      role: "client",
+      favorites: [],
+      reservations: [],
+      reviews: [],
+    });
+
+    alert("User registered successfully!");
+    dispatch(setUser({ ...user, role: "client" }));
+  } catch (error) {
+    handleAuthError(error, dispatch);
+  }
+};
+
+// Login action
+export const login = (email: string, password: string) => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
     const userDoc = await getDoc(doc(db, "Users", user.uid));
     if (userDoc.exists()) {
       const userData = userDoc.data();
       const role = userData?.role;
 
       alert(`User signed in successfully! Role: ${role}`);
-      console.log("User signed in successfully!", { ...user, role });
-      
-
-      // Dispatch the user along with their role
       dispatch(setUser({ ...user, role }));
     } else {
-      // Handle case where user data does not exist
       alert("User data not found. Please contact support.");
-      console.error("No user data found in Firestore for UID:", user.uid);
       dispatch(setError("User data not found."));
     }
   } catch (error) {
-    // Handle errors during sign-in
+    handleAuthError(error, dispatch);
+  }
+};
+
+// Like a room
+export const addToFavorites = (userId: string, roomId: Room) => async (dispatch: AppDispatch) => {
+  if (!userId || !roomId) {
+    console.error("User ID or room ID is undefined.");
+    return;
+  }
+  try {
+    // Reference to the user's document
+    const userRef = doc(db, "Users", userId); 
+    await updateDoc(userRef, {
+      favorites: arrayUnion(roomId), 
+    });
+
+    // Fetch the updated user data
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const updatedUserData = userDoc.data();
+      dispatch(setUser({ ...updatedUserData, uid: userId }));
+    }
+  } catch (error) {
+    console.error("Error adding to favorites:", error);
+    handleAuthError(error, dispatch);
+  }
+};
+
+// Remove liked room
+export const removeFavorite = (userId: string, roomId: string) => async (dispatch: AppDispatch) => {
+  if (!userId || !roomId) {
+    console.error("User ID or room ID is undefined.");
+    return;
+  }
+  try {
+    // Reference to the user's document
+    const userRef = doc(db, "Users", userId); 
+
+    // Remove the room ID from favorites
+    await updateDoc(userRef, {
+      favorites: arrayRemove(roomId), 
+    });
+
+    // Fetch the updated user data
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const updatedUserData = userDoc.data();
+      dispatch(setUser({ ...updatedUserData, uid: userId })); // Update Redux state
+    }
+  } catch (error) {
+    console.error("Error removing from favorites:", error);
+    handleAuthError(error, dispatch);
+  }
+};
+
+// Add review action
+export const addReview = (userId: string, reviewData: Review) => async (dispatch: AppDispatch) => {
+  try {
+    // Add the review to the Reviews collection
+    const reviewRef = await addDoc(collection(db, "Reviews"), {
+      ...reviewData,
+      userId,
+      createdAt: new Date(), // add timestamp
+    });
+
+    console.log("Review added with ID:", reviewRef.id);
+
+    // Update the user's reviews in their profile
+    const userRef = doc(db, "Users", userId);
+    
+    await updateDoc(userRef, {
+      reviews: arrayUnion(reviewRef.id),
+    });
+
+    // Fetch the updated user data
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const updatedUserData = userDoc.data();
+      dispatch(setUser({ ...updatedUserData, uid: userId }));
+    }
+  } catch (error) {
+    console.error("Error adding review:", error);
     handleAuthError(error, dispatch);
   }
 };
 
 
-// Google login
+// Logout action
+export const logout = () => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+  try {
+    await signOut(auth);
+    dispatch(setUser(null)); // Clear user data from Redux state
+    alert("User logged out successfully!");
+  } catch (error) {
+    handleAuthError(error, dispatch);
+  }
+};
+
+// Social login actions
+export const facebookLogin = () => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+
+  const provider = new FacebookAuthProvider();
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    await createUserProfile({
+      uid: user.uid,
+      userName: user.email,
+      displayName: user.displayName || "",
+      phoneNumber: "",
+      email: user.email,
+      photoURL: user.photoURL || "",
+      role: "client",
+      favorites: [],
+      reservations: [],
+      reviews: [],
+    });
+
+    const userDoc = await getDoc(doc(db, "Users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const role = userData?.role;
+
+      alert(`User signed in successfully! Role: ${role}`);
+      dispatch(setUser({ ...user, role }));
+    } else {
+      alert("User data not found. Please contact support.");
+      dispatch(setError("User data not found."));
+    }
+  } catch (error) {
+    handleAuthError(error, dispatch);
+  }
+};
+
 export const googleLogin = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading());
 
@@ -172,39 +307,30 @@ export const googleLogin = () => async (dispatch: AppDispatch) => {
 
   try {
     const result = await signInWithPopup(auth, provider);
-    
-    // The signed-in user info.
     const user = result.user;
 
-    // Use setDoc to create a document with the user's UID as the ID
-    await setDoc(doc(db, "Users", user.uid), {
+    await createUserProfile({
       uid: user.uid,
       userName: user.email,
-      displayName: user.displayName,
-      phone: "",
+      displayName: user.displayName || "",
+      phoneNumber: "",
       email: user.email,
-      photoURL: user.photoURL,
-      role: "client", // Default role
-      favorites: [{}], // Empty list
-      reservations : [{}],
+      photoURL: user.photoURL || "",
+      role: "client",
+      favorites: [],
+      reservations: [],
+      reviews: [],
     });
 
-    // Fetch user role from Firestore
     const userDoc = await getDoc(doc(db, "Users", user.uid));
     if (userDoc.exists()) {
       const userData = userDoc.data();
       const role = userData?.role;
 
       alert(`User signed in successfully! Role: ${role}`);
-      console.log("User signed in successfully!", { ...user, role });
-
-      // Dispatch the user along with their role
       dispatch(setUser({ ...user, role }));
-      console.log("user: ", user);
     } else {
-      // Create new profile
       alert("User data not found. Please contact support.");
-      console.error("No user data found in Firestore for UID:", user.uid);
       dispatch(setError("User data not found."));
     }
   } catch (error) {
@@ -212,47 +338,32 @@ export const googleLogin = () => async (dispatch: AppDispatch) => {
   }
 };
 
-
-// Twitter login
 export const twitterLogin = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading());
 
   const provider = new TwitterAuthProvider();
 
   try {
-    // Get signed-in user info
     const result = await signInWithPopup(auth, provider);
-    const user = result.user; 
+    const user = result.user;
 
-    // Fetch user role from Firestore
     const userDoc = await getDoc(doc(db, "Users", user.uid));
     if (userDoc.exists()) {
       const userData = userDoc.data();
       const role = userData?.role;
 
       alert(`User signed in successfully! Role: ${role}`);
-      console.log("User signed in successfully!", { ...user, role });
-
-      // Dispatch the user along with their role
       dispatch(setUser({ ...user, role }));
-      
     } else {
-      // Handle case where user data does not exist
       alert("User data not found. Please contact support.");
-      console.error("No user data found in Firestore for UID:", user.uid);
       dispatch(setError("User data not found."));
     }
   } catch (error) {
-    // Handle errors during sign-in
     handleAuthError(error, dispatch);
   }
 };
 
-
-// Get user profile
-
-
-// User Friendly Error Handler
+// User-Friendly Error Handler
 const handleAuthError = (error: any, dispatch: AppDispatch) => {
   const errorMessage = getUserFriendlyError(error.message);
   dispatch(setError(errorMessage));
@@ -273,17 +384,17 @@ const getUserFriendlyError = (error: string) => {
   }
 };
 
-export const resetPassword =
-  (email: string) => async (dispatch: AppDispatch) => {
-    dispatch(setLoading());
-    try {
-      await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent!");
-    } catch (error) {
-      const errorMessage = error.message;
-      dispatch(setError(errorMessage));
-    }
-  };
+// Reset password
+export const resetPassword = (email: string) => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset email sent!");
+  } catch (error) {
+    const errorMessage = error.message;
+    dispatch(setError(errorMessage));
+  }
+};
 
 export const { setLoading, setUser, setError } = authSlice.actions;
 

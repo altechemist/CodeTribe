@@ -20,7 +20,7 @@ export default function Account() {
             <p className="my-2">Email: {user.email}</p>
             <p className="my-2 mb-4">Phone: {user.phoneNumber}</p>
           </div>
-          <button className="btn btn-primary">Edit Profile</button>
+          <button  className="btn btn-primary rounded-pill px-3">Edit Profile</button>
         </div>
       </div>
     </div>

@@ -47,6 +47,16 @@ li {
   --bs-btn-disabled-border-color: var(--gray) !important;
 }
 
+/* Active state styles */
+.btn-primary:active,
+.btn-primary.active {
+  color: var(--bs-btn-active-color);
+  background-color: var(--bs-btn-active-bg);
+  border-color: var(--bs-btn-active-border-color);
+  box-shadow: var(--bs-btn-active-shadow);
+}
+
+
 input,
 .left-icon,
 .right-icon,
@@ -68,6 +78,10 @@ hr {
 .right-icon:hover {
   background-color: var(--gray);
   color: #ffffff;
+}
+
+.profile-tabs .nav-link {
+  background-color: var(--gray) !important;
 }
 
 .hero-banner {

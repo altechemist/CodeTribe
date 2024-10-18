@@ -5,7 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Heading from "../components/Heading";
 
-import { login, facebookLogin, googleLogin, twitterLogin } from "../store/slices/authSlice";
+import {
+  login,
+  facebookLogin,
+  googleLogin,
+  twitterLogin,
+} from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Login() {
@@ -23,7 +28,7 @@ function Login() {
   // Handle form submission
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    
+
     // Attempt to login
     setLoading(true);
     dispatch(login(email, password));
@@ -55,11 +60,11 @@ function Login() {
     // Redirect to home page after successful login
     if (user) {
       // Check if user is admin
-      if (user.role === 'admin') {
+      if (user.role === "admin") {
         navigate("/dashboard");
       } else {
         navigate("/");
-      };
+      }
     }
 
     if (error) {
@@ -83,12 +88,16 @@ function Login() {
           <h6 className="fw-bold text-center my-3">
             Hey, Good to see you again!
           </h6>
-          <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary">
-            {error && (
+          {error && (
               <div className="alert alert-danger" role="alert">
                 {error}
               </div>
             )}
+          <form
+            className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
+            onSubmit={handleSubmit}
+          >
+            
             <div className="input-group mb-3">
               <button className="btn left-icon" type="button">
                 <i className="bi bi-envelope"></i>
@@ -126,11 +135,7 @@ function Login() {
               <small className="text-body-secondary">Forgot Password?</small>
             </Link>
 
-            <button
-              className="w-100 btn btn-primary"
-              type="submit"
-              onClick={handleSubmit}
-            >
+            <button className="w-100 btn btn-primary" type="submit">
               <i className="bi bi-box-arrow-in-left me-2"></i>
               Login
             </button>

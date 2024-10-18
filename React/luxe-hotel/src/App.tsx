@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// import pages
+// Import pages
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -22,35 +22,18 @@ import Account from "./pages/Profile/Account";
 import Favorites from "./pages/Profile/Favorites";
 import MyReservation from "./pages/Profile/MyReservation";
 
-interface Room {
-  id: string;
-  bed: string;
-  size: number;
-  amenities: string;
-  beds: number;
-  description: string;
-  guests: number;
-  image: string;
-  images: string[];
-  price: number;
-  sofa: string;
-  type: string;
-}
-
 function App() {
-
   return (
     <Router>
       <Navbar />
-      {/*Implementing Routes for respective Path */}
+      {/* Implementing Routes for respective Path */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/rooms" element={<Rooms />} />
-        <Route path="/room" element={<Room />} />
+        <Route path="/room/:roomType" element={<Room />} />
         <Route path="/events" element={<Events />} />
         <Route path="/about" element={<About />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -60,12 +43,16 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/dashboard" element={<Admin />} />
         <Route path="/dashboard/reservations" element={<Reservation />} />
-        <Route path="/profile/account" element={ <Account /> } />
-        <Route path="/profile/reservations" element={ <MyReservation /> } />
-        <Route path="/profile/favorites" element={ <Profile/> } />
 
+        {/* Profile Routes */}
+        <Route path="/profile" element={<Profile />}>
+          <Route path="account" element={<Account />} />
+          <Route path="reservations" element={<MyReservation />} />
+          <Route path="favorites" element={<Favorites />} />
+        </Route>
       </Routes>
     </Router>
+    
   );
 }
 

@@ -1,6 +1,8 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../store/slices/dbSlice";
+import { useState, useEffect } from "react";
+import { addToFavorites, removeFavorite } from "../store/slices/authSlice";
 
 interface Room {
   id: string;
@@ -25,10 +27,48 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Get the logged-in user from Redux state
+  const user = useSelector((state) => state.auth.user);
+
+  // State to track if the room is liked
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isSharing, setSharing] = useState<boolean>(false);
+
+  // Check if the room is liked when the component mounts
+  useEffect(() => {
+    if (user && user.favorites) {
+      setIsLiked(user.favorites.includes(room.id));
+    }
+  }, [user, room.id]);
+
   // Navigate to room details page
+  const roomLink = `${window.location.origin}/room/${room.type}`;
   const handleView = (room: Room) => {
     dispatch(setSelectedRoom(room));
-    navigate(`/room/#intro`);
+    navigate(`/room/${room.type}`);
+  };
+
+   // Function to handle liking a room
+   const handleLike = (room: Room) => {
+    if (user) {
+      if (isLiked) {
+        // Optionally handle unliking here
+        dispatch(removeFavorite(user.uid, room.id));
+        alert("Unliked");
+      } else {
+        dispatch(addToFavorites(user.uid, room.id));
+        alert("Liked");
+      }
+      setIsLiked(!isLiked); // Toggle liked state
+    } else {
+      alert("Please log in");
+      navigate("/login");
+    }
+  };
+
+  // Function to toggle sharing options
+  const handleShareToggle = () => {
+    setSharing(!isSharing);
   };
 
   return (
@@ -37,18 +77,44 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
         <div className="col p-2">
           <div className="card shadow-sm border-3">
             <div style={{ position: "relative", display: "inline-block" }}>
-              <div
-                className="btn-group"
-                style={{ position: "absolute", top: "10px", right: "10px" }}
-              >
-                <button
-                  className="btn btn-primary bi bi-heart-fill"
-                  onClick={() => handleView(room)}
-                ></button>
-                <button
-                  className="btn btn-primary bi bi-share-fill"
-                  onClick={() => handleView(room)}
-                ></button>
+              <div style={{ position: "absolute", top: "10px", right: "10px" }}>
+                <div className="btn-group">
+                  <button
+                    className={`btn btn-primary bi ${isLiked ? "bi-heart-fill text-danger" : "bi-heart"}`}
+                    onClick={() => handleLike(room)}
+                  ></button>
+                  <button
+                    className="btn btn-primary bi bi-share-fill"
+                    onClick={handleShareToggle}
+                  ></button>
+                </div>
+
+                {/* Share functionality */}
+                {isSharing && (
+                  <div className="btn-group ms-1" style={{backgroundColor:"#2c2c2c"}}>
+                    <a
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${roomLink}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="btn bi bi-facebook text-light"></i>
+                    </a>
+                    <a
+                      href={`https://twitter.com/intent/tweet?url=${roomLink}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="btn bi bi-twitter-x text-light"></i>
+                    </a>
+                    <a
+                      href={`https://www.instagram.com/?url=${roomLink}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="btn bi bi-instagram text-light"></i>
+                    </a>
+                  </div>
+                )}
               </div>
               <img
                 className="card-img-top img-fluid card-image p-1 rounded-3"
@@ -91,7 +157,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
           </div>
         </div>
       ) : (
-        <div className="text-center">Room information is not available.</div> // Fallback message
+        <div className="text-center">Room information is not available.</div>
       )}
     </div>
   );

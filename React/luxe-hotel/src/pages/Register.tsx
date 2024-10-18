@@ -61,16 +61,16 @@ function Register() {
           <h6 className="fw-bold text-center my-3">
             Hello, Let's get started!
           </h6>
-          <form
-            className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
-            onSubmit={handleSubmit}
-          >
-            {error && (
+          {error && (
               <div className="alert alert-danger" role="alert">
                 {error}
               </div>
             )}
             
+          <form
+            className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
+            onSubmit={handleSubmit}
+          >
             <div className="input-group mb-3">
               <button className="btn left-icon" type="button">
                 <i className="bi bi-person"></i>
