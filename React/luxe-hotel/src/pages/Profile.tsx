@@ -64,7 +64,7 @@ function Profile() {
       {user ? (
         <div className="container-fluid">
           <Heading title="Manage Account" />
-          <ul className="nav nav-pills profile-tabs gap-2">
+          <ul className="nav nav-tabs d-flex justify-content-center gap-2">
             <li className="nav-item">
               <button
                 className={`btn btn-primary rounded-pill px-3 ${
@@ -75,20 +75,26 @@ function Profile() {
                 Account Details
               </button>
             </li>
+
+            <div className="vr my-1"></div>
+
             <li className="nav-item">
               <button
                 className={`btn btn-primary rounded-pill px-3 ${
-                  activeTab === "account" ? "active" : ""
+                  activeTab === "favorites" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("favorites")}
               >
                 My Favorites
               </button>
             </li>
+
+            <div className="vr my-1"></div>
+
             <li className="nav-item">
               <button
                 className={`btn btn-primary rounded-pill px-3 ${
-                  activeTab === "account" ? "active" : ""
+                  activeTab === "reservations" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("reservations")}
               >

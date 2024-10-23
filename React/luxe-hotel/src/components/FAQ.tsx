@@ -3,7 +3,7 @@ import Heading from "./Heading";
 export default function FAQ() {
   return (
     <div className="mb-3 mt-4 align-items-end">
-      <Heading title="Frequently Asked Questions" />
+      <Heading title="Common Questions" />
       <div className=" d-flex justify-content-center">
         <div className="accordion col-sm-7" id="accordionExample">
           <div className="accordion-item">
