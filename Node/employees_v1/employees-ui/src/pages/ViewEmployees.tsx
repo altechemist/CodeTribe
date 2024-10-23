@@ -23,15 +23,14 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Filter employees based on the search query
-const filteredEmployees = props.EmployeeData.filter((employee) => {
-  const lowerCaseSearchQuery = searchQuery.toLowerCase();
-  return (
-    searchQuery && 
-    (employee.firstName.toLowerCase() === lowerCaseSearchQuery ||
-     employee.lastName.toLowerCase() === lowerCaseSearchQuery)
-  );
-});
-
+  const filteredEmployees = props.EmployeeData.filter((employee) => {
+    const lowerCaseSearchQuery = searchQuery.toLowerCase();
+    return (
+      searchQuery &&
+      (employee.firstName.toLowerCase() === lowerCaseSearchQuery ||
+        employee.lastName.toLowerCase() === lowerCaseSearchQuery)
+    );
+  });
 
   // Remove employee by ID
   const removeEmployee = (id: string) => {
@@ -116,7 +115,6 @@ const filteredEmployees = props.EmployeeData.filter((employee) => {
                           <button
                             className="btn btn-secondary"
                             onClick={() => editEmployee(empData.id)}
-                            
                           >
                             <i className="bi bi-pencil me-2"></i>
                             Edit

@@ -82,7 +82,6 @@ function App() {
   };
 
   const UpdateEmployee = async (
-    idNumber: string,
     firstName: string,
     lastName: string,
     eMailAddress: string,
@@ -95,7 +94,6 @@ function App() {
   
     const formData = new FormData();
     formData.append("id", id);
-    formData.append("idNumber", idNumber);
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("eMailAddress", eMailAddress);

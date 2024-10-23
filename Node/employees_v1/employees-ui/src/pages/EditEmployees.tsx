@@ -23,8 +23,13 @@ interface EditEmployeeProps {
     image: File | null
   ) => boolean;
   UpdateEmployee: (
-    formData: FormData
-  ) => Promise<void>; // Update signature to accept FormData
+    firstName: string,
+    lastName: string,
+    eMailAddress: string,
+    phoneNumber: string,
+    position: string,
+    image: File | null,
+  ) => Promise<void>;
   errorList: string[];
   isFormValid: boolean | null;
 }
@@ -91,19 +96,9 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
     );
 
     if (isFormValid) {
-      const formData = new FormData();
-      formData.append("idNumber", id);
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("eMailAddress", eMailAddress);
-      formData.append("phoneNumber", phoneNumber);
-      formData.append("position", position);
-      if (imageFile) {
-        formData.append("imageFile", imageFile); // Append the image file if exists
-      }
-
+     
       try {
-        await props.UpdateEmployee(formData);
+        await props.UpdateEmployee(firstName, lastName, eMailAddress, phoneNumber, position, imageFile);
         CancelEdit(); // Clear the form after successful update
       } catch (error) {
         console.error("Error updating employee:", error);
