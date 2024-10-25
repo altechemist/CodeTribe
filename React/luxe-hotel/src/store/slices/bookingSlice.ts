@@ -1,9 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getDocs, collection, doc, deleteDoc, updateDoc, addDoc, } from 'firebase/firestore';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getDocs, collection, doc, deleteDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { AppDispatch } from '../store';
 
 interface Reservation {
+  id?: string;
   checkInDate: string;
   checkOutDate: string;
   guestName: string;
@@ -13,35 +14,60 @@ interface Reservation {
   status: boolean;
 }
 
-export interface bookingState {
-  data: [];
-  reservations: Reservation[];
-  bookingData: object;
-  loading: boolean;
-  error: null | string;
-  selectedRoom: [];
-  duration: number;
-  checkIn: null | string;
-  checkOut: null | string;
-  children: null | number;
-  adults: null | number;
-  guests: null | number;
-  subtotal: number,
+interface Room {
+  id: string;
+  amenities: string;
+  bed: string;
+  beds: number;
+  bookedRooms: number;
+  description: string;
+  guests: number;
+  image: string;
+  images: string[];
+  price: number;
+  size: number;
+  sofa: string;
+  totalRooms: number;
+  type: string;
 }
 
-const initialState: bookingState = {
+interface BookingData {
+  roomId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalGuests: number;
+  subtotal: number;
+}
+
+export interface BookingState {
+  data: Room[];
+  reservations: Reservation[];
+  bookingData: BookingData | null;
+  loading: boolean;
+  error: string | null;
+  selectedRoom: Room | null;
+  duration: number;
+  checkIn: string | null;
+  checkOut: string | null;
+  children: number;
+  adults: number;
+  guests: number;
+  subtotal: number;
+}
+
+const initialState: BookingState = {
   data: [],
   reservations: [],
-  bookingData: {},
+  bookingData: null,
   loading: false,
   error: null,
-  selectedRoom: [],
+  selectedRoom: null,
   duration: 0,
   checkIn: null,
   checkOut: null,
   children: 0,
   adults: 0,
-  guests: 0,  // Total guests (adults + children)
+  guests: 0,
   subtotal: 0,
 };
 
@@ -53,48 +79,47 @@ export const bookingSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    setData(state, action) {
+    setData(state, action: PayloadAction<Room[]>) {
       state.data = action.payload;
       state.loading = false;
     },
-    setBookingData(state, action) {
+    setBookingData(state, action: PayloadAction<BookingData | null>) {
       state.bookingData = action.payload;
       state.loading = false;
     },
-    setReservations(state, action) {
+    setReservations(state, action: PayloadAction<Reservation[]>) {
       state.reservations = action.payload;
       state.loading = false;
     },
-    setError(state, action) {
+    setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
       state.loading = false;
     },
-    setSelectedRoom(state, action) {
+    setSelectedRoom(state, action: PayloadAction<Room | null>) {
       state.selectedRoom = action.payload;
       state.loading = false;
     },
-    setDuration(state, action) {
+    setDuration(state, action: PayloadAction<number>) {
       state.duration = action.payload;
     },
-    setCheckIn(state, action) {
+    setCheckIn(state, action: PayloadAction<string | null>) {
       state.checkIn = action.payload;
     },
-    setCheckOut(state, action) {
+    setCheckOut(state, action: PayloadAction<string | null>) {
       state.checkOut = action.payload;
     },
-    setChildren(state, action) {
+    setChildren(state, action: PayloadAction<number>) {
       state.children = action.payload;
     },
-    setAdults(state, action) {
+    setAdults(state, action: PayloadAction<number>) {
       state.adults = action.payload;
     },
-    setSubtotal(state, action) {
+    setSubtotal(state, action: PayloadAction<number>) {
       state.subtotal = action.payload;
     },
-    setGuests(state, action) {
+    setGuests(state, action: PayloadAction<number>) {
       state.guests = action.payload;
     },
-    
   },
 });
 
@@ -104,10 +129,10 @@ export const fetchData = () => async (dispatch: AppDispatch) => {
 
   try {
     const querySnapshot = await getDocs(collection(db, 'Rooms'));
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const data: Room[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Room));
     dispatch(setData(data));
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred'));
+    dispatch(setError((error as Error).message || 'An error occurred while fetching rooms'));
   }
 };
 
@@ -116,10 +141,10 @@ export const fetchReservations = () => async (dispatch: AppDispatch) => {
 
   try {
     const querySnapshot = await getDocs(collection(db, 'Reservations'));
-    const data: Reservation[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reservation)); // Type assertion
+    const data: Reservation[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reservation));
     dispatch(setReservations(data));
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while fetching reservations'));
+    dispatch(setError((error as Error).message || 'An error occurred while fetching reservations'));
   }
 };
 
@@ -129,9 +154,10 @@ export const addReservation = (reservation: Reservation) => async (dispatch: App
 
   try {
     const docRef = await addDoc(collection(db, 'Reservations'), reservation);
-    dispatch(setReservations([...reservation, { id: docRef.id, ...reservation }])); // Update this line
+    const newReservation = { id: docRef.id, ...reservation };
+    dispatch(setReservations([...initialState.reservations, newReservation]));
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while adding the reservation'));
+    dispatch(setError((error as Error).message || 'An error occurred while adding the reservation'));
   }
 };
 
@@ -142,9 +168,9 @@ export const updateReservation = (reservationId: string, updates: Partial<Reserv
   try {
     const reservationRef = doc(db, 'Reservations', reservationId);
     await updateDoc(reservationRef, updates);
-    dispatch(setData({ id: reservationId, ...updates }));
+    dispatch(fetchReservations());
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while updating the reservation'));
+    dispatch(setError((error as Error).message || 'An error occurred while updating the reservation'));
   }
 };
 
@@ -155,16 +181,27 @@ export const deleteReservation = (reservationId: string) => async (dispatch: App
   try {
     const reservationRef = doc(db, 'Reservations', reservationId);
     await deleteDoc(reservationRef);
-    dispatch(setData({ id: reservationId, deleted: true }));
+    dispatch(fetchReservations());
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while deleting the reservation'));
+    dispatch(setError((error as Error).message || 'An error occurred while deleting the reservation'));
   }
 };
 
-
-
-
 // Action creators are generated for each case reducer function
-export const { setLoading, setData, setError, setSelectedRoom, setDuration, setCheckIn, setCheckOut, setAdults, setChildren, setGuests, setSubtotal, setReservations, setBookingData } = bookingSlice.actions;
+export const {
+  setLoading,
+  setData,
+  setError,
+  setSelectedRoom,
+  setDuration,
+  setCheckIn,
+  setCheckOut,
+  setAdults,
+  setChildren,
+  setGuests,
+  setSubtotal,
+  setReservations,
+  setBookingData,
+} = bookingSlice.actions;
 
 export default bookingSlice.reducer;

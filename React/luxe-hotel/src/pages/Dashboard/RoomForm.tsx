@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Container, Row, Col, Alert } from "react-bootstrap";
+import { Button, Form, Container, Alert } from "react-bootstrap";
 
 import { useDispatch } from "react-redux";
 import { addRoom } from "../../store/slices/dbSlice";

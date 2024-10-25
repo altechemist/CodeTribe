@@ -1,9 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getDocs, collection, deleteDoc, doc, updateDoc, addDoc, } from 'firebase/firestore';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getDocs, collection, deleteDoc, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { AppDispatch } from '../store';
 
 interface Room {
+  id?: string;
   amenities: string;
   bed: string;
   beds: number;
@@ -17,20 +18,32 @@ interface Room {
   sofa: string;
   totalRooms: number;
   type: string;
-} ;
-
-export interface dbState {
-  data: [];
-  loading: boolean;
-  error: null | string;
-  selectedRoom: [];
 }
 
+interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  userName: string;
+  userId: string;
+  userPhoto?: string;
+}
+
+export interface dbState {
+  data: Room[];
+  reviews: Review[];
+  loading: boolean;
+  error: string | null;
+  selectedRoom: Room | null;
+}
+
+// Initial state
 const initialState: dbState = {
   data: [],
+  reviews: [],
   loading: false,
   error: null,
-  selectedRoom: [],
+  selectedRoom: null,
 };
 
 export const dbSlice = createSlice({
@@ -41,45 +54,66 @@ export const dbSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    setData(state, action) {
+    setData(state, action: PayloadAction<Room[]>) {
       state.data = action.payload;
       state.loading = false;
     },
-    setError(state, action) {
+    setReviews(state, action: PayloadAction<Review[]>) {
+      state.reviews = action.payload;
+      state.loading = false;
+    },
+    setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
       state.loading = false;
     },
-    setSelectedRoom(state, action) {
+    setSelectedRoom(state, action: PayloadAction<Room | null>) {
       state.selectedRoom = action.payload;
       state.loading = false;
     },
   },
 });
 
+// Async actions
 export const fetchData = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading());
 
   try {
     const querySnapshot = await getDocs(collection(db, 'Rooms'));
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const data: Room[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Room));
     dispatch(setData(data));
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred'));
+    dispatch(setError((error as Error).message || 'An error occurred while fetching data'));
   }
 };
+
+// Fetch reviews
+export const fetchReviews = () => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+
+  try {
+    const querySnapshot = await getDocs(collection(db, 'Reviews'));
+    const reviews: Review[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Review));
+    console.log(reviews)
+    dispatch(setReviews(reviews));
+  } catch (error) {
+    console.error("Error fetching reviews:", error); // Log error for debugging
+    dispatch(setError((error as Error).message || 'An error occurred while fetching data'));
+  }
+};
+
 
 // Adds a new room
 export const addRoom = (room: Room) => async (dispatch: AppDispatch) => {
   dispatch(setLoading());
 
   try {
-    const docRef = await addDoc(collection(db, 'Rooms'), room);
-    dispatch(setData({ id: docRef.id, ...room }));
-    fetchData();
+    await addDoc(collection(db, 'Rooms'), room);
+    dispatch(fetchData());
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while adding the room'));
+    dispatch(setError((error as Error).message || 'An error occurred while adding the room'));
   }
 };
+
 
 // Updates room information
 export const updateRoom = (roomId: string, updates: Partial<Room>) => async (dispatch: AppDispatch) => {
@@ -88,10 +122,9 @@ export const updateRoom = (roomId: string, updates: Partial<Room>) => async (dis
   try {
     const roomRef = doc(db, 'Rooms', roomId);
     await updateDoc(roomRef, updates);
-    dispatch(setData({ id: roomId, ...updates }));
-    fetchData();
+    dispatch(fetchData());
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while updating the room'));
+    dispatch(setError((error as Error).message || 'An error occurred while updating the room'));
   }
 };
 
@@ -102,13 +135,13 @@ export const deleteRoom = (roomId: string) => async (dispatch: AppDispatch) => {
   try {
     const roomRef = doc(db, 'Rooms', roomId);
     await deleteDoc(roomRef);
-    dispatch(setData({ id: roomId, deleted: true }));
+    dispatch(fetchData()); // Fetch updated data after deletion
   } catch (error) {
-    dispatch(setError(error.message || 'An error occurred while deleting the room'));
+    dispatch(setError((error as Error).message || 'An error occurred while deleting the room'));
   }
 };
 
-// Action creators are generated for each case reducer function
-export const { setLoading, setData, setError, setSelectedRoom } = dbSlice.actions;
+// Action creators
+export const { setLoading, setData, setReviews, setError, setSelectedRoom } = dbSlice.actions;
 
 export default dbSlice.reducer;

@@ -41,6 +41,7 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
     }
   }, [user, room.id]);
 
+
   // Navigate to room details page
   const roomLink = `${window.location.origin}/room/${room.type}`;
   const handleView = (room: Room) => {
@@ -75,12 +76,12 @@ const VerticalCard: React.FC<CardProps> = ({ room }) => {
     <div>
       {room ? (
         <div className="col p-2">
-          <div className="card shadow-sm border-3">
+          <div className="card shadow border-3">
             <div style={{ position: "relative", display: "inline-block" }}>
               <div style={{ position: "absolute", top: "10px", right: "10px" }}>
                 <div className="btn-group">
                   <button
-                    className={`btn btn-primary bi ${isLiked ? "bi-heart-fill text-danger" : "bi-heart"}`}
+                    className={`btn btn-primary bi ${isLiked ? "bi-heart-fill text-danger" : "bi-heart-fill"}`}
                     onClick={() => handleLike(room)}
                   ></button>
                   <button

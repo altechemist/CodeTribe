@@ -45,7 +45,13 @@ li {
   --bs-btn-disabled-color: #fff;
   --bs-btn-disabled-bg: var(--gray) !important;
   --bs-btn-disabled-border-color: var(--gray) !important;
+  transition: all .2s ease-in-out; 
 }
+
+.btn-primary:hover {
+  transform: scale(1.1); 
+}
+
 
 .active {
   background-color: #fff !important;
@@ -129,6 +135,15 @@ hr {
   background-color: rgba(33, 37, 41, 0.1) !important;
   margin-bottom: 5px !important;
   width: 30rem;
+  transition: all .2s ease-in-out; 
+}
+
+.card:hover {
+  transform: scale(1.02); 
+}
+
+.review-card:hover {
+  transform: scale(1.02); 
 }
 
 .card-image {
@@ -179,6 +194,17 @@ hr {
   color: white !;
   font-weight: bold;
 }
+
+/* Animations */
+.grow { 
+  transition: all .2s ease-in-out; 
+}
+
+.grow:hover { 
+  transform: scale(1.1); 
+}
+
+
 
 /* Additional Media Queries */
 @media only screen and (max-width: 992px) {

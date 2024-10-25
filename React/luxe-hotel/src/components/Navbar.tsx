@@ -37,19 +37,39 @@ function CustomNavbar() {
             <Nav.Link as={Link} to="/" active={location.pathname === "/"}>
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/gallery" active={location.pathname === "/gallery"}>
+            <Nav.Link
+              as={Link}
+              to="/gallery"
+              active={location.pathname === "/gallery"}
+            >
               Gallery
             </Nav.Link>
-            <Nav.Link as={Link} to="/rooms" active={location.pathname === "/rooms"}>
+            <Nav.Link
+              as={Link}
+              to="/rooms"
+              active={location.pathname === "/rooms"}
+            >
               Rooms
             </Nav.Link>
-            <Nav.Link as={Link} to="/events" active={location.pathname === "/events"}>
+            <Nav.Link
+              as={Link}
+              to="/events"
+              active={location.pathname === "/events"}
+            >
               Events
             </Nav.Link>
-            <Nav.Link as={Link} to="/about" active={location.pathname === "/about"}>
+            <Nav.Link
+              as={Link}
+              to="/about"
+              active={location.pathname === "/about"}
+            >
               About
             </Nav.Link>
-            <Nav.Link as={Link} to="/contact" active={location.pathname === "/contact"}>
+            <Nav.Link
+              as={Link}
+              to="/contact"
+              active={location.pathname === "/contact"}
+            >
               Contact
             </Nav.Link>
           </Nav>
@@ -86,16 +106,23 @@ function CustomNavbar() {
         </Navbar.Collapse>
 
         {/* Separate Row for Map and Phone */}
-        <Container fluid className="bg-white d-flex justify-content-end align-items-center p-1 ">
+        <Container
+          fluid
+          className="bg-white d-flex justify-content-end align-items-center p-1 "
+        >
           <Nav className="nav-bar-row-2">
             <Nav.Link
-              as={Link}
-              to="https://www.google.com/maps?ll=-28.738809,24.754799&z=15&t=m&hl=en&gl=ZA&mapclient=embed&cid=957914449917949251"
+              as="a"
+              href="https://www.google.com/maps?ll=-28.738809,24.754799&z=15&t=m&hl=en&gl=ZA&mapclient=embed&cid=957914449917949251"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <i className="bi bi-geo-alt" aria-label="View Map"></i> View Map
             </Nav.Link>
+
             <Nav.Link href="tel:+27538028200">
-              <i className="bi bi-telephone" aria-label="Phone Number"></i> +27 53-802-8200
+              <i className="bi bi-telephone" aria-label="Phone Number"></i> +27
+              53-802-8200
             </Nav.Link>
           </Nav>
         </Container>
