@@ -5,10 +5,19 @@ import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import Bookmarks from "./components/Bookmarks";
 
 function App() {
   // Determine the selected news category
   const [newsCategory, setCategory] = useState<string>("General");
+  const [offline, setOffline] = useState<boolean>(false);
+  const readOffline = () => {
+    if (!offline) {
+      setOffline(true);
+    } else {
+      setOffline(false);
+    }
+  }
 
   const selectedCategory = (category: string) => {
     switch (category) {
@@ -80,13 +89,24 @@ function App() {
               </li>
             </ul>
           </div>
+          <a className="navbar-brand" href="#" onClick={readOffline}>
+            Bookmarks
+          </a>
         </div>
       </nav>
 
-      <div>
+      {
+        offline ? <div>
         <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">{newsCategory} News</h2>
         <NewsFeed newsCategory={newsCategory}/>
+      </div> : <div>
+        <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">Bookmarks</h2>
+        <Bookmarks newsCategory={newsCategory}/>
       </div>
+      }
+      
+
+      
     </div>
   );
 }
