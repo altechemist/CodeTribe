@@ -17,7 +17,7 @@ function App() {
     } else {
       setOffline(false);
     }
-  }
+  };
 
   const selectedCategory = (category: string) => {
     switch (category) {
@@ -46,9 +46,7 @@ function App() {
     <div className="container-sm">
       <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            News Feed
-          </a>
+          <a className="navbar-brand">News Feed</a>
           <button
             className="navbar-toggler"
             type="button"
@@ -68,22 +66,34 @@ function App() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Business")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Business")}
+                >
                   Business
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Sports")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Sports")}
+                >
                   Sports
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Science")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Science")}
+                >
                   Science
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => selectedCategory("Technology")}>
+                <a
+                  className="nav-link"
+                  onClick={() => selectedCategory("Technology")}
+                >
                   Technology
                 </a>
               </li>
@@ -95,18 +105,21 @@ function App() {
         </div>
       </nav>
 
-      {
-        offline ? <div>
-        <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">{newsCategory} News</h2>
-        <NewsFeed newsCategory={newsCategory}/>
-      </div> : <div>
-        <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">Bookmarks</h2>
-        <Bookmarks newsCategory={newsCategory}/>
-      </div>
-      }
-      
-
-      
+      {offline ? (
+        <div>
+          <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">
+            {newsCategory} News
+          </h2>
+          <NewsFeed newsCategory={newsCategory} />
+        </div>
+      ) : (
+        <div>
+          <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">
+            Bookmarks
+          </h2>
+          <Bookmarks newsCategory={newsCategory} />
+        </div>
+      )}
     </div>
   );
 }
