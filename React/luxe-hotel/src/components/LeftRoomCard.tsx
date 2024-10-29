@@ -31,7 +31,7 @@ const LeftRoomCard: React.FC<CardProps> = ({ room }) => {
     // Set the room type in the URL query parameters
     dispatch(setSelectedRoom(room));
     // Navigate to room details page
-    navigate(`/room#CheckAvailability`);
+    navigate(`/room/${room.id}`);
   };
 
   return (

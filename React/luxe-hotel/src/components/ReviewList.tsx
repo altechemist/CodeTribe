@@ -19,6 +19,8 @@ const ReviewsList: React.FC = () => {
   const loading = useSelector((state) => state.db.loading);
   const error = useSelector((state) => state.db.error);
 
+   
+
   useEffect(() => {
     dispatch(fetchReviews());
   }, [dispatch]);
@@ -38,6 +40,8 @@ const ReviewsList: React.FC = () => {
       </Container>
     );
   }
+
+  
 
   return (
     <Container className="container-fluid mt-4">

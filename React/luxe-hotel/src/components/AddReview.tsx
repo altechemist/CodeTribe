@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Container, Alert } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addReview } from "../store/slices/authSlice";
 
 const ReviewForm: React.FC = () => {
@@ -15,6 +15,16 @@ const ReviewForm: React.FC = () => {
   });
 
   const [message, setMessage] = useState("");
+
+  // Get the logged-in user from Redux state
+  const user = useSelector((state) => state.auth.user);
+  
+  // If not logged in, redirect to login page
+  if (!user) {
+    // redirect
+    return <p>Please log in to review a room.</p>;
+
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
@@ -40,6 +50,8 @@ const ReviewForm: React.FC = () => {
 
     console.log("Review Data Submitted:", formData);
   };
+
+  
 
   return (
     <Container className="mt-5">
