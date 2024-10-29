@@ -3,7 +3,8 @@ import AddTodoItem from "./components/AddItem";
 import TodoListItems from "./components/TodoList";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 // Bootstrap styles
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,7 +12,12 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
-  const [todo, setTodo] = useState([]);
+  // Use Redux selector to get todos
+  const todos = useSelector((state) => state.todoList.todos);
+
+  useEffect(() => {
+   
+  }, [todos]); 
 
   return (
     <div className="container-sm justify-content-center">
@@ -35,7 +41,7 @@ function App() {
 
               <ul className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li>
-                  <a href="#" className="nav-link px-2 link-secondary">
+                  <a href="/" className="nav-link px-2 link-secondary">
                     Shop Mate
                   </a>
                 </li>
@@ -43,7 +49,7 @@ function App() {
 
               <div className="dropdown text-end">
                 <a
-                  href="#"
+                  href="/"
                   className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -109,7 +115,7 @@ function App() {
           id="addItemModal"
           data-bs-backdrop="static"
           data-bs-keyboard="false"
-          tabindex="-1"
+          tabIndex="-1"
           aria-hidden="true"
         >
           <div className="modal-dialog modal-lg">
@@ -136,7 +142,7 @@ function App() {
 
       {/* Todo List */}
       <div className="d-flex justify-content-center">
-        <TodoListItems todo={todo} />
+        <TodoListItems todos={todos} />
       </div>
 
       {/* Add Item button */}
@@ -147,7 +153,7 @@ function App() {
           data-bs-toggle="modal"
           data-bs-target="#addItemModal"
         >
-          <i class="bi bi-plus-square"></i>
+          <i className="bi bi-plus-square"></i>
         </button>
       </div>
 

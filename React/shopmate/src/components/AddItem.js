@@ -1,6 +1,7 @@
-import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import { addTodoItem } from "../redux/todoListReducer";
+import { selectCurrentUser } from "../redux/usersReducer";
 
 function AddTodoItem() {
   const [itemName, setItemName] = useState("");
@@ -9,35 +10,29 @@ function AddTodoItem() {
   const [itemDescription, setItemDescription] = useState("");
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
+
   const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
 
   const categoryList = [
-    "Fruits",
-    "Vegetables",
-    "Canned Goods",
-    "Dairy",
-    "Meat",
-    "Seafood",
-    "Deli",
-    "Spices",
-    "Snacks",
-    "Bread",
-    "Beverages",
-    "Pasta",
-    "Baking",
-    "Frozen Foods",
-    "Personal Care",
-    "Health Care",
-    "Baby Items",
-    "Pet Care",
+    "Fruits", "Vegetables", "Canned Goods", "Dairy", "Meat",
+    "Seafood", "Deli", "Spices", "Snacks", "Bread",
+    "Beverages", "Pasta", "Baking", "Frozen Foods",
+    "Personal Care", "Health Care", "Baby Items", "Pet Care",
   ];
 
   const handleAddItem = () => {
-    setFormError([]);
+    setFormError("");
 
     // Basic Validation
     if (!itemName || !itemQuantity || !itemCategory) {
       setFormError("Please fill out all fields.");
+      return;
+    }
+
+    const quantity = parseInt(itemQuantity, 10);
+    if (isNaN(quantity) || quantity <= 0) {
+      setFormError("Quantity must be a positive number.");
       return;
     }
 
@@ -47,39 +42,45 @@ function AddTodoItem() {
       return;
     }
 
-    // Add the new item to the list
     const newItem = {
       id: Date.now(),
       name: itemName,
-      quantity: itemQuantity,
+      quantity: quantity,
       category: itemCategory,
       description: itemDescription,
       completed: false,
     };
 
-    dispatch(addTodoItem(newItem));
+    // Dispatch the action with email included
+    dispatch(addTodoItem({ todo: newItem, email: currentUser.email }));
 
-    // Reset form fields
+    setFormSuccess("Item added successfully!");
+    resetForm();
+  };
+
+  const resetForm = () => {
     setItemName("");
     setItemQuantity("");
     setItemCategory("");
     setItemDescription("");
-
-    // Show success message
-    setFormSuccess("Item added successfully!");
-
-    // Clear form after 3 seconds
-    setTimeout(() => {
-      setFormSuccess("");
-
-      // Find button by id
-      const button = document.getElementById("closeModal");
-      button.click();
-    }, 1000);
   };
+
+  // Effect to handle form success
+  useEffect(() => {
+    if (formSuccess) {
+      const timer = setTimeout(() => {
+        setFormSuccess("");
+        const button = document.getElementById("closeModal");
+        if (button) button.click();
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [formSuccess]);
 
   return (
     <div className="container-sm rounded-4 mt-4 mb-3">
+      {currentUser && <p>Adding under {currentUser.email}</p>}
       <form>
         <div className="d-flex ps-2 justify-content-start">
           {formError && <p style={{ color: "red" }}>{formError}</p>}
@@ -89,23 +90,21 @@ function AddTodoItem() {
           <div className="mb-3 col-auto">
             <input
               type="text"
-              class="form-control"
+              className="form-control"
               placeholder="Enter Name"
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
           </div>
-
           <div className="mb-3 col-auto">
             <input
               type="number"
-              class="form-control"
+              className="form-control"
               placeholder="Enter Quantity"
               value={itemQuantity}
               onChange={(e) => setItemQuantity(e.target.value)}
             />
           </div>
-
           <div className="mb-3 col-auto">
             <select
               name="categories"
@@ -125,12 +124,10 @@ function AddTodoItem() {
             </select>
           </div>
         </div>
-
         <div className="d-flex justify-content-center mb-2">
           <div className="d-flex g-3 p-2 col-12">
             <textarea
-              class="form-control"
-              id="exampleFormControlTextarea1"
+              className="form-control"
               placeholder="Enter Description"
               value={itemDescription}
               onChange={(e) => setItemDescription(e.target.value)}
@@ -139,7 +136,7 @@ function AddTodoItem() {
           </div>
         </div>
         <div className="d-flex justify-content-end mb-2 pe-2">
-          <button type="button" class="btn btn-primary" onClick={handleAddItem}>
+          <button type="button" className="btn btn-primary" onClick={handleAddItem}>
             Add
           </button>
         </div>
@@ -147,4 +144,5 @@ function AddTodoItem() {
     </div>
   );
 }
+
 export default AddTodoItem;

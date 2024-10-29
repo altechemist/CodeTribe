@@ -1,49 +1,71 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [];
+const initialState = {
+  todos: {},
+};
 
 const todoSlice = createSlice({
   name: "todoList",
   initialState,
   reducers: {
+    setTodos: (state, action) => {
+      const { email, todos } = action.payload;
+      state.todos[email] = todos;
+    },
+
     addTodoItem: (state, action) => {
-      state.push({ ...action.payload, completed: false });
+      const { todo, email } = action.payload;
+      state.todos[email] = state.todos[email] || [];
+      state.todos[email].push(todo);
+      updateLocalStorage(email, state.todos[email]);
     },
+
     deleteTodoItem: (state, action) => {
-      return state.filter((item) => item.id !== action.payload);
+      const { todoId, email } = action.payload;
+      if (state.todos[email]) {
+        state.todos[email] = state.todos[email].filter(item => item.id !== todoId);
+        updateLocalStorage(email, state.todos[email]);
+      }
     },
+
     checkout: (state, action) => {
-      const item = state.find((item) => item.id === action.payload);
-      if (item) {
-        item.completed = !item.completed;
+      const { todoId, email } = action.payload;
+      const todo = state.todos[email]?.find(item => item.id === todoId);
+      if (todo) {
+        todo.completed = !todo.completed;
+        updateLocalStorage(email, state.todos[email]);
       }
     },
+
     updateTodoItem: (state, action) => {
-      const tmpItem = action.payload;
-      const item = state.find((item) => item.id === tmpItem.id);
-      if (item) {
-        console.log(item);
-        item.name = tmpItem.name;
-        item.quantity = tmpItem.quantity;
-        item.category = tmpItem.category;
-        item.description = tmpItem.description;
+      const { todo, email } = action.payload;
+      const todoIndex = state.todos[email]?.findIndex(item => item.id === todo.id);
+      if (todoIndex !== -1) {
+        state.todos[email][todoIndex] = { ...state.todos[email][todoIndex], ...todo };
+        updateLocalStorage(email, state.todos[email]);
       }
-    },
-    searchItem: (state, action) => {
-      const searchTerm = action.payload.toLowerCase();
-      const filteredItems = state.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm)
-      );
-      return filteredItems;
     },
   },
 });
 
+// Helper function to update local storage
+const updateLocalStorage = (email, todos) => {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const userIndex = users.findIndex(user => user.email === email);
+  
+  if (userIndex !== -1) {
+    users[userIndex].lists = todos;
+    localStorage.setItem("users", JSON.stringify(users));
+  }
+};
+
+// Export actions
 export const {
   addTodoItem,
   deleteTodoItem,
   checkout,
   updateTodoItem,
-  searchItem,
+  setTodos,
 } = todoSlice.actions;
+
 export default todoSlice.reducer;

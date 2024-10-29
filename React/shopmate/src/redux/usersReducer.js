@@ -4,6 +4,7 @@ const usersSlice = createSlice({
   name: 'users',
   initialState: {
     users: [],
+    currentUser: null,
     loginError: '',
     registerError: '',
   },
@@ -21,7 +22,7 @@ const usersSlice = createSlice({
     },
     registerUser(state, action) {
       const { name, email, password, password2 } = action.payload;
-      if (!email || !password || !password2 || !name){
+      if (!email || !password || !password2 || !name) {
         state.registerError = 'All fields are required.';
         return;
       }
@@ -29,29 +30,36 @@ const usersSlice = createSlice({
         state.registerError = 'Passwords do not match.';
         return;
       }
-      let users = [...state.users];
-      if (users.find(user => user.email === email)) {
+      if (state.users.find(user => user.email === email)) {
         state.registerError = 'Email already registered.';
         return;
       }
+
       const lists = [];
-      users.push({ name, email, password, lists });
-      state.users = users;
-      localStorage.setItem('users', JSON.stringify(users));
+      const newUser = { name, email, password, lists };
+      state.users.push(newUser);
+      
+      // Update localStorage after modifying state
+      localStorage.setItem('users', JSON.stringify(state.users));
+
       state.registerError = '';
     },
     loginUser(state, action) {
       const { email, password } = action.payload;
-      if (!email && !password) {
+      if (!email || !password) {
         state.loginError = 'All fields are required.';
         return;
       }
       const user = state.users.find(user => user.email === email && user.password === password);
       if (user) {
+        state.currentUser = user;
         state.loginError = '';
       } else {
         state.loginError = 'Invalid email or password.';
       }
+    },
+    logoutUser(state) {
+      state.currentUser = null; 
     },
     clearLoginError(state) {
       state.loginError = '';
@@ -62,10 +70,15 @@ const usersSlice = createSlice({
   },
 });
 
+// Selector to get the currentUser
+export const selectCurrentUser = (state) => state.users.currentUser;
+
+// Call getUsers on app start (in your main component or useEffect)
 export const {
   getUsers,
   registerUser,
   loginUser,
+  logoutUser,
   clearLoginError,
   clearRegisterError,
 } = usersSlice.actions;
