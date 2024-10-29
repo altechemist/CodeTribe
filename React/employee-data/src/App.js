@@ -3,38 +3,55 @@ import CreateEmployee from "./components/create_emp";
 import EditEmployee from "./components/edit_emp";
 import ViewEmployee from "./components/view_emp.";
 import HomePage from "./components/home";
+import Login from "./components/login";
+import Register from "./components/register";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
-  // A list of employee data
-  const [employeeData, setEmployeeData] = useState([]);
+  const [employeeData, setEmployeeData] = useState(() => {
+    // Load initial state from local storage
+    const storedData = localStorage.getItem("employeeData");
+    return storedData ? JSON.parse(storedData) : [];
+  });
+  const [user, setUser] = useState({});
+  let isUser = false;
 
   // Add employee data to list
-  const AddEmployee = (
+const AddEmployee = (
+  employeeID,
+  firstName,
+  lastName,
+  eMailAddress,
+  phoneNumber,
+  position,
+  image
+) => {
+  const newEmployee = {
     employeeID,
     firstName,
     lastName,
     eMailAddress,
     phoneNumber,
     position,
-    image
-  ) => {
-    let newEmployee = {
-      employeeID,
-      firstName,
-      lastName,
-      eMailAddress,
-      phoneNumber,
-      position,
-      image,
-    };
-    setEmployeeData((employeeData) => [...employeeData, newEmployee]);
+    image,
   };
+
+  // Update employee data state
+  setEmployeeData((prevEmployeeData) => {
+    const updatedEmployeeData = [...prevEmployeeData, newEmployee];
+    
+    // Save the updated employee data to local storage
+    localStorage.setItem("employeeData", JSON.stringify(updatedEmployeeData));
+    
+    return updatedEmployeeData; // Return the new state
+  });
+};
+
 
   // Validate user input
   const [errorList, addError] = useState([]);
@@ -112,6 +129,7 @@ function App() {
     // Update employee data
     setTmpEmployeeData(newEmployeeData);
     setEmployeeData(newEmployeeData);
+    localStorage.setItem("employeeData", JSON.stringify(employeeData));
   };
 
   // Update employee data
@@ -158,6 +176,31 @@ function App() {
   // Show tabs
   const [isVisible, SetVisibility] = useState("");
 
+  // Load employee data from local storage on initial render
+  useEffect(() => {
+    const loadData = () => {
+      try {
+        const storedData = JSON.parse(localStorage.getItem("employeeData"));
+        if (storedData) {
+          setEmployeeData(storedData);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to load employee data from local storage:",
+          error
+        );
+      }
+    };
+
+    loadData();
+  }, []);
+
+
+  useEffect(()=>{
+    // Update employee data
+    localStorage.setItem("employeeData", JSON.stringify(employeeData));
+  }, [employeeData])
+
   const AddPage = () => {
     SetVisibility("Add");
     setCurrPage("Add");
@@ -171,6 +214,16 @@ function App() {
   const UpdatePage = () => {
     SetVisibility("Update");
     setCurrPage("Update");
+  };
+
+  const LoginPage = () => {
+    SetVisibility("Login");
+    setCurrPage("Login");
+  };
+
+  const RegisterPage = () => {
+    SetVisibility("Register");
+    setCurrPage("Register");
   };
 
   const Home = () => {
@@ -197,6 +250,11 @@ function App() {
     },
   };
 
+  // If user object is not null
+  if (user.name !== undefined) {
+    isUser = true;
+  }
+
   return (
     <div className="App">
       <div class="container-sm">
@@ -214,7 +272,7 @@ function App() {
             <span class="fs-4">Employee Data</span>
           </a>
 
-          <ul class="nav">
+          <ul class="nav" hidden={!isUser}>
             <li class="nav-item">
               <button
                 onClick={AddPage}
@@ -231,25 +289,62 @@ function App() {
             </li>
 
             <li class="nav-item">
-              <button onClick={ViewPage} class="btn btn-outline-primary me-2"
-              style={
-                currPage === "View"
-                  ? buttonStyles.active
-                  : buttonStyles.default
-              }>
+              <button
+                onClick={ViewPage}
+                class="btn btn-outline-primary me-2"
+                style={
+                  currPage === "View"
+                    ? buttonStyles.active
+                    : buttonStyles.default
+                }
+              >
                 <i class="bi bi-search me-2"></i>
                 View Employees
               </button>
             </li>
             <li class="nav-item">
-              <button onClick={UpdatePage} class="btn btn-outline-primary me-2"
-              style={
-                currPage === "Update"
-                  ? buttonStyles.active
-                  : buttonStyles.default
-              }>
+              <button
+                onClick={UpdatePage}
+                class="btn btn-outline-primary me-2"
+                style={
+                  currPage === "Update"
+                    ? buttonStyles.active
+                    : buttonStyles.default
+                }
+              >
                 <i class="bi bi-file-arrow-up me-2"></i>
                 Update Employees
+              </button>
+            </li>
+          </ul>
+
+          <ul class="nav" hidden={isUser}>
+            <li class="nav-item">
+              <button
+                onClick={LoginPage}
+                class="btn btn-outline-primary me-2"
+                style={
+                  currPage === "Login"
+                    ? buttonStyles.active
+                    : buttonStyles.default
+                }
+              >
+                <i class="bi bi-search me-2"></i>
+                Login
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                onClick={RegisterPage}
+                class="btn btn-outline-primary me-2"
+                style={
+                  currPage === "Register"
+                    ? buttonStyles.active
+                    : buttonStyles.default
+                }
+              >
+                <i class="bi bi-file-arrow-up me-2"></i>
+                Register
               </button>
             </li>
           </ul>
@@ -296,6 +391,20 @@ function App() {
           />
         ) : (
           () => setCurrPage("Update")
+        )}
+
+        {/* logs in a user */}
+        {isVisible === "Login" ? (
+          <Login setUser={setUser} Home={Home} />
+        ) : (
+          () => setCurrPage("Login")
+        )}
+
+        {/* registers a user */}
+        {isVisible === "Register" ? (
+          <Register setUser={setUser} Home={Home} />
+        ) : (
+          () => setCurrPage("Register")
         )}
 
         {/* Show default homepage */}

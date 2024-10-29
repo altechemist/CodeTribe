@@ -5,7 +5,7 @@ export default function HomePage() {
     <div>
       <div className="col-lg-6 mx-auto text-center">
         <h1 className="display-5 fw-bold text-body-emphasis">
-          Manage Employees
+          Manage All Employees
         </h1>
       </div>
     </div>
