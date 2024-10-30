@@ -88,17 +88,17 @@ function CustomNavbar() {
               id="profile-dropdown"
               align="end"
             >
-              <NavDropdown.Item as={Link} to="/profile/#reservations">
+              <NavDropdown.Item as={Link} to="/profile">
                 My Bookings...
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/profile/#favorites">
+              <NavDropdown.Item as={Link} to="/profile">
                 Favorites
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/profile/#account">
+              <NavDropdown.Item as={Link} to="/profile">
                 Profile
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item as={Link} to="#" onClick={handleLogout}>
+              <NavDropdown.Item as={Link} to="/" onClick={handleLogout}>
                 Sign out
               </NavDropdown.Item>
             </NavDropdown>

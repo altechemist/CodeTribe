@@ -32,6 +32,7 @@ interface Review {
 export interface dbState {
   data: Room[];
   reviews: Review[];
+  eventsGallery: string[];
   loading: boolean;
   error: string | null;
   selectedRoom: Room | null;
@@ -41,6 +42,7 @@ export interface dbState {
 const initialState: dbState = {
   data: [],
   reviews: [],
+  eventsGallery: [],
   loading: false,
   error: null,
   selectedRoom: null,
@@ -60,6 +62,10 @@ export const dbSlice = createSlice({
     },
     setReviews(state, action: PayloadAction<Review[]>) {
       state.reviews = action.payload;
+      state.loading = false;
+    },
+    setEventsGallery(state, action: PayloadAction<string[]>) {
+      state.eventsGallery = action.payload;
       state.loading = false;
     },
     setError(state, action: PayloadAction<string | null>) {
@@ -100,6 +106,31 @@ export const fetchReviews = () => async (dispatch: AppDispatch) => {
     dispatch(setError((error as Error).message || 'An error occurred while fetching data'));
   }
 };
+
+// Fetch events images
+export const getImages = () => async (dispatch: AppDispatch) => {
+  dispatch(setLoading());
+
+  try {
+    const querySnapshot = await getDocs(collection(db, 'Gallery'));
+
+    // Extract images from the documents
+    const images = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data() // Assuming the data contains an image field
+    }));
+
+    console.log("gallery");
+    console.log(images); // Log the extracted images
+
+    // Dispatch the images to the store
+    dispatch(setEventsGallery(images));
+  } catch (error) {
+    console.error("Error fetching images:", error); // Log error for debugging
+    dispatch(setError((error as Error).message || 'An error occurred while fetching data'));
+  }
+};
+
 
 
 // Adds a new room
@@ -142,6 +173,7 @@ export const deleteRoom = (roomId: string) => async (dispatch: AppDispatch) => {
 };
 
 // Action creators
-export const { setLoading, setData, setReviews, setError, setSelectedRoom } = dbSlice.actions;
+export const { setLoading, setData, setReviews, setError, setEventsGallery, setSelectedRoom } = dbSlice.actions;
 
 export default dbSlice.reducer;
+

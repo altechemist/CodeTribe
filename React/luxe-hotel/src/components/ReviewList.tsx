@@ -19,8 +19,6 @@ const ReviewsList: React.FC = () => {
   const loading = useSelector((state) => state.db.loading);
   const error = useSelector((state) => state.db.error);
 
-   
-
   useEffect(() => {
     dispatch(fetchReviews());
   }, [dispatch]);
@@ -41,15 +39,17 @@ const ReviewsList: React.FC = () => {
     );
   }
 
-  
+  // Shuffle reviews
+  const shuffledReviews = [...reviews].sort(() => Math.random() - 0.5);
+
 
   return (
     <Container className="container-fluid mt-4">
       <Row className="row row-cols-1 row-cols-xl-4">
-        {reviews && reviews.length > 0 ? (
-          reviews.slice(0, 4).map((review: Review) => (
+        {shuffledReviews && shuffledReviews.length > 0 ? (
+          shuffledReviews.slice(0, 4).map((review: Review) => (
             <Col key={review.id} md={4} className="mb-4">
-              <div className="review-card" style={styles.card}>
+              <div className="review-card shadow" style={styles.card}>
                 <div className="review-header" style={styles.header}>
                   <img
                     src={review.userPhoto}
@@ -58,7 +58,7 @@ const ReviewsList: React.FC = () => {
                   />
                   <span style={styles.userName}>{review.userName}</span>
                 </div>
-               
+
                 <div className="review-rating" style={styles.rating}>
                   {Array.from({ length: 5 }, (_, index) => (
                     <i
@@ -71,7 +71,7 @@ const ReviewsList: React.FC = () => {
                   ))}
                 </div>
                 <p style={styles.description}>{review.description}</p>
-                 <hr></hr>
+                <hr></hr>
                 <div className="review-footer" style={styles.footer}>
                   {review.createdAt}
                 </div>
@@ -79,9 +79,10 @@ const ReviewsList: React.FC = () => {
             </Col>
           ))
         ) : (
-          <Col>
-            <p>No reviews available.</p>
-          </Col>
+          <Container className="mt-5 text-center">
+            <Spinner animation="border" />
+            <p>Loading Reviews...</p>
+          </Container>
         )}
       </Row>
     </Container>

@@ -2,7 +2,7 @@ import Heading from "./Heading";
 
 export default function ContactForm() {
   return (
-    <div>
+    <div className="container">
       <Heading title="Get In Touch" />
       <div className="d-flex justify-content-center">
         <div className="row gap-2">

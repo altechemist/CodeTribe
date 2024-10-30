@@ -101,6 +101,18 @@ hr {
   background-size: cover;
 }
 
+.events-gallery img {
+  width: 100% !important;
+  height: 15rem !important;
+  object-fit: cover;
+}
+
+
+img:hover {
+  transform: scale(1.03); 
+  border: 0.3rem solid #fff;
+}
+
 .hero-text {
   text-align: center;
   position: absolute;

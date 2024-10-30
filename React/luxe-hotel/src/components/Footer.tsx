@@ -1,6 +1,23 @@
+import { useSelector } from "react-redux";
 import logo from "../assets/logo.png";
 import ReviewForm from "./AddReview";
+import { Link, useNavigate } from "react-router-dom";
+
 function Footer() {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+
+  const handleProfile = () => {
+    // Check if user logged in
+    if (user) {
+      // Navigate to profile page
+      navigate("/profile");
+    } else {
+      // Navigate to login page
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="container-xxl mt-4">
       <hr className="mx-auto" />
@@ -8,24 +25,40 @@ function Footer() {
         <div className="row justify-content-between">
           <div className="col-6 col-md-2 mb-3">
             <h5>Luxe Haven</h5>
-            <img className="img-fluid" src={logo} alt={logo} />
+            <img className="img-fluid" src={logo} alt="Luxe Haven Logo" />
             <div className="social-login nav flex-column">
               <div className="d-flex justify-content-around">
-                <a href="#">
-                  <i className="bi bi-facebook"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-twitter"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-instagram"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-linkedin"></i>
-                </a>
-                <a href="#">
-                  <i className="bi bi-envelope"></i>
-                </a>
+                <Link
+                  to="https://facebook.com"
+                  target="_blank"
+                  aria-label="Facebook"
+                >
+                  <i className="bi bi-facebook" />
+                </Link>
+                <Link
+                  to="https://twitter.com"
+                  target="_blank"
+                  aria-label="Twitter"
+                >
+                  <i className="bi bi-twitter" />
+                </Link>
+                <Link
+                  to="https://instagram.com"
+                  target="_blank"
+                  aria-label="Instagram"
+                >
+                  <i className="bi bi-instagram" />
+                </Link>
+                <Link
+                  to="https://linkedin.com"
+                  target="_blank"
+                  aria-label="LinkedIn"
+                >
+                  <i className="bi bi-linkedin" />
+                </Link>
+                <Link to="mailto:example@example.com" aria-label="Email">
+                  <i className="bi bi-envelope" />
+                </Link>
               </div>
               <div className="d-flex mt-1">
                 <button
@@ -44,39 +77,51 @@ function Footer() {
             <h5>Useful Links</h5>
             <ul className="nav flex-column">
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
+                <a href="/" className="nav-link p-0 text-body-secondary">
                   Home
                 </a>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
+                <Link to="/rooms" className="nav-link p-0 text-body-secondary">
                   Rooms
-                </a>
+                </Link>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
+                <Link
+                  to="/gallery"
+                  className="nav-link p-0 text-body-secondary"
+                >
                   Gallery
-                </a>
+                </Link>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
+                <Link to="/events" className="nav-link p-0 text-body-secondary">
                   Events
-                </a>
+                </Link>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
+                <button
+                  className="nav-link p-0 text-body-secondary"
+                  onClick={handleProfile}
+                >
                   Bookings
-                </a>
+                </button>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
-                  My Favorites
-                </a>
+                <button
+                  className="nav-link p-0 text-body-secondary"
+                  onClick={handleProfile}
+                >
+                  Favorites
+                </button>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link p-0 text-body-secondary">
+                <Link
+                  to="/contact"
+                  className="nav-link p-0 text-body-secondary"
+                >
                   Contact Us
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

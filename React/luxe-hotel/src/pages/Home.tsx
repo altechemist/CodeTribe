@@ -66,7 +66,10 @@ function Home() {
             ))}
           </div>
         ) : (
-          <p>No rooms available.</p>
+          <div className="text-center">
+            <Spinner animation="border" />
+            <p>Loading Rooms...</p>
+          </div>
         )}
       </div>
 
