@@ -48,13 +48,24 @@ const PayPalButtonComponent = () => {
     <PayPalScriptProvider
       options={{
         "client-id": import.meta.env.VITE_SANDBOX_CLIENT_ID,
-        currency: "USD",
+        currency: "ZAR",
       }}
     >
       <div className="checkout">
         {loading && <div>Loading...</div>}
-        {error && <div style={{ color: "red" }}>{error}</div>}
-        {success && <div>Payment successful!</div>}
+
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="alert alert-success" role="alert">
+            Payment successful!
+          </div>
+        )}
+
         <PayPalButtons
           style={{ layout: "vertical" }}
           createOrder={onCreateOrder}

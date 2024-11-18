@@ -15,7 +15,7 @@ function Bookings() {
         </div>
 
         {/* Room Card */}
-        <div className="d-flex col-2 mt-4">
+        <div className="d-flex col-3 mt-4">
           <BookingSummary />
         </div>
       </div>

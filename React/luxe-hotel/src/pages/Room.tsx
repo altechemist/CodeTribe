@@ -67,6 +67,12 @@ function Room() {
   const handleView = (room: Room) => {
     dispatch(setSelectedRoom(room));
     dispatch(setSubtotal((room.price * days).toFixed(2)));
+
+     // Check reservation details
+     if (days === 0 && guests === 0){
+      alert("Please select at least one day and guests.");
+      return;
+    }
     navigate(`/bookings`);
   };
 
@@ -84,6 +90,7 @@ function Room() {
     const selectedDate = e.target.value;
     dispatch(setCheckOut(selectedDate));
   };
+
 
   return (
     <div className="container-fluid mt-4">

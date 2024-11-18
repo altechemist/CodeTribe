@@ -39,7 +39,7 @@ export default function BookingSummary() {
     <div>
       {/* Room Card */}
       <div className="d-flex rounded-3 p-1 gap-1 mb-4 text-center justify-content-center room-info ">
-        <div className="col align-content-center justify-content-end">
+        <div className="col-sm align-content-center justify-content-end bg-body-tertiary shadow rounded-4 p-2 pt-3">
           <img
             src={room.image}
             className="w-75 card-img-top img-fluid rounded-3"
@@ -53,6 +53,7 @@ export default function BookingSummary() {
           <div className="card-body mt-2">
             <h2>R{room.price}</h2>
             <p className="card-text">x {duration} Days</p>
+            <hr></hr>
             <h2 className="fw-bold">R{subtotal}</h2>
           </div>
 

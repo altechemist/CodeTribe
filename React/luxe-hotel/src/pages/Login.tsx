@@ -72,6 +72,11 @@ function Login() {
     }
   }, [user, error, navigate]);
 
+  // Return loading
+  if (loading) {
+    return <div className="spinner-border text-primary" role="status"></div>;
+  }
+
   return (
     <div className="container-sm">
       <Heading title="Welcome Back!" />

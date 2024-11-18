@@ -24,6 +24,9 @@ interface RootState {
   };
 }
 
+// if not selected room, select the default
+
+
 export default function ImageGrid() {
   // Use the RootState type for the state
   const room: Room = useSelector((state: RootState) => state.db.selectedRoom);
@@ -32,7 +35,7 @@ export default function ImageGrid() {
     <div className="d-flex container-fluid rounded-3 p-2 gap-1 mb-4 text-center">
       <div className="col align-content-center">
         <div className="d-inline-flex gap-1">
-          {room.images.map((img, index) => (
+          {room?.images.map((img, index) => (
             <div className="d-flex img-fluid col">
               <img
                 key={index}

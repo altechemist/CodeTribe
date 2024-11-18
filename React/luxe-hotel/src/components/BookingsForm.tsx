@@ -44,7 +44,7 @@ export default function BookingsForm() {
       return;
     };
     
-    if (!/^[a-zA-Z\s]+$/.test(address)) {
+    if (!/^[a-zA-Z0-9\s,.'-]+$/.test(address)) {
       alert("Invalid address format.");
       return;
     };
@@ -56,12 +56,12 @@ export default function BookingsForm() {
 
     // Set booking data
     bookingData = {
-      fullname: fname + " " + lname,
-      checkIn,
-      checkOut,
+      guestName: fname + " " + lname,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
       duration,
       phone,
-      email,
+      guestEmail: email,
       roomType: room.type,
       guests,
       address: address + " " + country + " " + state + " " + zip,
@@ -89,7 +89,7 @@ export default function BookingsForm() {
 
   return (
     <div className="row gap-2 reservation-form justify-content-center">
-      <div className="d-flex">
+      <div className="d-flex bg-body-tertiary shadow rounded-4">
         <form className="needs-validation">
           <p>Guests: {guests}</p>
           <p>rid: {room.id}</p>

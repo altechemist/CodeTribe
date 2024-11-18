@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getDocs, collection, doc, deleteDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { AppDispatch } from '../store';
+import axios from 'axios';
 
 interface Reservation {
   id?: string;
   checkInDate: string;
   checkOutDate: string;
   guestName: string;
+  guestEmail: string;
   guests: number;
   roomId: string;
   roomType: string;
@@ -45,6 +47,7 @@ export interface BookingState {
   bookingData: BookingData | null;
   loading: boolean;
   error: string | null;
+  success: string | null;
   selectedRoom: Room | null;
   duration: number;
   checkIn: string | null;
@@ -61,6 +64,7 @@ const initialState: BookingState = {
   bookingData: null,
   loading: false,
   error: null,
+  success: null,
   selectedRoom: null,
   duration: 0,
   checkIn: null,
@@ -156,6 +160,38 @@ export const addReservation = (reservation: Reservation) => async (dispatch: App
     const docRef = await addDoc(collection(db, 'Reservations'), reservation);
     const newReservation = { id: docRef.id, ...reservation };
     dispatch(setReservations([...initialState.reservations, newReservation]));
+
+    // Send a verification email
+    console.log(newReservation)
+    
+    // Prepare the email payload
+     const emailPayload = {
+      name: newReservation.guestName,
+      email: newReservation.guestEmail,
+      roomType: newReservation.roomType,
+      checkInDate: newReservation.checkInDate,
+      checkOutDate: newReservation.checkOutDate,
+    };
+
+    // Send a confirmation email
+    try {
+      console.log(emailPayload)
+      const response = await axios.post('https://sendemail-xnue.onrender.com/send-email', emailPayload);
+
+      // Handle email send success or failure
+      if (response.status === 200) {
+        console.log('Confirmation email sent successfully');
+      } else {
+        console.error('Failed to send confirmation email:', response);
+        dispatch(setError('Failed to send confirmation email.'));
+      }
+    } catch (error) {
+      // Handle email sending error
+      dispatch(setError((error as Error).message || 'An error occurred while sending the confirmation email'));
+      console.error('Error sending email:', error);
+    }
+
+
   } catch (error) {
     dispatch(setError((error as Error).message || 'An error occurred while adding the reservation'));
   }

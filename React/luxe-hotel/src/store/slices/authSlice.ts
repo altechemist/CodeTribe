@@ -163,7 +163,7 @@ export const login =
       const userDoc = await getDoc(doc(db, "Users", user.uid));
       if (userDoc.exists()) {
         const userData = userDoc.data() as CustomUser;
-        dispatch(setUser({ ...userData, uid: user.uid }));
+        await dispatch(setUser({ ...userData, uid: user.uid }));
       } else {
         dispatch(setError("User data not found."));
       }
@@ -359,6 +359,7 @@ const handleAuthError = (error: Error, dispatch: AppDispatch) => {
   dispatch(setError(errorMessage));
 };
 
+// Map Firebase error codes to user-friendly messages
 const getUserFriendlyError = (error: string) => {
   switch (error) {
     case "auth/email-already-in-use":
@@ -369,6 +370,10 @@ const getUserFriendlyError = (error: string) => {
       return "Incorrect password. Please try again.";
     case "auth/user-not-found":
       return "No user found with this email.";
+    case "auth/operation-not-allowed":
+      return "This operation is not allowed. Please contact support.";
+    case "auth/weak-password":
+      return "The password is too weak. Please choose a stronger password.";
     default:
       return "An unexpected error occurred. Please try again later.";
   }
@@ -385,6 +390,8 @@ export const resetPassword =
       dispatch(setError((error as Error).message));
     }
   };
+
+
 
 export const { setLoading, setUser, setError } = authSlice.actions;
 

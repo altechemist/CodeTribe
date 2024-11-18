@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 const HeroSection = ({ heading }: {heading: string}) => {
   return (
@@ -7,9 +8,12 @@ const HeroSection = ({ heading }: {heading: string}) => {
         <p className="lead mb-4">
           The perfect place for leisure or business travelers.
         </p>
+        
+        <Link className="navbar-brand" to="/rooms">
         <button className="btn btn-primary">
           Book Now
         </button>
+      </Link>
       </div>
     </div>
   );
