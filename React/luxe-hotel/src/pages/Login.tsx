@@ -13,10 +13,13 @@ import {
 } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
+import Swal from "sweetalert2";
+
 function Login() {
   // State for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
 
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.user);
@@ -25,13 +28,18 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   // Handle form submission
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     // Attempt to login
     setLoading(true);
-    dispatch(login(email, password));
+    await dispatch(login(email, password));
     setLoading(false);
   };
 
@@ -65,16 +73,36 @@ function Login() {
       } else {
         navigate("/");
       }
+      // Show success alert
+      Swal.fire({
+        title: "Login Successful!",
+        text: "Welcome back!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
     }
 
     if (error) {
-      alert(error);
+      // Show error alert
+      Swal.fire({
+        title: "Login Failed",
+        text: error,
+        icon: "error",
+        confirmButtonText: "Try Again",
+      });
     }
   }, [user, error, navigate]);
 
   // Return loading
   if (loading) {
-    return <div className="spinner-border text-primary" role="status"></div>;
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <div className="spinner-border text-primary" role="status"></div>
+      </div>
+    );
   }
 
   return (
@@ -94,15 +122,14 @@ function Login() {
             Hey, Good to see you again!
           </h6>
           {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
-              </div>
-            )}
+            <div className="alert alert-danger" role="alert">
+              {error}
+            </div>
+          )}
           <form
             className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
             onSubmit={handleSubmit}
           >
-            
             <div className="input-group mb-3">
               <button className="btn left-icon" type="button">
                 <i className="bi bi-envelope"></i>
@@ -123,7 +150,7 @@ function Login() {
                 <i className="bi bi-lock"></i>
               </button>
               <input
-                type="password"
+                type={passwordVisible ? "text" : "password"} // Toggle between text and password input
                 className="form-control"
                 id="passwordInput"
                 placeholder="Password"
@@ -131,8 +158,16 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button className="btn right-icon" type="button">
-                <i className="bi bi-eye"></i>
+              <button
+                className="btn right-icon"
+                type="button"
+                onClick={togglePasswordVisibility}
+              >
+                <i
+                  className={`bi ${
+                    passwordVisible ? "bi-eye-slash" : "bi-eye"
+                  }`}
+                ></i>
               </button>
             </div>
 

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Table, Container, Alert, Form } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Button, Table, Container, Alert, Form, Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchData, fetchReservations } from '../../store/slices/bookingSlice';
+import { fetchReservations, fetchData, addReservation, updateReservation, deleteReservation } from "../../store/slices/bookingSlice";
 
 interface Reservation {
-  id: string; // Firestore document ID
+  id: string;
   guestName: string;
   roomType: string;
   checkInDate: string;
@@ -20,150 +20,176 @@ interface Room {
 }
 
 const Reservations: React.FC = () => {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const [newReservation, setNewReservation] = useState<Reservation>({
-    id: '',
-    guestName: '',
-    roomType: '',
-    checkInDate: '',
-    checkOutDate: '',
+    id: "",
+    guestName: "",
+    roomType: "",
+    checkInDate: "",
+    checkOutDate: "",
     guests: 1,
   });
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
-  // Featch reservation data
+  // Fetch reservation data and rooms data on component mount
   useEffect(() => {
-    dispatch(fetchReservations());
-    dispatch(fetchData());
+    dispatch(fetchReservations()); // Fetch reservations from Redux
+    dispatch(fetchData()); // Fetch rooms from Redux
   }, [dispatch]);
 
-  const reservationsList = useSelector((state) => state.booking.reservations);
-  const roomList = useSelector((state) => state.db.data);
-  
+  // Access reservations and rooms data from Redux store
+  const reservationsList = useSelector((state: any) => state.booking.reservations);
+  const roomList = useSelector((state: any) => state.booking.data);
 
-useEffect(() => {
-    
+  const roomTypes = roomList.map((room: Room) => room.type);
 
-    const fetchRooms = async () => {
-      const response = await fetch('/api/rooms'); // Replace with your API endpoint
-      const data = await response.json();
-      setRooms(data);
-    };
+  console.log(reservationsList)
 
-    fetchReservations();
-    fetchRooms();
-  }, []);
-
-  const handleDelete = async (id: string) => {
-    await fetch(`/api/reservations/${id}`, { method: 'DELETE' });
-    setReservations(reservations.filter(reservation => reservation.id !== id));
-    setMessage('Reservation deleted successfully!');
+  // Handle Delete Reservation
+  const handleDelete = (id: string) => {
+    dispatch(deleteReservation(id)); // Dispatch delete action
+    setMessage("Reservation deleted successfully!");
   };
 
+  // Handle Edit Reservation
   const handleEdit = (reservation: Reservation) => {
     setNewReservation(reservation);
+    setShowModal(true);
   };
 
+  // Handle Add/Update Reservation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newReservation.id) {
       // Update existing reservation
-      await fetch(`/api/reservations/${newReservation.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newReservation),
-      });
-      setMessage('Reservation updated successfully!');
+      dispatch(updateReservation(newReservation.id, newReservation));
+      setMessage("Reservation updated successfully!");
     } else {
-      // Create new reservation
-      await fetch('/api/reservations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newReservation),
-      });
-      setMessage('Reservation created successfully!');
+      // Add new reservation
+      dispatch(addReservation(newReservation));
+      setMessage("Reservation created successfully!");
     }
 
-    // Reset form
-    setNewReservation({ id: '', guestName: '', roomType: '', checkInDate: '', checkOutDate: '', guests: 1 });
-    await fetchReservations(); // Refresh reservations
+    // Reset form and close modal
+    setNewReservation({
+      id: "",
+      guestName: "",
+      roomType: "",
+      checkInDate: "",
+      checkOutDate: "",
+      guests: 1,
+    });
+    setShowModal(false);
   };
 
+  // Calculate available rooms
   const calculateAvailableRooms = (total: number, booked: number) => {
     return total - booked;
   };
 
   return (
-    <Container className="mt-5">
-      <h2>Manage Reservations</h2>
+    <Container className="mt-5 mb-5 container-fluid flex">
       {message && <Alert variant="success">{message}</Alert>}
 
-      <Form onSubmit={handleSubmit}>
-        <h4>{newReservation.id ? 'Edit Reservation' : 'Add Reservation'}</h4>
-        <Form.Group controlId="formGuestName">
-          <Form.Label>Guest Name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter guest name"
-            value={newReservation.guestName}
-            onChange={(e) => setNewReservation({ ...newReservation, guestName: e.target.value })}
-            required
-          />
-        </Form.Group>
+      {/* Modal for Add/Edit Reservation */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{newReservation.id ? "Edit Reservation" : "Add Reservation"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formGuestName">
+              <Form.Label>Guest Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter guest name"
+                value={newReservation.guestName}
+                onChange={(e) =>
+                  setNewReservation({
+                    ...newReservation,
+                    guestName: e.target.value,
+                  })
+                }
+                required
+              />
+            </Form.Group>
 
-        <Form.Group controlId="formRoomType">
-          <Form.Label>Room Type</Form.Label>
-          <Form.Control
-            as="select"
-            value={newReservation.roomType}
-            onChange={(e) => setNewReservation({ ...newReservation, roomType: e.target.value })}
-            required
-          >
-            <option value="">Select room type</option>
-            {rooms.map(room => (
-              <option key={room.id} value={room.type}>{room.type}</option>
-            ))}
-          </Form.Control>
-        </Form.Group>
+            <Form.Group controlId="formRoomType">
+              <Form.Label>Room Type</Form.Label>
+              <Form.Control
+                as="select"
+                value={newReservation.roomType}
+                onChange={(e) =>
+                  setNewReservation({
+                    ...newReservation,
+                    roomType: e.target.value,
+                  })
+                }
+                required
+              >
+                <option value="">Select room type</option>
+                {roomTypes.map((room) => (
+                  <option key={room} value={room}>
+                    {room}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
 
-        <Form.Group controlId="formCheckInDate">
-          <Form.Label>Check-In Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={newReservation.checkInDate}
-            onChange={(e) => setNewReservation({ ...newReservation, checkInDate: e.target.value })}
-            required
-          />
-        </Form.Group>
+            <Form.Group controlId="formCheckInDate">
+              <Form.Label>Check-In Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={newReservation.checkInDate}
+                onChange={(e) =>
+                  setNewReservation({
+                    ...newReservation,
+                    checkInDate: e.target.value,
+                  })
+                }
+                required
+              />
+            </Form.Group>
 
-        <Form.Group controlId="formCheckOutDate">
-          <Form.Label>Check-Out Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={newReservation.checkOutDate}
-            onChange={(e) => setNewReservation({ ...newReservation, checkOutDate: e.target.value })}
-            required
-          />
-        </Form.Group>
+            <Form.Group controlId="formCheckOutDate">
+              <Form.Label>Check-Out Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={newReservation.checkOutDate}
+                onChange={(e) =>
+                  setNewReservation({
+                    ...newReservation,
+                    checkOutDate: e.target.value,
+                  })
+                }
+                required
+              />
+            </Form.Group>
 
-        <Form.Group controlId="formGuests">
-          <Form.Label>Number of Guests</Form.Label>
-          <Form.Control
-            type="number"
-            min={1}
-            value={newReservation.guests}
-            onChange={(e) => setNewReservation({ ...newReservation, guests: Number(e.target.value) })}
-            required
-          />
-        </Form.Group>
+            <Form.Group controlId="formGuests">
+              <Form.Label>Number of Guests</Form.Label>
+              <Form.Control
+                type="number"
+                min={1}
+                value={newReservation.guests}
+                onChange={(e) =>
+                  setNewReservation({
+                    ...newReservation,
+                    guests: Number(e.target.value),
+                  })
+                }
+                required
+              />
+            </Form.Group>
 
-        <Button variant="primary" type="submit">
-          {newReservation.id ? 'Update Reservation' : 'Add Reservation'}
-        </Button>
-      </Form>
+            <Button variant="primary" type="submit" className="mt-3">
+              {newReservation.id ? "Update Reservation" : "Add Reservation"}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
 
       <h2 className="mt-5">Room Availability</h2>
       <Table striped bordered hover>
@@ -176,7 +202,7 @@ useEffect(() => {
           </tr>
         </thead>
         <tbody>
-          {rooms.map(room => (
+          {roomList.map((room: Room) => (
             <tr key={room.id}>
               <td>{room.type}</td>
               <td>{room.totalRooms}</td>
@@ -202,7 +228,7 @@ useEffect(() => {
           </tr>
         </thead>
         <tbody>
-          {reservationsList.map(reservation => (
+          {reservationsList.map((reservation) => (
             <tr key={reservation.id}>
               <td>{reservation.id}</td>
               <td>{reservation.fullname}</td>
@@ -212,7 +238,7 @@ useEffect(() => {
               <td>{reservation.guests}</td>
               <td>{reservation.status ? "Confirmed" : "Pending"}</td>
               <td>
-                <div className='btn-group'>
+                <div className="btn-group">
                   <Button variant="warning" onClick={() => handleEdit(reservation)}>
                     Edit
                   </Button>
@@ -225,6 +251,21 @@ useEffect(() => {
           ))}
         </tbody>
       </Table>
+      <div className="container-sm d-flex justify-content-end">
+        <Button variant="primary" onClick={() => {
+          setNewReservation({
+            id: "",
+            guestName: "",
+            roomType: "",
+            checkInDate: "",
+            checkOutDate: "",
+            guests: 1,
+          });
+          setShowModal(true);
+        }}>
+          Add Reservation
+        </Button>
+      </div>
     </Container>
   );
 };

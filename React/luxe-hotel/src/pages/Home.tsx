@@ -40,6 +40,30 @@ function Home() {
     loading: state.db.loading,
   }));
 
+  // Hotel FAQ
+  const hotelQuestions = [
+    {
+      question: "What time is check-in and check-out?",
+      answer: "Check-in is available from 2:00 PM, and check-out is until 11:00 AM. Early check-in and late check-out may be available upon request and subject to availability."
+    },
+    {
+      question: "Do you offer free Wi-Fi?",
+      answer: "Yes, we offer complimentary Wi-Fi in all guest rooms and public areas of the hotel."
+    },
+    {
+      question: "Is breakfast included in the room rate?",
+      answer: "It depends on the room rate or package you choose. Some rates include breakfast, while others may offer it as an add-on."
+    },
+    {
+      question: "Is there a parking fee?",
+      answer: "Parking is available for an additional fee. We offer both valet and self-parking options."
+    },
+    {
+      question: "Do you accept pets?",
+      answer: "Yes, we are a pet-friendly hotel. However, a pet fee may apply, and we ask that you notify us in advance if you're traveling with a pet."
+    }
+  ];
+
   return (
     <div>
       {/* Hero Banner */}
@@ -87,7 +111,7 @@ function Home() {
 
       {/* Frequently Asked Questions */}
       <div className="container-xl">
-        <FAQ />
+        <FAQ questions={hotelQuestions}/>
       </div>
 
       {/* Footer */}

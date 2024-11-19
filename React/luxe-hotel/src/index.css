@@ -164,6 +164,11 @@ hr {
   align-items: center;
 }
 
+.gallery-images {
+  width: 120rem !important;
+  object-fit: contain !important;
+}
+
 .reservation-form {
   width: 70%;
 }

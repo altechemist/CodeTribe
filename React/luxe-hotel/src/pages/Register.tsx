@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Heading from "../components/Heading";
 import { register } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 function Register() {
   // Registration variables
@@ -15,6 +16,9 @@ function Register() {
 
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle confirm password visibility
+
   const user = useSelector((state) => state.auth.user);
   const error = useSelector((state) => state.auth.error);
 
@@ -26,12 +30,16 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      Swal.fire({
+        icon: "error",
+        title: "Passwords do not match!",
+        text: "Please make sure both passwords match.",
+      });
       return;
     }
 
     setLoading(true);
-    dispatch(register(email, password, name, phoneNumber));
+    await dispatch(register(email, password, name, phoneNumber));
 
     // Reset loading state after registration
     setLoading(false);
@@ -39,14 +47,27 @@ function Register() {
 
   useEffect(() => {
     if (user) {
-      alert("Successfully registered");
+      Swal.fire({
+        icon: "success",
+        title: "Successfully registered",
+        text: "Welcome to our platform!",
+      });
       navigate("/");
     }
 
     if (error) {
-      alert(error); // Display error message to the user
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: error,
+      });
     }
   }, [user, error, navigate]);
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword((prev) => !prev);
 
   return (
     <div className="container-sm">
@@ -62,10 +83,10 @@ function Register() {
             Hello, Let's get started!
           </h6>
           {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
-              </div>
-            )}
+            <div className="alert alert-danger" role="alert">
+              {error}
+            </div>
+          )}
             
           <form
             className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
@@ -121,7 +142,7 @@ function Register() {
                 <i className="bi bi-lock"></i>
               </button>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 id="passwordInput"
                 placeholder="Password"
@@ -129,8 +150,12 @@ function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button className="btn right-icon" type="button">
-                <i className="bi bi-eye"></i>
+              <button
+                className="btn right-icon"
+                type="button"
+                onClick={togglePasswordVisibility}
+              >
+                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
               </button>
             </div>
 
@@ -139,7 +164,7 @@ function Register() {
                 <i className="bi bi-lock"></i>
               </button>
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 className="form-control"
                 id="confirmPasswordInput"
                 placeholder="Confirm Password"
@@ -147,8 +172,12 @@ function Register() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-              <button className="btn right-icon" type="button">
-                <i className="bi bi-eye"></i>
+              <button
+                className="btn right-icon"
+                type="button"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                <i className={`bi ${showConfirmPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
               </button>
             </div>
 
@@ -161,7 +190,17 @@ function Register() {
               {loading ? "Registering..." : "Register"}
             </button>
 
-            {loading && <h1>Loading</h1>}
+            {/* Display the loader centered while loading */}
+            {loading && (
+              <div
+                className="d-flex justify-content-center align-items-center mt-3"
+                style={{ height: "200px" }} // You can adjust the height as needed
+              >
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            )}
 
             <hr className="my-4" />
 

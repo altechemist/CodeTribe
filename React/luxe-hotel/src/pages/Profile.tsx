@@ -46,7 +46,7 @@ function Profile() {
 
   // Filter rooms by favorites
   const favoriteRooms = roomList.filter((room: Room) =>
-    user.favorites.includes(room.id)
+    user?.favorites?.includes(room.id)
   );
 
   // Redirect to login if no user is logged in
@@ -54,7 +54,10 @@ function Profile() {
     if (!user) {
       navigate("/login");
     }
+    console.log(user);
   }, [user, navigate]);
+
+  // 
 
   // State to manage the active tab
   const [activeTab, setActiveTab] = useState("account");
@@ -116,7 +119,7 @@ function Profile() {
               <p className="text-center">
                 View and manage your favorite rooms.
               </p>
-              {roomList.length > 0 && (
+              {roomList?.length > 0 && (
                 <div className="d-flex recommendations">
                   {favoriteRooms.map((room: Room) => (
                     <VerticalCard key={room.id} room={room} />

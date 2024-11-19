@@ -40,6 +40,16 @@ const RoomForm: React.FC = () => {
     setFormData({ ...formData, images: updatedImages });
   };
 
+  const roomTypes = [
+    "Junior Suite",
+    "Luxury Suite",
+    "Penthouse Suite",
+    "Executive Room",
+    "Family Suite",
+    "Deluxe Room",
+    "Honeymoon Suite",
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Logic to handle form submission, e.g., send data to the backend
@@ -70,17 +80,20 @@ const RoomForm: React.FC = () => {
     <Container className="mt-5">
       {message && <Alert variant="success">{message}</Alert>}
       <Form onSubmit={handleSubmit}>
-    
-      <Form.Group controlId="formType">
+        
+        <Form.Group controlId="formType">
           <Form.Label>Room Type</Form.Label>
           <Form.Control
-            type="text"
-            placeholder="Enter room type"
-            name="type"
+            as="select"
             value={formData.type}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Select room type</option>
+            {roomTypes.map(room => (
+              <option key={room} value={room}>{room}</option>
+            ))}
+          </Form.Control>
         </Form.Group>
 
         <Form.Group controlId="formDescription">

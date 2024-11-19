@@ -3,6 +3,7 @@ import logo from "../assets/logo.png";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
+import Swal from 'sweetalert2';  // Import SweetAlert2
 
 function CustomNavbar() {
   const dispatch = useDispatch();
@@ -10,8 +11,24 @@ function CustomNavbar() {
   const location = useLocation();
 
   const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
+    // Show confirmation dialog before logging out
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to log out?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, log me out!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // If user confirms, dispatch logout and navigate to home
+        dispatch(logout());
+        navigate("/");
+        Swal.fire('Logged out!', 'You have been logged out.', 'success');
+      }
+    });
   };
 
   return (
@@ -34,44 +51,12 @@ function CustomNavbar() {
         <Navbar.Toggle aria-controls="navbarNav" />
         <Navbar.Collapse id="navbarNav" className="ms-auto">
           <Nav className="me-auto justify-content-end">
-            <Nav.Link as={Link} to="/" active={location.pathname === "/"}>
-              Home
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              to="/gallery"
-              active={location.pathname === "/gallery"}
-            >
-              Gallery
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              to="/rooms"
-              active={location.pathname === "/rooms"}
-            >
-              Rooms
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              to="/events"
-              active={location.pathname === "/events"}
-            >
-              Events
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              to="/about"
-              active={location.pathname === "/about"}
-            >
-              About
-            </Nav.Link>
-            <Nav.Link
-              as={Link}
-              to="/contact"
-              active={location.pathname === "/contact"}
-            >
-              Contact
-            </Nav.Link>
+            <Nav.Link as={Link} to="/" active={location.pathname === "/"}>Home</Nav.Link>
+            <Nav.Link as={Link} to="/gallery" active={location.pathname === "/gallery"}>Gallery</Nav.Link>
+            <Nav.Link as={Link} to="/rooms" active={location.pathname === "/rooms"}>Rooms</Nav.Link>
+            <Nav.Link as={Link} to="/events" active={location.pathname === "/events"}>Events</Nav.Link>
+            <Nav.Link as={Link} to="/about" active={location.pathname === "/about"}>About</Nav.Link>
+            <Nav.Link as={Link} to="/contact" active={location.pathname === "/contact"}>Contact</Nav.Link>
           </Nav>
           <Nav>
             <NavDropdown
@@ -88,28 +73,17 @@ function CustomNavbar() {
               id="profile-dropdown"
               align="end"
             >
-              <NavDropdown.Item as={Link} to="/profile">
-                My Bookings...
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/profile">
-                Favorites
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/profile">
-                Profile
-              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/profile">My Bookings...</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/profile">Favorites</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/profile">Profile</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item as={Link} to="/" onClick={handleLogout}>
-                Sign out
-              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/" onClick={handleLogout}>Sign out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
 
         {/* Separate Row for Map and Phone */}
-        <Container
-          fluid
-          className="bg-white d-flex justify-content-end align-items-center p-1 "
-        >
+        <Container fluid className="bg-white d-flex justify-content-end align-items-center p-1">
           <Nav className="nav-bar-row-2">
             <Nav.Link
               as="a"
@@ -121,8 +95,7 @@ function CustomNavbar() {
             </Nav.Link>
 
             <Nav.Link href="tel:+27538028200">
-              <i className="bi bi-telephone" aria-label="Phone Number"></i> +27
-              53-802-8200
+              <i className="bi bi-telephone" aria-label="Phone Number"></i> +27 53-802-8200
             </Nav.Link>
           </Nav>
         </Container>

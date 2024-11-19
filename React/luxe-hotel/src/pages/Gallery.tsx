@@ -12,7 +12,7 @@ function Gallery() {
       <Heading title="Photos & Videos" />
 
       {/* Main Card */}
-      <div className="d-flex container-fluid rounded-3 p-1 gap-1 mb-4 text-center">
+      <div className="d-flex container-fluid rounded-3 p-1 gap-1 mb-4">
         {/* First Row of Images */}
         <div className="d-flex img-fluid w-25 col">
           <img
@@ -30,25 +30,22 @@ function Gallery() {
         </div>
       </div>
 
-      {/* Second Row of Images */}
-      <div className="d-flex container-fluid rounded-3 p-1 gap-1 mb-4 text-center">
-        <div className="col align-content-baseline">
-          <div className="d-inline-flex gap-1">
-            <img
-              src={image_3}
-              className="card-img-top rounded-3"
-              alt="Spacious bedroom with scenic view"
-            />
-          </div>
-          <div className="d-inline-flex gap-1">
-            <img
-              src={image_6}
-              className="card-img-top rounded-3"
-              alt="Elegant bedroom with a view of the city"
-            />
-          </div>
+      {/* Second Row of Images - Full width images */}
+      <div className="flex container-fluid rounded-3 p-1 gap-1 mb-4">
+        <div className="d-flex justify-content-center mb-4">
+          <img
+            src={image_3}
+            className="img-fluid rounded-3"
+            alt="Spacious bedroom with scenic view"
+          />
         </div>
-      
+        <div className="d-flex justify-content-center mb-4">
+          <img
+            src={image_6}
+            className="img-fluid rounded-3"
+            alt="Elegant bedroom with a view of the city"
+          />
+        </div>
       </div>
 
       {/* YouTube Video */}

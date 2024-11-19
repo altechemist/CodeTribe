@@ -81,7 +81,7 @@ export const bookingSlice = createSlice({
   reducers: {
     setLoading(state) {
       state.loading = true;
-      state.error = null;
+      state.error = null; // Reset any previous errors when loading starts
     },
     setData(state, action: PayloadAction<Room[]>) {
       state.data = action.payload;
@@ -97,6 +97,10 @@ export const bookingSlice = createSlice({
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
+      state.loading = false;
+    },
+    setSuccess(state, action: PayloadAction<string | null>) {
+      state.success = action.payload;
       state.loading = false;
     },
     setSelectedRoom(state, action: PayloadAction<Room | null>) {
@@ -153,19 +157,19 @@ export const fetchReservations = () => async (dispatch: AppDispatch) => {
 };
 
 // Adds a reservation
-export const addReservation = (reservation: Reservation) => async (dispatch: AppDispatch) => {
+export const addReservation = (reservation: Reservation) => async (dispatch: AppDispatch, getState) => {
   dispatch(setLoading());
 
   try {
     const docRef = await addDoc(collection(db, 'Reservations'), reservation);
     const newReservation = { id: docRef.id, ...reservation };
-    dispatch(setReservations([...initialState.reservations, newReservation]));
 
-    // Send a verification email
-    console.log(newReservation)
-    
-    // Prepare the email payload
-     const emailPayload = {
+    // Use current reservations from the store and append the new reservation
+    const state = getState();
+    dispatch(setReservations([...state.booking.reservations, newReservation]));
+
+    // Send a confirmation email
+    const emailPayload = {
       name: newReservation.guestName,
       email: newReservation.guestEmail,
       roomType: newReservation.roomType,
@@ -173,25 +177,16 @@ export const addReservation = (reservation: Reservation) => async (dispatch: App
       checkOutDate: newReservation.checkOutDate,
     };
 
-    // Send a confirmation email
     try {
-      console.log(emailPayload)
       const response = await axios.post('https://sendemail-xnue.onrender.com/send-email', emailPayload);
-
-      // Handle email send success or failure
       if (response.status === 200) {
-        console.log('Confirmation email sent successfully');
+        dispatch(setSuccess('Confirmation email sent successfully.'));
       } else {
-        console.error('Failed to send confirmation email:', response);
         dispatch(setError('Failed to send confirmation email.'));
       }
-    } catch (error) {
-      // Handle email sending error
-      dispatch(setError((error as Error).message || 'An error occurred while sending the confirmation email'));
-      console.error('Error sending email:', error);
+    } catch (emailError) {
+      dispatch(setError((emailError as Error).message || 'An error occurred while sending the confirmation email'));
     }
-
-
   } catch (error) {
     dispatch(setError((error as Error).message || 'An error occurred while adding the reservation'));
   }
@@ -228,6 +223,7 @@ export const {
   setLoading,
   setData,
   setError,
+  setSuccess,
   setSelectedRoom,
   setDuration,
   setCheckIn,

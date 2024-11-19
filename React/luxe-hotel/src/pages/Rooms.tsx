@@ -1,9 +1,11 @@
 import HeroSection from "../components/Hero";
 import Footer from "../components/Footer";
 import Heading from "../components/Heading";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LeftRoomCard from "../components/LeftRoomCard";
 import RightRoomCard from "../components/RightRoomCard";
+import { useEffect } from "react";
+import { fetchData } from "../store/slices/dbSlice";
 
 interface Room {
   id: string;
@@ -21,6 +23,13 @@ interface Room {
 }
 
 function Rooms() {
+  const dispatch = useDispatch();
+  
+  // Fetch data from firebase
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+
   const roomList = useSelector((state) => state.db.data);
 
   return (

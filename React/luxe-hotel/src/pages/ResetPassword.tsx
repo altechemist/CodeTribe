@@ -1,10 +1,10 @@
 import logo from "../assets/logo.png";
 import Heading from "../components/Heading";
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { resetPassword } from '../store/slices/authSlice';
+import { resetPassword } from "../store/slices/authSlice";
 import { useDispatch } from "react-redux";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -13,11 +13,38 @@ function ResetPassword() {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Reset email address
-    dispatch(resetPassword(email));
 
-    // Redirect to login page after successful reset
-    navigate("/login");
+    if (!email) {
+      // Check if the email is provided
+      Swal.fire({
+        icon: "error",
+        title: "Email is required",
+        text: "Please provide a valid email address.",
+      });
+      return;
+    }
+
+    try {
+      // Dispatch resetPassword action
+      await dispatch(resetPassword(email));
+
+      // Display success alert
+      Swal.fire({
+        icon: "success",
+        title: "Password Reset Requested",
+        text: "Check your email for reset instructions.",
+      });
+
+      // Redirect to login page after success
+      navigate("/login");
+    } catch (error) {
+      // Display error alert if something goes wrong
+      Swal.fire({
+        icon: "error",
+        title: "Something went wrong",
+        text: "There was an issue with the password reset. Please try again later.",
+      });
+    }
   };
 
   return (
