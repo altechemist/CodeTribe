@@ -7,6 +7,7 @@ import MyReservation from "./Profile/MyReservation";
 import { useNavigate } from "react-router-dom";
 import VerticalCard from "../components/VerticalCard";
 import Subheading from "../components/Subheading";
+import Footer from "../components/Footer";
 
 interface Room {
   id: string;
@@ -63,16 +64,14 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("account");
 
   return (
-    <div>
+    <><div>
       {user ? (
-        <div className="container-fluid">
+        <div className="container-fluid mt-4 mb-4 ">
           <Heading title="Manage Account" />
           <ul className="nav nav-tabs d-flex justify-content-center gap-2">
             <li className="nav-item">
               <button
-                className={`btn btn-primary rounded-pill px-3 ${
-                  activeTab === "account" ? "active" : ""
-                }`}
+                className={`btn btn-primary rounded-pill px-3 ${activeTab === "account" ? "active" : ""}`}
                 onClick={() => setActiveTab("account")}
               >
                 Account Details
@@ -83,9 +82,7 @@ function Profile() {
 
             <li className="nav-item">
               <button
-                className={`btn btn-primary rounded-pill px-3 ${
-                  activeTab === "favorites" ? "active" : ""
-                }`}
+                className={`btn btn-primary rounded-pill px-3 ${activeTab === "favorites" ? "active" : ""}`}
                 onClick={() => setActiveTab("favorites")}
               >
                 My Favorites
@@ -96,9 +93,7 @@ function Profile() {
 
             <li className="nav-item">
               <button
-                className={`btn btn-primary rounded-pill px-3 ${
-                  activeTab === "reservations" ? "active" : ""
-                }`}
+                className={`btn btn-primary rounded-pill px-3 ${activeTab === "reservations" ? "active" : ""}`}
                 onClick={() => setActiveTab("reservations")}
               >
                 My Reservations
@@ -143,7 +138,7 @@ function Profile() {
           <p>Please log in</p>
         </div>
       )}
-    </div>
+    </div><Footer /></>
   );
 }
 

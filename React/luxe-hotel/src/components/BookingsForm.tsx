@@ -91,8 +91,6 @@ export default function BookingsForm() {
     <div className="row gap-2 reservation-form justify-content-center">
       <div className="d-flex bg-body-tertiary shadow rounded-4">
         <form className="needs-validation">
-          <p>Guests: {guests}</p>
-          <p>rid: {room.id}</p>
           <div className="row g-3">
             <div className="col">
               <label htmlFor="firstName" className="form-label">
@@ -266,17 +264,19 @@ export default function BookingsForm() {
             </label>
           </div>
 
-          {isFormValid ? (
-            <PayPalButtonComponent />
-          ) : (
-            <button
-              className="w-100 btn btn-primary btn-lg"
-              type="submit"
-              onClick={handleSubmit}
-            >
-              Book Now
-            </button>
-          )}
+          <div className="mb-4">
+            {isFormValid ? (
+              <PayPalButtonComponent />
+            ) : (
+              <button
+                className="w-100 btn btn-primary btn-lg"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                Book Now
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>

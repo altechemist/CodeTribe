@@ -3,6 +3,8 @@ import Footer from "../components/Footer";
 import Heading from "../components/Heading";
 import ImageGrid from "../components/ImageGrid";
 
+import Swal from "sweetalert2";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../store/slices/dbSlice";
@@ -16,7 +18,6 @@ import {
   setSubtotal,
 } from "../store/slices/bookingSlice";
 import RoomSummary from "../components/RoomSummary";
-import DatePicker from "../components/DatePicker";
 
 interface Room {
   id: string;
@@ -31,6 +32,8 @@ interface Room {
   price: number;
   sofa: string;
   type: string;
+  bookedRooms: number;
+  totalRooms: number;
 }
 
 function Room() {
@@ -65,14 +68,33 @@ function Room() {
   }, [checkIn, checkOut, adults, children]);
 
   const handleView = (room: Room) => {
+    
+
+    // Check reservation details
+    if (days === 0 || guests === 0 ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid selection",
+        text: "Please select at least one day and one guest(s).",
+        confirmButtonColor: '#2c2c2c',
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    if (availableUnits === 0 ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Room unavailable",
+        text: "Oops, the current room is unavailable",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     dispatch(setSelectedRoom(room));
     dispatch(setSubtotal((room.price * days).toFixed(2)));
 
-     // Check reservation details
-     if (days === 0 && guests === 0){
-      alert("Please select at least one day and guests.");
-      return;
-    }
     navigate(`/bookings`);
   };
 
@@ -91,6 +113,9 @@ function Room() {
     dispatch(setCheckOut(selectedDate));
   };
 
+  // Find number of available units
+  let availableUnits: number = 0;
+  if (room) availableUnits = room.totalRooms - room.bookedRooms;
 
   return (
     <div className="container-fluid mt-4">
@@ -103,24 +128,6 @@ function Room() {
         className="d-flex flex-row align-items-center justify-content-evenly mb-4"
         id="CheckAvailability"
       >
-        <div className="col-4 text-center mb-4">
-          <h3 className="display-7 fw-bold">Available Dates</h3>
-
-          <DatePicker />
-
-          <p>Check In: {checkIn}</p>
-          <p>Check Out: {checkOut}</p>
-          <p>Guests: {guests} guests</p>
-          <p>Duration: {days} Days</p>
-          <p>
-            <strong>Note:</strong> We are currently unavailable for this room.
-            Please try another date.
-          </p>
-          <button onClick={() => handleView(room)} className="btn btn-primary">
-            Confirm Reservation
-          </button>
-        </div>
-
         <div className="col-4 text-center mb-4">
           <h3 className="display-7 fw-bold">Choose Dates</h3>
           <div className="row g-3 mb-3 justify-content-center">
@@ -167,6 +174,8 @@ function Room() {
                 id="children"
                 placeholder="0"
                 value={children}
+                min={0}
+                max={room.guests}
                 onChange={(e) => dispatch(setChildren(e.target.value))}
               />
             </div>
@@ -179,15 +188,21 @@ function Room() {
                 className="form-control"
                 id="adults"
                 placeholder="0"
+                min={0}
+                max={room.guests}
                 value={adults}
                 onChange={(e) => dispatch(setAdults(e.target.value))}
               />
             </div>
           </div>
 
-          <div className="d-flex justify-content-center">
-            <button className="btn btn-primary">Search</button>
+          <div className="alert alert-secondary mt-2 mb-2 " role="alert">
+            Available Units: <strong>{availableUnits}</strong>
           </div>
+
+          <button onClick={() => handleView(room)} className="btn btn-primary">
+            Confirm Reservation
+          </button>
         </div>
       </div>
 

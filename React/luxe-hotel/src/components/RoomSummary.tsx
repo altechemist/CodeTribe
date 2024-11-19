@@ -42,7 +42,7 @@ export default function RoomSummary() {
   // Function to handle viewing the room details
   const handleView = (room: Room) => {
     dispatch(setSelectedRoom(room));
-    navigate(`/room#CheckAvailability`);
+    navigate(`/room/${room.id}`);
   };
 
   // Function to handle "like" functionality with SweetAlert2

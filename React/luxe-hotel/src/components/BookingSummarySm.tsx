@@ -32,7 +32,7 @@ export default function BookingSummary() {
     // Set the room type in the URL query parameters
     dispatch(setSelectedRoom(room));
     // Navigate to room details page
-    navigate(`/room#CheckAvailability`);
+    navigate(`/room/${room.id}`);
   };
 
   return (
@@ -57,13 +57,7 @@ export default function BookingSummary() {
             <h2 className="fw-bold">R{subtotal}</h2>
           </div>
 
-          <div className="d-inline-flex gap-2 mt-4">
-            <button className="btn btn-primary">
-              <i className="bi bi-share"></i>
-            </button>
-            <button className="btn btn-primary">
-              <i className="bi bi-heart-fill"></i>
-            </button>
+          <div className="d-inline-flex gap-2 mt-4 mb-2">
             <button
               onClick={() => handleView(room)}
               className="btn btn-primary"

@@ -10,7 +10,7 @@ function Bookings() {
 
       <div className="d-flex">
         {/* Check Availability */}
-        <div className="d-flex justify-content-center col-8">
+        <div className="d-flex justify-content-center col-8 p-1 pb-4">
           <BookingsForm />
         </div>
 

@@ -96,8 +96,8 @@ export const bookingSlice = createSlice({
       state.loading = false;
     },
     setError(state, action: PayloadAction<string | null>) {
-      state.error = action.payload;
       state.loading = false;
+      state.error = action.payload;
     },
     setSuccess(state, action: PayloadAction<string | null>) {
       state.success = action.payload;
