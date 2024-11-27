@@ -181,7 +181,7 @@ const CurrentTask: React.FC<TaskProps> = ({
           {incompleteTasks.length === 0 ? (
             <div>
               <h3 className="d-flex justify-content-center p-4 py-md-5">
-                No Current Tasks
+                Add a Task...
               </h3>
             </div>
           ) : (
@@ -200,7 +200,6 @@ const CurrentTask: React.FC<TaskProps> = ({
                 />
               </div>
               {incompleteTasks.map((task) => {
-                // Choose the id to use, preferring task.id over task.taskid
                 const taskId = task.id ?? task.taskid;
 
                 return (
@@ -231,7 +230,7 @@ const CurrentTask: React.FC<TaskProps> = ({
                     >
                       {task.priority}
                       <br />
-                      Priority {taskId}
+                      Priority
                     </span>
                     <div className="btn-group gap-1" role="group">
                       <button
@@ -240,7 +239,7 @@ const CurrentTask: React.FC<TaskProps> = ({
                         data-bs-toggle="modal"
                         data-bs-target="#updateTaskModal"
                       >
-                        <i className="bi bi-pencil p-1"></i>{taskId}
+                        <i className="bi bi-pencil p-1"></i>
                       </button>
                       <button
                         onClick={() => handleDelete(taskId)}

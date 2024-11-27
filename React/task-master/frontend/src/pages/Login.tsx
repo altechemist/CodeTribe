@@ -54,6 +54,7 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
         setErrorList([
           "Failed to login. Please check your credentials and try again.",
         ]);
+        console.log(error);
       }
     }
   };

@@ -73,14 +73,10 @@ export default function App() {
     password: InputValue
   ): Promise<boolean> => {
     try {
-      console.log("Logging in with:", { email, password });
-
       const response = await axios.post("http://localhost:3001/login", {
         email,
         password,
       });
-
-      console.log("Login response:", response.data);
 
       const { uid } = response.data;
       if (uid) {
