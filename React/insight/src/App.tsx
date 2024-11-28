@@ -7,10 +7,27 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Bookmarks from "./components/Bookmarks";
 
+// Sweet alerts
+import Swal from 'sweetalert2'
+import ProfilePage from "./components/Profile";
+import AuthForm from "./components/Auth";
+
+interface Profile {
+  name: string;
+  email: string;
+  password: string;
+  preferences: Array<string>;
+  bookmarks: Array<string>;
+}
+
 function App() {
   // Determine the selected news category
   const [newsCategory, setCategory] = useState<string>("General");
   const [offline, setOffline] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [user, setUser] = useState<Profile>();
+
+
   const readOffline = () => {
     if (!offline) {
       setOffline(true);
@@ -46,7 +63,7 @@ function App() {
     <div className="container-sm">
       <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
         <div className="container-fluid">
-          <a className="navbar-brand">News Feed</a>
+          <a className="navbar-brand" onClick={readOffline}>News Feed</a>
           <button
             className="navbar-toggler"
             type="button"
@@ -99,8 +116,23 @@ function App() {
               </li>
             </ul>
           </div>
+          <form
+            className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+            role="search"
+          >
+            <input
+              type="search"
+              className="form-control form-control"
+              placeholder="Search..."
+              aria-label="Search"
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </form>
           <a className="navbar-brand" href="#" onClick={readOffline}>
             Bookmarks
+          </a>
+          <a className="navbar-brand" href="#" onClick={readOffline}>
+          <i className="bi bi-person"></i>
           </a>
         </div>
       </nav>
@@ -110,18 +142,19 @@ function App() {
           <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">
             {newsCategory} News
           </h2>
-          <NewsFeed newsCategory={newsCategory} />
+          <NewsFeed newsCategory={newsCategory} searchTerm={searchTerm} user={user} />
         </div>
       ) : (
         <div>
-          <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">
-            Bookmarks
-          </h2>
-          <Bookmarks newsCategory={newsCategory} />
+          
+          {user ? <ProfilePage user={user} /> : <AuthForm setUser={setUser}/>}
+          {user && <Bookmarks newsCategory={newsCategory} />}
+          
         </div>
       )}
     </div>
   );
 }
+
 
 export default App;

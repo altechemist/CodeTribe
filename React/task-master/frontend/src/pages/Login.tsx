@@ -11,10 +11,12 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorList, setErrorList] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const newErrors: string[] = [];
 
     if (email === "" || password === "") {
@@ -28,7 +30,9 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
 
     setErrorList(newErrors);
 
+ 
     if (newErrors.length === 0) {
+      setLoading(true);
       try {
         // Call the login function
         const success = (await LoginUser(
@@ -44,19 +48,16 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
           setEmail("");
           setPassword("");
           setErrorList([]);
-        } else {
-          // If login was unsuccessful, set error message
-          setErrorList([
-            "Failed to login. Please check your credentials and try again.",
-          ]);
-        }
+        } 
       } catch (error) {
         setErrorList([
           "Failed to login. Please check your credentials and try again.",
         ]);
-        console.log(error);
+        console.log("login", error);
       }
+      setLoading(false);
     }
+    
   };
 
   const showPassword = () => {
@@ -100,6 +101,13 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
                     </ul>
                   </div>
                 )}
+                {loading && (
+                  <div className="d-flex justify-content-center">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+                )}
               </div>
 
               <div className="form-floating mb-3">
@@ -139,7 +147,11 @@ const Login: React.FC<LoginProps> = ({ LoginUser }) => {
                 </label>
               </div>
 
-              <button className="w-100 btn btn-lg btn-primary" type="submit">
+              <button
+                className="w-100 btn btn-lg btn-primary"
+                type="submit"
+                disabled={loading}
+              >
                 <i className="bi bi-box-arrow-in-left me-2"></i>
                 Login
               </button>

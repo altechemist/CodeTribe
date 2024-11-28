@@ -12,18 +12,18 @@ interface Employee {
 }
 
 interface ViewEmployeeProps {
-  EmployeeData: Employee[];
+  EmployeeData: Employee[] | undefined; // Allow undefined or null
   RemoveEmployee: (id: string) => void;
   SelectEmployee: (id: string) => void;
   UpdatePage: () => void;
+  loading: boolean;
 }
 
 const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
-  // State for search query
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Filter employees based on the search query
-  const filteredEmployees = props.EmployeeData.filter((employee) => {
+  const filteredEmployees = props.EmployeeData?.filter((employee) => {
     const lowerCaseSearchQuery = searchQuery.toLowerCase();
     return (
       searchQuery &&
@@ -43,10 +43,20 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
     props.UpdatePage();
   };
 
+  // Make sure EmployeeData is always an array, if it's undefined, default to empty array
+  const employees = props.EmployeeData || [];
+
+  if (props?.loading) {
+    return (
+      <div className="spinner-border text-primary" role="status">
+      </div>
+    );
+  }
+
   return (
     <div id="View" className="container-sm">
       <div>
-        {props.EmployeeData.length === 0 ? (
+        {employees.length === 0 ? (
           <div className="text-center">
             <h1>No Employee Data Found</h1>
           </div>
@@ -87,49 +97,48 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {(filteredEmployees.length > 0
-                    ? filteredEmployees
-                    : props.EmployeeData
-                  ).map((empData) => (
-                    <tr key={empData.id} className="align-middle">
-                      <td>
-                        <img
-                          className="Thumbnail"
-                          src={empData.image}
-                          alt={`${empData.firstName} ${empData.lastName}`}
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "50%",
-                          }}
-                        />
-                      </td>
-                      <td>{empData.firstName}</td>
-                      <td>{empData.lastName}</td>
-                      <td>{empData.idNumber}</td>
-                      <td>{empData.eMailAddress}</td>
-                      <td>{empData.phoneNumber}</td>
-                      <td>{empData.position}</td>
-                      <td>
-                        <div className="btn-group" role="group">
-                          <button
-                            className="btn btn-secondary"
-                            onClick={() => editEmployee(empData.id)}
-                          >
-                            <i className="bi bi-pencil me-2"></i>
-                            Edit
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => removeEmployee(empData.id)}
-                          >
-                            <i className="bi bi-trash me-2"></i>
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {(filteredEmployees?.length > 0 ? filteredEmployees : employees).map(
+                    (empData) => (
+                      <tr key={empData.id} className="align-middle">
+                        <td>
+                          <img
+                            className="Thumbnail"
+                            src={empData.image}
+                            alt={`${empData.firstName} ${empData.lastName}`}
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "50%",
+                            }}
+                          />
+                        </td>
+                        <td>{empData.firstName}</td>
+                        <td>{empData.lastName}</td>
+                        <td>{empData.idNumber}</td>
+                        <td>{empData.eMailAddress}</td>
+                        <td>{empData.phoneNumber}</td>
+                        <td>{empData.position}</td>
+                        <td>
+                          <div className="btn-group" role="group">
+                            <button
+                              className="btn btn-secondary"
+                              onClick={() => editEmployee(empData.id!)} // Ensure id is not null/undefined
+                            >
+                              <i className="bi bi-pencil me-2"></i>
+                              Edit
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => removeEmployee(empData.id!)} // Ensure id is not null/undefined
+                            >
+                              <i className="bi bi-trash me-2"></i>
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )}
                 </tbody>
               </table>
             </div>

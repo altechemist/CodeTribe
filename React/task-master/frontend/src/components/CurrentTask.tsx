@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 // Define types for input values
 type InputValue = string | number | undefined;
@@ -118,7 +119,12 @@ const CurrentTask: React.FC<TaskProps> = ({
 
   // Mark task as completed
   const handleCompletedTask = useCallback((taskId: number) => {
-    alert("Completed " + taskId);
+    Swal.fire({
+      title: 'Complete!',
+      text: 'Task completed successfully',
+      icon: 'success',
+      confirmButtonText: 'Done'
+    })
     if (taskId !== undefined) {
       const selectedTaskDetails = taskList.find((task) => task.id === taskId);
 

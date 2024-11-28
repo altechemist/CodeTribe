@@ -23,6 +23,7 @@ interface CreateEmployeeProps {
   ) => boolean;
   errorList: string[];
   isFormValid: boolean | null;
+  loading: boolean;
 }
 
 const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
@@ -50,12 +51,12 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-  
+
     if (!imageFile) {
       alert("Please select an image.");
       return;
     }
-  
+
     const isFormValid = props.FormValidation(
       id,
       firstName,
@@ -65,12 +66,19 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
       position,
       imageFile
     );
-  
+
     if (isFormValid) {
-    
       try {
         // Call the AddEmployee prop function
-        await props.AddEmployee(id, firstName, lastName, eMailAddress, phoneNumber, position, imageFile);
+        await props.AddEmployee(
+          id,
+          firstName,
+          lastName,
+          eMailAddress,
+          phoneNumber,
+          position,
+          imageFile
+        );
 
         // Clear fields after submission
         setId("");
@@ -81,15 +89,19 @@ const AddEmployees: React.FC<CreateEmployeeProps> = (props) => {
         setPosition("");
         setImagePreview("");
         setImageFile(null);
-        
       } catch (error) {
         console.error("Error:", error);
         alert("Failed to add employee. Please try again.");
       }
     }
   };
-  
-  
+
+  if (props?.loading) {
+    return (
+      <div className="spinner-border text-primary" role="status">
+      </div>
+    );
+  }
 
   return (
     <div id="Add" className="container-sm form">

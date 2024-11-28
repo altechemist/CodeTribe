@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 type InputValue = string | undefined;
 
@@ -42,9 +43,14 @@ const Login: React.FC<LoginProps> = ({ LoginUser, passwordReset }) => {
           setEmail("");
           setPassword("");
           setErrorList([]);
-          alert("Logged in successfully");
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Log in successful!",
+            showConfirmButton: false,
+            timer: 1500
+          });
         } else {
-          // If login was unsuccessful, set error message
           setErrorList([
             "Failed to login. Please check your credentials and try again.",
           ]);
@@ -76,9 +82,7 @@ const Login: React.FC<LoginProps> = ({ LoginUser, passwordReset }) => {
     if (newErrors.length === 0) {
       try {
         // Call the password reset function
-        const success = (await passwordReset(
-          emailReset
-        )) as unknown as boolean;
+        const success = (await passwordReset(emailReset)) as unknown as boolean;
 
         if (success) {
           // Clear fields
@@ -109,7 +113,7 @@ const Login: React.FC<LoginProps> = ({ LoginUser, passwordReset }) => {
 
   return (
     <div>
-      <div className="container col-xl-10 col-xxl-8 px-4 py-5">
+      <div className="container col-sm-10 col-xxl-8 px-4 py-5">
         <div className="row align-items-center g-lg-5 py-5">
           <div className="col-lg-7 text-center text-lg-start">
             <h1 className="display-4 fw-bold lh-1 text-body-emphasis mb-3">
@@ -122,26 +126,25 @@ const Login: React.FC<LoginProps> = ({ LoginUser, passwordReset }) => {
               corporis corrupti asperiores? Exercitationem!
             </p>
           </div>
-          <div className="col-md mx-auto col-lg">
+          <div className="col-sm mx-auto col-lg">
+            <div className="mb-4">
+              {errorList.length > 0 && (
+                <div className="mb-3  alert alert-danger error-list">
+                  <h6>Whoops! There were some problems with your input</h6>
+                  <ul className="list-group-item list-group-item-danger">
+                    {errorList.map((error, index) => (
+                      <li key={index} className="list-group-item">
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
             <form
               className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
               onSubmit={handleSubmit}
             >
-              <div className="mb-4 m-2">
-                {errorList.length > 0 && (
-                  <div className="mb-3 alert error-list">
-                    <h6>Whoops! There were some problems with your input</h6>
-                    <ul className="list-group">
-                      {errorList.map((error, index) => (
-                        <li key={index} className="error">
-                          {error}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
               <div className="form-floating mb-3">
                 <input
                   type="email"

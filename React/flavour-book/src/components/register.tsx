@@ -1,4 +1,26 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
+
+interface Ingredient {
+  name: string;
+  quantity: string;
+}
+
+
+interface Recipe {
+  id: number;
+  image: string;
+  name: string;
+  description: string;
+  total_time: number;
+  calories: number;
+  servings: number;
+  prep_time: number;
+  category: string;
+  cook_time: number;
+  ingredients: Ingredient[];
+  steps: string[];
+}
 
 function Register() {
   interface User {
@@ -13,9 +35,13 @@ function Register() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [formError, setFormError] = useState<string>("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [password2Visible, setPassword2Visible] = useState(false);
 
   // Saves to local storage
-  const createUser = () => {
+  const createUser = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent form submission from reloading the page
+
     // Get existing users
     let users: User[] = [];
     try {
@@ -44,27 +70,21 @@ function Register() {
       setFormError("Enter your password");
       return;
     }
-    const user = users.find(
-      (user) => user.email === email && user.password === password
-    );
-    if (user) {
+    if (password !== password2) {
+      setFormError("Passwords do not match");
+      return;
+    }
+    const userExists = users.some((user) => user.email === email);
+    if (userExists) {
       setFormError("Email address already exists. Please try a different one.");
       return;
     }
 
-    // If everything is valid, save the user to local storage
-    try {
-      localStorage.setItem("users", JSON.stringify(users));
-    } catch (e) {
-      console.error("Failed to save users to localStorage", e);
-    }
-
     // Create a new user object
-    const newUser: User = {
-      name,
-      email,
-      password,
-    };
+    const recipes: Recipe[] = [];
+    const favorites: Recipe[] = [];
+    const newUser: User = { name, email, password, recipes, favorites };
+    
 
     // Add the new user to the list
     users.push(newUser);
@@ -72,6 +92,12 @@ function Register() {
     // Save the updated list back to local Storage
     try {
       localStorage.setItem("users", JSON.stringify(users));
+      Swal.fire({
+        title: 'Done!',
+        text: 'Successfully created new user',
+        icon: 'success',
+        confirmButtonText: 'Ok'
+      })
     } catch (e) {
       console.error("Failed to save users to localStorage", e);
     }
@@ -81,6 +107,28 @@ function Register() {
     setEmail("");
     setPassword("");
     setPassword2("");
+    setFormError("");
+
+    // Close modal
+    const button = document.getElementById("closeModal");
+    if (button) {
+      button.click();
+    }
+  
+  };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = (field: "password" | "password2") => {
+    if (field === "password") {
+      setPasswordVisible(!passwordVisible);
+    } else if (field === "password2") {
+      setPassword2Visible(!password2Visible);
+    }
+  };
+
+  const showPassword = () => {
+    togglePasswordVisibility("password");
+    togglePasswordVisibility("password2");
   };
 
   return (
@@ -102,6 +150,7 @@ function Register() {
               <button
                 type="button"
                 className="btn-close"
+                id="closeModal"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
@@ -116,8 +165,15 @@ function Register() {
                   </div>
 
                   <div className="col-md-10 mx-auto ">
-                  {formError && <p style={{ color: "red" }}>{formError}</p>}
-                    <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary text-center">
+                    {formError && (
+                      <div className="alert alert-danger" role="alert">
+                        {formError}
+                      </div>
+                    )}
+                    <form
+                      onSubmit={createUser}
+                      className="p-4 p-md-5 border rounded-3 bg-body-tertiary text-center"
+                    >
                       <div className="form-floating mb-3">
                         <input
                           type="text"
@@ -146,7 +202,7 @@ function Register() {
 
                       <div className="form-floating mb-3">
                         <input
-                          type="password"
+                          type={passwordVisible ? "text" : "password"}
                           className="form-control"
                           id="passwordInput"
                           placeholder="Password"
@@ -159,7 +215,7 @@ function Register() {
 
                       <div className="form-floating mb-3">
                         <input
-                          type="password"
+                          type={password2Visible ? "text" : "password"}
                           className="form-control"
                           id="passwordInput2"
                           placeholder="Confirm Password"
@@ -173,13 +229,18 @@ function Register() {
 
                       <div className="checkbox mb-3">
                         <label>
-                          <input type="checkbox" value="show-password" /> Show
-                          Password
+                          <input
+                            type="checkbox"
+                            value="show-password2"
+                            onChange={() =>
+                              showPassword()
+                            }
+                          />{" "}
+                          Show Password
                         </label>
                       </div>
                       <button
-                        type="button"
-                        onClick={createUser}
+                        type="submit"
                         className="btn btn-primary green text-centered"
                       >
                         <i className="bi bi-box-arrow-in-left me-2"></i>

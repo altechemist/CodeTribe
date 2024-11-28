@@ -37,6 +37,27 @@ function Login() {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
+    // Validate form validity
+    if (!email ||!password) {
+      Swal.fire({
+        icon: "error",
+        title: "Email and password are required",
+        text: "Please provide both an email address and a password.",
+      });
+      return;
+    }
+    
+    // Check if the email is provided
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid email address",
+        text: "Please provide a valid email address.",
+      });
+      return;
+    }
+
+
     // Attempt to login
     setLoading(true);
     await dispatch(login(email, password));

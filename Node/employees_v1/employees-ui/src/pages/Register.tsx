@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 // Define input value type
 type InputValue = string | undefined;
@@ -27,56 +28,54 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const newErrors: string[] = [];
-
+  
     // Validate user input
-    if (
-      name === "" ||
-      email === "" ||
-      password === "" ||
-      confirmPassword === ""
-    ) {
+    if (name === "" || email === "" || password === "" || confirmPassword === "") {
       newErrors.push("Please fill in all fields.");
     }
-
-    // Validate user email
+  
+    // Validate user email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       newErrors.push("Please enter a valid email address.");
     }
-
+  
     // Check if password matches
     if (password !== confirmPassword) {
       newErrors.push("Passwords do not match.");
     }
-
+  
     setErrorList(newErrors);
-
+  
     // If there are no errors
     if (newErrors.length === 0) {
-      const success = (await CreateUser(
-        name,
-        email,
-        password
-      )) as unknown as boolean;
-
+      const success = await CreateUser(name, email, password);
+  
       if (success) {
+        // Clear form and errors
         setName("");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
         setErrorList([]);
-
-        // You can add your custom success logic here (e.g., showing a success message)
+  
+        // Show success notification
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Registration successful!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+  
         alert("Registration successful!");
-        
       } else {
-        alert("Failed to register. Please check your credentials and try again.");
-        setErrorList([
-          "Failed to register. Please check your credentials and try again.",
-        ]);
+        // Optionally, you can set specific error messages from the backend
+        setErrorList(["Failed to register. Please check your credentials and try again."]);
       }
     }
   };
+  
 
   // Display password in plain text
   const showPassword = () => {
@@ -115,26 +114,24 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
             </p>
           </div>
           <div className="col-md-10 mx-auto col-lg-5">
+          <div className="mb-4">
+              {errorList.length > 0 && (
+                <div className="mb-3  alert alert-danger error-list">
+                  <h6>Whoops! There were some problems with your input</h6>
+                  <ul className="list-group-item list-group-item-danger">
+                    {errorList.map((error, index) => (
+                      <li key={index} className="list-group-item">
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
             <form
               className="p-4 p-md-5 border rounded-3 bg-body-tertiary"
               onSubmit={handleSubmit}
             >
-              {/* Display errors here */}
-              <div className="mb-4 m-2">
-                {errorList.length > 0 && (
-                  <div className="mb-3 alert error-list">
-                    <h6>Whoops! There were some problems with your input</h6>
-                    <ul className="list-group">
-                      {errorList.map((error, index) => (
-                        <li key={index} className="error">
-                          {error}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
               <div className="form-floating mb-3">
                 <input
                   type="text"

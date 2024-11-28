@@ -3,9 +3,22 @@ import axios from "axios";
 import placeholderImage from "../assets/news.png";
 import { ShareSocial } from "react-share-social";
 
+// Sweet alerts
+import Swal from 'sweetalert2'
+
+interface Profile {
+  name: string;
+  email: string;
+  password: string;
+  preferences: Array<string>;
+  bookmarks: Array<string>;
+}
+
 // Props
 interface NewsArticleProps {
   newsCategory: string;
+  searchTerm?: string;
+  user?: Profile;
 }
 
 interface Article {
@@ -16,9 +29,10 @@ interface Article {
   url: string;
 }
 
-const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory }) => {
+const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory, searchTerm, user }) => {
   const [news, setNews] = useState<Article[]>([]);
   const [bookmarks, setBookmarks] = useState<Article[]>([]);
+  
 
   const apiKey: string = "9a45d8a7572c4bbeb1cd2e1bd99ae90c";
   const country: string = "us";
@@ -47,32 +61,58 @@ const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory }) => {
       }
     } catch (error) {
       console.error("Error fetching articles: ", error);
+      Swal.fire({
+        title: 'Network Error!',
+        text: 'You are not connected to the network',
+        icon: 'warning',
+        confirmButtonText: 'Read Offline',
+        confirmButtonColor: '#0D6EFD',
+      })
     }
   };
 
   const loadBookmarks = () => {
-    const savedBookmarks = localStorage.getItem("bookmarks");
-    if (savedBookmarks) {
-      setBookmarks(JSON.parse(savedBookmarks));
+    const savedBookmarks = localStorage.getItem("news_app");
+    console.log(savedBookmarks.bookmarks);
+    if (savedBookmarks?.bookmarks) {
+      setBookmarks(JSON.parse(savedBookmarks.bookmarks));
     }
   };
 
   const saveBookmarksToLocalStorage = (updatedBookmarks: Article[]) => {
-    localStorage.setItem("bookmarks", JSON.stringify(updatedBookmarks));
+    let userDetails = localStorage.getItem('news_app');
+    if (userDetails){
+      userDetails = JSON.parse(userDetails);
+      userDetails.bookmarks = JSON.stringify(updatedBookmarks);
+      localStorage.setItem('news_app', JSON.stringify(userDetails));
+    }
   };
 
   const bookmarkNews = (article: Article) => {
     const updatedBookmarks = [...bookmarks, article];
     setBookmarks(updatedBookmarks);
     saveBookmarksToLocalStorage(updatedBookmarks);
-    alert("Bookmarked");
+
+    Swal.fire({
+      title: 'Bookmarked!',
+      text: 'Article saved successfully',
+      icon: 'success',
+      confirmButtonText: 'Continue',
+      confirmButtonColor: '#0D6EFD',
+    })
   };
+
+  // Filter the articles based on keyword
+  const filteredNews = news.filter((article: Article) =>
+    article.title.toLowerCase().includes(searchTerm?.toLowerCase())
+  );
+
 
   return (
     <div className="container flex news-feed">
       <div className="d-flex justify-content-between">
         <div className="row">
-          {news.map((article: Article, index) => (
+          {filteredNews.map((article: Article, index) => (
             <div className="col-sm-6" key={index}>
               <div className="card mb-4 rounded-4">
                 <img
@@ -101,7 +141,16 @@ const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory }) => {
                     </div>
                     <div className="col text-end">
                       <div className="btn-group">
-                        <button className="btn btn-primary" onClick={() => bookmarkNews(article)}>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => bookmarkNews(article)}
+                        >
+                          <i className="bi bi-download"></i>
+                        </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => bookmarkNews(article)}
+                        >
                           <i className="bi bi-bookmark-plus-fill"></i>
                         </button>
                         <button
@@ -124,7 +173,10 @@ const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory }) => {
                           <div className="modal-dialog">
                             <div className="modal-content">
                               <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="staticBackdropLabel">
+                                <h1
+                                  className="modal-title fs-5"
+                                  id="staticBackdropLabel"
+                                >
                                   Share the news!
                                 </h1>
                                 <button
@@ -138,7 +190,13 @@ const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory }) => {
                                 <ShareSocial
                                   title={article.title}
                                   url={article.url}
-                                  socialTypes={["facebook", "twitter", "reddit", "linkedin", "whatsapp"]}
+                                  socialTypes={[
+                                    "facebook",
+                                    "twitter",
+                                    "reddit",
+                                    "linkedin",
+                                    "whatsapp",
+                                  ]}
                                 />
                               </div>
                             </div>

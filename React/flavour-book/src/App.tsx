@@ -11,6 +11,7 @@ import AddRecipe from "./components/addRecipe";
 import EditRecipe from "./components/editRecipe";
 import Auth from "./components/auth";
 import Register from "./components/register";
+import Swal from "sweetalert2";
 
 function App() {
   interface Ingredient {
@@ -243,9 +244,22 @@ function App() {
         filtered
       );
       console.log("Recipe posted successfully:", response.data);
+      Swal.fire({
+        title: 'Recipe Added!',
+        text: 'Recipe posted successfully:',
+        icon: 'success',
+        confirmButtonText: 'Retry',
+      })
       fetchRecipes();
     } catch (error) {
       console.error("Error posting recipe:", error);
+      Swal.fire({
+        title: 'Addition Error!',
+        text: 'Error posting recipe',
+        icon: 'error',
+        confirmButtonText: 'Retry',
+      })
+      return;
     }
   };
 
@@ -443,7 +457,7 @@ function App() {
       )}
 
       {/* Categories */}
-      <div className="d-flex gap-2 justify-content-start py-3">
+      <div className="d-flex gap-2 justify-content-start py-3 container-sm categories">
         {categoryList.map((category) => (
           <button
             onClick={() => selectCategory(category)}

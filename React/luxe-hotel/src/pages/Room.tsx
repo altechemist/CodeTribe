@@ -68,8 +68,6 @@ function Room() {
   }, [checkIn, checkOut, adults, children]);
 
   const handleView = (room: Room) => {
-    
-
     // Check reservation details
     if (days === 0 || guests === 0 ) {
       Swal.fire({
@@ -117,6 +115,17 @@ function Room() {
   let availableUnits: number = 0;
   if (room) availableUnits = room.totalRooms - room.bookedRooms;
 
+  // Handle check availability
+  const checkAvailability = () => {
+   if (availableUnits > 1){
+     Swal.fire({
+       icon: "success",
+       title: "Available",
+       text: "The current room is available for booking.",
+       confirmButtonText: "OK",
+     });
+   } 
+  };
   return (
     <div className="container-fluid mt-4">
       <RoomSummary />

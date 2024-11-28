@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 function CreateEmployee(props) {
   // Create state variables for text fields
@@ -9,10 +8,13 @@ function CreateEmployee(props) {
   const [eMailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [position, setPosition] = useState("");
-  const [image, uploadImage] = useState("");
+  const [image, uploadImage] = useState(""); // State for image
 
   // Check if input valid
-  const AddEmployee = () => {
+  const AddEmployee = (event) => {
+    // Prevent form submission and page reload
+    event.preventDefault();
+
     const isFormValid = props.FormValidation(
       employeeID,
       firstName,
@@ -34,67 +36,70 @@ function CreateEmployee(props) {
         image
       );
 
-      // Clear fields
+      // Clear fields after successful submission
       setEmployeeID("");
       setFirstName("");
       setLastName("");
       setEmailAddress("");
       setPhoneNumber("");
       setPosition("");
+      uploadImage(""); // Clear the image after submitting
     }
   };
 
+  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        uploadImage(reader.result);
+        uploadImage(reader.result); // Store the image as a base64 data URL
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Read the file as a base64-encoded string
     }
   };
 
   return (
     <div id="Add" className="container-sm form">
-      <form className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg">
+      <form
+        className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg"
+        onSubmit={(e) => e.preventDefault()} // Prevent form submission on Enter press
+      >
         <h3>Add Employee Information</h3>
 
         {/* Display errors */}
         {props.errorList.length > 0 ? (
-          <div class="mb-3 alert alert-danger">
+          <div className="mb-3 alert alert-danger">
             <h6>Whoops! There were some problems with your input</h6>
             <ul>
-              {props.errorList.map((errors) => (
-                <li>{errors}</li>
+              {props.errorList.map((errors, index) => (
+                <li key={index}>{errors}</li>
               ))}
             </ul>
           </div>
         ) : (
           <div>
-            {props.isFormValid ? (
-              <div class="mb-3 alert alert-success">
+            {props.isFormValid && (
+              <div className="mb-3 alert alert-success">
                 <h6>Employee Successfully Created!</h6>
               </div>
-            ) : (
-              <div></div>
             )}
           </div>
         )}
 
         {/* Employee ID */}
-        <div class="mb-3">
-          <label for="fname" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="empID" className="form-label">
             Employee ID
           </label>
-
-          <div class="row g-3 align-items-center">
-            <div class="col-sm">
+          <div className="row g-3 align-items-center">
+            <div className="col-sm">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="empID"
                 placeholder="101"
+                max={13}
                 onChange={(event) => setEmployeeID(event.target.value)}
                 value={employeeID}
                 required
@@ -104,16 +109,15 @@ function CreateEmployee(props) {
         </div>
 
         {/* Full Names */}
-        <div class="mb-3">
-          <label for="fname" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="fname" className="form-label">
             Full Names
           </label>
-
-          <div class="row g-3 align-items-center">
-            <div class="col-sm-6">
+          <div className="row g-3 align-items-center">
+            <div className="col-sm-6">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="fname"
                 placeholder="Jon"
                 onChange={(event) => setFirstName(event.target.value)}
@@ -121,10 +125,10 @@ function CreateEmployee(props) {
                 required
               />
             </div>
-            <div class="col-sm-6">
+            <div className="col-sm-6">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="lname"
                 placeholder="Doe"
                 onChange={(event) => setLastName(event.target.value)}
@@ -136,13 +140,13 @@ function CreateEmployee(props) {
         </div>
 
         {/* Email Address */}
-        <div class="mb-3">
-          <label for="email" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
             Email Address
           </label>
           <input
             type="email"
-            class="form-control"
+            className="form-control"
             id="email"
             placeholder="name@example.com"
             onChange={(event) => setEmailAddress(event.target.value)}
@@ -152,13 +156,13 @@ function CreateEmployee(props) {
         </div>
 
         {/* Phone Number */}
-        <div class="mb-3">
-          <label for="phone" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="phone" className="form-label">
             Phone Number
           </label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             id="phone"
             placeholder="0612345678"
             onChange={(event) => setPhoneNumber(event.target.value)}
@@ -168,13 +172,13 @@ function CreateEmployee(props) {
         </div>
 
         {/* Position */}
-        <div class="mb-3">
-          <label for="position" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="position" className="form-label">
             Position
           </label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             id="position"
             placeholder="Developer"
             onChange={(event) => setPosition(event.target.value)}
@@ -184,22 +188,37 @@ function CreateEmployee(props) {
         </div>
 
         {/* Image Picker */}
-        <div class="mb-3">
-          <label for="formFile" class="form-label">
+        <div className="mb-3">
+          <label htmlFor="formFile" className="form-label">
             Upload picture
           </label>
           <input
-            class="form-control"
+            className="form-control"
             type="file"
             id="formFile"
             accept="image/*"
             onChange={handleImageUpload}
             required
           />
+          {image && (
+            <div className="mt-2">
+              <img
+                src={image}
+                alt="Employee"
+                className="img-fluid"
+                style={{ maxWidth: "150px", maxHeight: "150px" }}
+              />
+            </div>
+          )}
         </div>
+
         <div className="text-end">
-          <button className="btn btn-primary my-1" onClick={AddEmployee}>
-            <i class="bi bi-floppy me-2"></i>
+          <button
+            className="btn btn-primary my-1"
+            type="button" // Ensure this is a button, not submit to prevent form submission
+            onClick={AddEmployee}
+          >
+            <i className="bi bi-floppy me-2"></i>
             Create
           </button>
         </div>

@@ -78,6 +78,16 @@ function AddTodoItem() {
     }
   }, [formSuccess]);
 
+  // If no user is logged in
+  if (!currentUser) {
+    return (
+      <div className="container-sm rounded-4 mt-4 mb-3">
+        <p>Please log in to add items.</p>
+      </div>
+    );
+  }
+
+
   return (
     <div className="container-sm rounded-4 mt-4 mb-3">
       {currentUser && <p>Adding under {currentUser.email}</p>}

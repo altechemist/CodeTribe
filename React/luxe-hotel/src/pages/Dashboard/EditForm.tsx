@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Container, Row, Col, Alert } from "react-bootstrap";
-
 import { useDispatch, useSelector } from "react-redux";
 import { fetchData, updateRoom } from "../../store/slices/dbSlice";
 
@@ -8,27 +7,44 @@ const EditForm: React.FC = () => {
   const dispatch = useDispatch();
   const room = useSelector((state) => state.db.selectedRoom);
 
-  useEffect(() => {
-    dispatch(fetchData());
-  }, [room, dispatch]);
-
-  // Initialize form data with current room details
+  // Ensure room is loaded before initializing form
   const [formData, setFormData] = useState({
-    amenities: room.amenities,
-    bed: room.bed,
-    beds: room.beds,
-    description: room.description,
-    guests: room.guests,
-    image: room.image,
-    images: room.images,
-    price: room.price,
-    size: room.size,
-    sofa: room.sofa,
-    type: room.type,
-    rooms: room.totalRooms,
+    amenities: "",
+    bed: "",
+    beds: 1,
+    description: "",
+    guests: 1,
+    image: "",
+    images: [""],
+    price: 0,
+    size: 0,
+    sofa: "",
+    type: "",
+    totalRooms: 0,
+    bookedRooms: 0,
   });
 
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (room) {
+      setFormData({
+        amenities: room.amenities,
+        bed: room.bed,
+        beds: room.beds,
+        description: room.description,
+        guests: room.guests,
+        image: room.image,
+        images: room.images,
+        price: room.price,
+        size: room.size,
+        sofa: room.sofa,
+        type: room.type,
+        totalRooms: room.totalRooms,
+        bookedRooms: room.bookedRooms,
+      });
+    }
+  }, [room]); // Only runs when 'room' changes
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -48,28 +64,32 @@ const EditForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logic to handle form submission, e.g., send data to the backend
-    dispatch(updateRoom(room.id, formData));
+    if (room && room.id) {
+      // Dispatch the updateRoom action with the correct ID
+      dispatch(updateRoom(room.id, formData));
 
-    // Reset form fields after successful submission
-    setFormData({
-      amenities: "",
-      bed: "",
-      beds: 1,
-      description: "",
-      guests: 1,
-      image: "",
-      images: [""],
-      price: 0,
-      size: 0,
-      sofa: "",
-      type: "",
-      rooms: 1,
-    });
-    setMessage("");
+      // Set success message after submission
+      setMessage("Room information updated successfully!");
 
-    console.log("Room Data Updated:", formData);
-    setMessage("Room information updated successfully!");
+      // Optionally, reset the form fields only after successful submission
+      setFormData({
+        amenities: "",
+        bed: "",
+        beds: 1,
+        description: "",
+        guests: 1,
+        image: "",
+        images: [""],
+        price: 0,
+        size: 0,
+        sofa: "",
+        type: "",
+        totalRooms: 0,
+        bookedRooms: 0,
+      });
+    } else {
+      setMessage("Error: Room ID is missing.");
+    }
   };
 
   return (
@@ -113,13 +133,25 @@ const EditForm: React.FC = () => {
           />
         </Form.Group>
 
-        <Form.Group controlId="formNumber">
+        <Form.Group controlId="formRoomNumber">
           <Form.Label>Number of Rooms</Form.Label>
           <Form.Control
             type="number"
             placeholder="Enter number of rooms"
-            name="rooms"
-            value={formData.rooms}
+            name="totalRooms"
+            value={formData.totalRooms}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group controlId="formBookedNumber">
+          <Form.Label>Number of Booked Rooms</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Enter number of booked rooms"
+            name="bookedRooms"
+            value={formData.bookedRooms}
             onChange={handleChange}
             required
           />

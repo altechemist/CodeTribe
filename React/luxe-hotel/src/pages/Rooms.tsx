@@ -6,6 +6,7 @@ import LeftRoomCard from "../components/LeftRoomCard";
 import RightRoomCard from "../components/RightRoomCard";
 import { useEffect } from "react";
 import { fetchData } from "../store/slices/dbSlice";
+import { Container, Spinner } from "react-bootstrap";
 
 interface Room {
   id: string;
@@ -31,6 +32,16 @@ function Rooms() {
   }, [dispatch]);
 
   const roomList = useSelector((state) => state.db.data);
+  const loading = useSelector((state) => state.db.loading);
+
+  if (loading) {
+    return (
+      <Container className="mt-5 text-center">
+        <Spinner animation="border" />
+      </Container>
+    );
+  }
+
 
   return (
     <div>

@@ -11,6 +11,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 // Define custom types
 type InputValue = string | number | undefined;
@@ -36,6 +37,7 @@ function App() {
   const [isFormValid, setIsFormValid] = useState<boolean | null>(null);
   const [isVisible, setVisibility] = useState<string>("Home");
   const [currPage, setCurrPage] = useState<string>("Home");
+  const [loading, setLoading] = useState<boolean>(false);
 
   // User state
   const [user, setUser] = useState({});
@@ -49,7 +51,7 @@ function App() {
     phoneNumber: string,
     position: string,
     imageFile: File | null
-  ) => {
+  ): Promise<boolean> => {
     const formData = new FormData();
     formData.append("idNumber", idNumber);
     formData.append("firstName", firstName);
@@ -63,23 +65,37 @@ function App() {
     }
   
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://localhost:3001/api/addEmployee",
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-  
       setEmployeeData(response.data.employees);
+      setLoading(false);
+  
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Employee added successfully!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       return true;
     } catch (error) {
       console.error("Error creating new employee:", error);
+      setLoading(false);
+  
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "Failed to add employee. Please try again.",
+        showConfirmButton: true,
+      });
       return false;
     }
   };
+  
 
   const UpdateEmployee = async (
     firstName: string,
@@ -105,6 +121,7 @@ function App() {
     }
   
     try {
+      setLoading(true);
       await axios.put(
         `http://localhost:3001/api/updateEmployee/${id}`,
         formData,
@@ -114,7 +131,8 @@ function App() {
           },
         }
       );
-  
+
+      setLoading(false);
       return true;
     } catch (error) {
       console.error("Error updating employee:", error);
@@ -124,10 +142,12 @@ function App() {
   
   const FetchEmployees = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         "http://localhost:3001/api/getAllEmployees"
       );
       setEmployeeData(response.data.employees);
+      setLoading(false);
       return true;
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -135,20 +155,37 @@ function App() {
     }
   };
 
-  const RemoveEmployee = async (id: string) => {
+  const RemoveEmployee = async (id: string): Promise<boolean> => {
     try {
-      await axios.delete(`http://localhost:3001/api/deleteEmployee/${id}/`, {
+      setLoading(true);
+      await axios.delete(`http://localhost:3001/api/deleteEmployee/${id}`, {
         data: { id },
       });
-      setEmployeeData((prevData) =>
-        prevData.filter((employee) => employee.id !== id)
-      );
+      setEmployeeData((prevData) => prevData.filter((employee) => employee.id !== id));
+      setLoading(false);
+  
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Employee deleted successfully!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       return true;
     } catch (error) {
       console.error("Error deleting employee:", error);
+      setLoading(false);
+  
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "Failed to delete employee. Please try again.",
+        showConfirmButton: true,
+      });
       return false;
     }
   };
+  
 
 
   // User Creation
@@ -159,18 +196,36 @@ function App() {
   ): Promise<boolean> => {
     const newUser = { uid: undefined, name, email, password };
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/register",
-        newUser
-      );
-      console.log(response);
-
+      setLoading(true);
+      const response = await axios.post("http://localhost:3001/api/register", newUser);
+      
+      // Success response
+      setLoading(false);
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Registration successful!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       return true;
-    } catch (error) {
-      console.error("Error creating new user:", error);
+  
+    } catch (error: any) {
+      console.error("Error creating new user:", error.response?.data.error || error.message);
+      
+      Swal.fire({
+        position: "top-center",
+        icon: "error",
+        title: error.response?.data.error || error.message || "An error occurred",
+        showConfirmButton: true,
+      });
+      
+      setLoading(false);
       return false;
     }
   };
+  
+  
 
   // User Authentication
   const LoginUser = async (
@@ -178,25 +233,44 @@ function App() {
     password: InputValue
   ): Promise<boolean> => {
     try {
+      setLoading(true);
       const response = await axios.post("http://localhost:3001/api/login", {
         email,
         password,
       });
       const { uid } = response.data.user;
+  
       if (uid) {
         setUser({ uid });
+        setLoading(false);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Login successful!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
         return true;
       }
+      setLoading(false);
       return false;
     } catch (error) {
       console.error("Login error:", error);
+      setLoading(false);
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "Login failed. Please check your credentials.",
+        showConfirmButton: true,
+      });
       return false;
     }
   };
-
+  
   // Password reset
   const passwordReset = async (email: InputValue): Promise<boolean> => {
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://localhost:3001/api/resetEmail",
         {
@@ -205,6 +279,7 @@ function App() {
       );
 
       console.log(response);
+      setLoading(false);
       return true;
     } catch (error) {
       console.error("Reset error:", error);
@@ -237,7 +312,7 @@ function App() {
     if (currPage === "Home" || currPage === "View") {
       FetchEmployees();
     }
-  }, [currPage]); // Fetch employees when switching to Home or View page
+  }, [currPage]);
 
   return (
     <div className="App">
@@ -315,6 +390,7 @@ function App() {
             FormValidation={FormValidation}
             errorList={errorList}
             isFormValid={isFormValid}
+            loading={loading}
           />
         )}
         {isVisible === "View" && (
@@ -323,6 +399,7 @@ function App() {
             RemoveEmployee={RemoveEmployee}
             SelectEmployee={SelectEmployee}
             UpdatePage={() => navigateTo("Update")}
+            loading={loading}
           />
         )}
         {isVisible === "Update" && (
@@ -334,6 +411,7 @@ function App() {
             FormValidation={FormValidation}
             errorList={errorList}
             isFormValid={isFormValid}
+            loading={loading}
           />
         )}
         {isVisible === "Home" && <Home />}

@@ -13,6 +13,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../src/index.css";
 
+import Swal from "sweetalert2";
+
 // Define custom types
 type InputValue = string | number | undefined;
 
@@ -88,10 +90,16 @@ export default function App() {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Login error response:", error.response?.data);
-        console.error("Login error message:", error.message);
+        console.error("Login error message:", error?.message);
+        Swal.fire({
+          title: "Error!",
+          text: error?.message,
+          icon: "error",
+          confirmButtonText: "Retry",
+          primaryButtonColor: "#0D6EFD",
+        });
       } else {
-        console.error("Unexpected error:", error);
+        console.error("Unexpected error:", error?.message);
       }
       return false;
     }
@@ -121,7 +129,7 @@ export default function App() {
         newTask
       );
 
-      const createdTask = response.data;
+      // const createdTask = response.data;
       // Update the task list state with the new task
       // setTaskList((prevTaskList) => [...prevTaskList, createdTask]);
 

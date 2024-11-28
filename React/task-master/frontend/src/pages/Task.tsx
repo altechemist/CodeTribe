@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CurrentTask from "../components/CurrentTask";
 import UpdateTask from "../components/UpdateTask";
 import NewTask from "../components/NewTask";
 import WelcomeHeader from "../components/WelcomeHeader";
 import CompletedTask from "../components/CompletedTask";
+import Swal from "sweetalert2";
 
 type InputValue = string | number | undefined;
 
@@ -55,6 +56,18 @@ const Tasks: React.FC<TaskProps> = ({
   userID,
   setTaskList,
 }) => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
   // Check if user is logged in
   if (userID) {
     const authDiv = document.getElementById("auth-div");
@@ -63,9 +76,19 @@ const Tasks: React.FC<TaskProps> = ({
       authDiv.innerHTML = "";
       logoutButton.style.display = "visible";
     }
+
   }
 
-
+  useEffect(() => {
+    if (userID){
+      console.log(userID)
+      Toast.fire({
+        icon: "success",
+        title: "Signed in successfully",
+      });
+    }
+    
+  }, []);
 
   return (
     <div>

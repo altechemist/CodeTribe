@@ -2,8 +2,14 @@ import Heading from "./Heading";
 
 export default function ContactForm() {
   return (
-    <div className="container">
+    <div className="container mb-4 mt-4">
       <Heading title="Get In Touch" />
+      <p className="text-center mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni,
+        reiciendis! Quia incidunt harum eum, at sequi magni ex, obcaecati
+        eveniet quo natus voluptatum expedita aliquam odit culpa? Dicta,
+        inventore earum!
+      </p>
       <div className="d-flex justify-content-center">
         <div className="row gap-2">
           <div className="d-flex">

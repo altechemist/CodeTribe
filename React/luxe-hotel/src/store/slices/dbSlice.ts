@@ -147,14 +147,27 @@ export const addRoom = (room: Room) => async (dispatch: AppDispatch) => {
 
 
 // Updates room information
-export const updateRoom = (roomId: string, updates: Partial<Room>) => async (dispatch: AppDispatch) => {
+export const updateRoom = (id: string, updates: Partial<Room>) => async (dispatch: AppDispatch) => {
+  // Dispatch loading state before updating
   dispatch(setLoading());
+  console.log(updates)
 
   try {
-    const roomRef = doc(db, 'Rooms', roomId);
+    // Reference to the room document in Firestore
+    const roomRef = doc(db, 'Rooms', id);
+
+    console.log(id)
+    // Perform the update operation in Firestore
     await updateDoc(roomRef, updates);
+
+    console.log(id)
+    console.log(id)
+
+    // Dispatch fetchData to refresh the room list or room data elsewhere
     dispatch(fetchData());
+
   } catch (error) {
+    // Error handling: Dispatch the error message to update the UI
     dispatch(setError((error as Error).message || 'An error occurred while updating the room'));
   }
 };

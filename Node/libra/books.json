@@ -1,0 +1,23 @@
+[
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "publisher": "Charles Scribner's Sons",
+    "publishedDate": "1925-04-10",
+    "ISBN": "9780743273565"
+  },
+  {
+    "title": "1984",
+    "author": "George Orwell",
+    "publisher": "Secker & Warburg",
+    "publishedDate": "1949-06-08",
+    "ISBN": "9780451524935"
+  },
+  {
+    "title": "The Great",
+    "author": "F. Scott Fitzgerald",
+    "publisher": "Charles Scribner's Sons",
+    "publishedDate": "1925-04-10",
+    "ISBN": "1234568"
+  }
+]

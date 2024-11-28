@@ -28,12 +28,51 @@ function Register() {
   // Handle form submission
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    // Validate form validity
+    if (!email ||!password) {
+      Swal.fire({
+        icon: "error",
+        title: "Email and password are required",
+        text: "Please provide both an email address and a password.",
+      });
+      return;
+    }
+    
+    if (password.length < 8) {
+      Swal.fire({
+        icon: "error",
+        title: "Password must be at least 8 characters long",
+        text: "Please choose a password that is at least 8 characters long.",
+      });
+      return;
+    }
+
+    // Check if the email is provided
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid email address",
+        text: "Please provide a valid email address.",
+      });
+      return;
+    }
+
 
     if (password !== confirmPassword) {
       Swal.fire({
         icon: "error",
         title: "Passwords do not match!",
         text: "Please make sure both passwords match.",
+      });
+      return;
+    }
+
+    // Validate phone number
+    if (!/^\d{10}$/.test(String(phoneNumber))) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid phone number",
+        text: "Please provide a valid 10-digit phone number.",
       });
       return;
     }

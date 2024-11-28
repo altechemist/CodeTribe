@@ -18,7 +18,6 @@ function Login() {
     dispatch(clearLoginError());
     dispatch(loginUser({ email, password }));
 
-    alert(loginError)
     if (loginError === "") {
       // Show success message
       setFormSuccess("Login successful!");
@@ -75,10 +74,14 @@ function Login() {
                 <div className="col-md-10 mx-auto">
                   <div>
                     {loginError && (
-                      <p className="text-danger mt-2">{loginError}</p>
+                      <div class="alert alert-danger" role="alert">
+                        {loginError}
+                      </div>
                     )}
                     {formSuccess && (
-                      <p className="text-success mt-2">{formSuccess}</p>
+                      <div class="alert alert-success" role="alert">
+                        {formSuccess}
+                      </div>
                     )}
                   </div>
 

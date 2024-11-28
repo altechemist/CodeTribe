@@ -24,6 +24,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
   // State for success message and errors
   const [errorList, setErrorList] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Function to handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -55,6 +56,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
 
     // If there are no errors
     if (newErrors.length === 0) {
+      setLoading(true);
       const success = (await CreateUser(
         name,
         email,
@@ -76,6 +78,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
           "Failed to register. Please check your credentials and try again.",
         ]);
       }
+      setLoading(false);
     }
   };
 
@@ -136,7 +139,13 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
                 )}
 
                 {/* Confirmation */}
-                {<div></div>}
+                {loading && (
+                  <div className="d-flex justify-content-center">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="form-floating mb-3">
                 <input
@@ -201,7 +210,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
                 </label>
               </div>
 
-              <button className="w-100 btn btn-lg btn-primary" type="submit">
+              <button className="w-100 btn btn-lg btn-primary" type="submit" disabled={loading}>
                 Register
               </button>
 

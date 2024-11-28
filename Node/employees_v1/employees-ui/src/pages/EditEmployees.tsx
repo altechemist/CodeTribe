@@ -32,6 +32,7 @@ interface EditEmployeeProps {
   ) => Promise<void>;
   errorList: string[];
   isFormValid: boolean | null;
+  loading: boolean
 }
 
 const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
@@ -106,6 +107,13 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
       }
     }
   };
+
+  if (props?.loading) {
+    return (
+      <div className="spinner-border text-primary" role="status">
+      </div>
+    );
+  }
 
   return (
     <div id="Edit" className="container-sm form">

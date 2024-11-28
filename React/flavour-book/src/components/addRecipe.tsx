@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 interface Ingredient {
   name: string;
@@ -128,6 +129,18 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
   // Handler for form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validate form inputs
+    if (!name ||!description ||!rCategory ||!prepTime ||!cookTime ||!calories ||!servings) {
+      Swal.fire({
+        title: 'Missing Data!',
+        text: 'All fields are required!',
+        icon: 'error',
+        confirmButtonText: 'Retry',
+      })
+      return;
+    }
+
     postRecipe();
   };
 
@@ -159,7 +172,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
               {/* Upper Section */}
               <div className="upper-section row">
                 {/* Left card */}
-                <div className="left-card col p-2">
+                <div className="left-card col-sm p-2">
                   <h5 className="mb-4">Recipe Details</h5>
                   <div className="mb-3">
                     <label htmlFor="recipeName" className="form-label">
@@ -285,11 +298,11 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
 
               {/* Mid Section */}
               <div className="mid-section row pt-5">
-                <div className="left-card col p-2">
+                <div className="left-card col-sm p-2">
                   <h5 className="mb-4">Ingredients</h5>
                   <div id="ingredientsList">
                     <div className="row mb-3">
-                      <div className="col-8">
+                      <div className="col-sm-8">
                         <label htmlFor="ingredientName" className="form-label">
                           Ingredient Name
                         </label>
@@ -302,7 +315,7 @@ const AddRecipe: React.FC<RecipeProps> = ({ categoryList, recipes, fetchRecipes,
                           placeholder="Enter ingredient name"
                         />
                       </div>
-                      <div className="col-4">
+                      <div className="col-sm-4">
                         <label
                           htmlFor="ingredientQuantity"
                           className="form-label"

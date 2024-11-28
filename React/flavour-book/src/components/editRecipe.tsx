@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 interface Ingredient {
   name: string;
@@ -126,14 +127,38 @@ const EditRecipe: React.FC<RecipeProps> = ({
       );
       console.log("Recipe posted successfully:", response.data);
       fetchRecipes();
+      Swal.fire({
+        title: 'Success!',
+        text: 'Recipe posted successfully!',
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      })
+      return;
     } catch (error) {
       console.error("Error posting recipe:", error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'Error posting recipe!',
+        icon: 'error',
+        confirmButtonText: 'Retry',
+      })
+      return;
     }
   };
 
   // Handler for form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+     // Validate form inputs
+     if (!name ||!description ||!rCategory ||!prepTime ||!cookTime ||!calories ||!servings) {
+      Swal.fire({
+        title: 'Missing Data!',
+        text: 'All fields are required!',
+        icon: 'error',
+        confirmButtonText: 'Retry',
+      })
+      return;
+    }
     postRecipe();
   };
 

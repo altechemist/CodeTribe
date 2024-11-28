@@ -10,6 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 // Define types for employee data
 interface Employee {
@@ -33,6 +34,7 @@ function App() {
   const [isFormValid, setIsFormValid] = useState<boolean | null>(null);
   const [isVisible, setVisibility] = useState<string>("");
   const [currPage, setCurrPage] = useState<string>("Home");
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Employee CRUD operations
   const AddEmployee = async (
@@ -42,8 +44,8 @@ function App() {
     eMailAddress: string,
     phoneNumber: string,
     position: string,
-    image: string,
-   // id?: string
+    image: string
+    // id?: string
   ) => {
     const newEmployee: Employee = {
       idNumber,
@@ -56,12 +58,14 @@ function App() {
     };
 
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://localhost:3001/api/addEmployee",
         newEmployee
       );
-      const allEmployees = response.data.employees;
+      const allEmployees = response?.data?.employees;
       setEmployeeData(() => [...allEmployees]);
+      setLoading(false);
       console.log(response);
       return true;
     } catch (error) {
@@ -73,12 +77,14 @@ function App() {
   // Get employee data
   const FetchEmployees = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         "http://localhost:3001/api/getAllEmployees"
       );
       console.log(response);
       const allEmployees = response.data.employees;
       setEmployeeData(() => [...allEmployees]);
+      setLoading(false);
       console.log(allEmployees);
       return true;
     } catch (error) {
@@ -87,18 +93,27 @@ function App() {
     }
   };
 
-  
   // Remove employee
   const RemoveEmployee = async (id: string) => {
     try {
+      setLoading(true);
       const response = await axios.delete(
         `http://localhost:3001/api/deleteEmployee/${id}/`,
         { data: { id } }
       );
       console.log(response);
+      FetchEmployees();
+      setLoading(false);
       setEmployeeData((prevData) =>
         prevData.filter((employee) => employee.id !== id)
       );
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Employee Removed",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       return true;
     } catch (error) {
       console.error("Error deleting employee: ", error);
@@ -108,15 +123,16 @@ function App() {
 
   const UpdateEmployee = async (updatedEmployee: Employee) => {
     try {
-    
-       const id = selectedEmployee.id
+      setLoading(true);
+      const id = selectedEmployee?.id;
 
       const response = await axios.put(
         `http://localhost:3001/api/updateEmployee/${id}`,
         { id, updates: updatedEmployee }
       );
-
+      FetchEmployees();
       console.log(response);
+      setLoading(false);
 
       return true;
     } catch (error) {
@@ -147,7 +163,7 @@ function App() {
   // Reload collection on action
   useEffect(() => {
     FetchEmployees();
-  }, [employeeData, UpdateEmployee]);
+  }, []);
 
   return (
     <div className="App">
@@ -199,6 +215,7 @@ function App() {
             FormValidation={FormValidation}
             errorList={errorList}
             isFormValid={isFormValid}
+            loading={loading}
           />
         )}
         {isVisible === "View" && (
@@ -207,6 +224,7 @@ function App() {
             RemoveEmployee={RemoveEmployee}
             SelectEmployee={SelectEmployee}
             UpdatePage={() => navigateTo("Update")}
+            loading={loading}
           />
         )}
         {isVisible === "Update" && (
@@ -218,6 +236,7 @@ function App() {
             FormValidation={FormValidation}
             errorList={errorList}
             isFormValid={isFormValid}
+            loading={loading}
           />
         )}
         {currPage === "Home" && <Home />}

@@ -1,20 +1,26 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 function EditEmployee(props) {
   // Create state variables for text fields
-  const [searchID, setSearchID] = useState("");
   const [employeeID, setEmployeeID] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [eMailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [position, setPosition] = useState("");
-  const [image, setImage] = useState(null); // Changed to handle File object
+  const [image, setImage] = useState(null); // Handle the image as a base64 data URL
 
   // Filter the employee data
   const FilterEmployees = (employeeID) => {
     if (!employeeID) {
       alert("Employee ID cannot be empty");
+      Swal.fire({
+        title: "Error!",
+        text: "Employee ID cannot be empty",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
       return;
     }
 
@@ -24,6 +30,12 @@ function EditEmployee(props) {
 
     if (filteredEmp.length === 0) {
       alert("User Not Found!");
+      Swal.fire({
+        title: "Error!",
+        text: "User Not Found!",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
       return;
     }
 
@@ -49,12 +61,12 @@ function EditEmployee(props) {
     setPhoneNumber("");
     setPosition("");
     setImage(null); // Clear the image state
-    props.SelectEmployee(null);
+    props.SelectEmployee(null); // Clear the selected employee
   };
 
   // Add user input to data object
   const UpdateEmployee = (event) => {
-    // Prevent form submission
+    // Prevent form submission to avoid page refresh
     event.preventDefault();
 
     const isFormValid = props.FormValidation(
@@ -78,7 +90,7 @@ function EditEmployee(props) {
         image
       );
 
-      // Clear fields
+      // Clear fields after successful update
       setEmployeeID("");
       setFirstName("");
       setLastName("");
@@ -90,17 +102,27 @@ function EditEmployee(props) {
     }
   };
 
-  // Handle file upload
-  const handleFileChange = (event) => {
+  // Handle file upload (image upload logic)
+  const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    setImage(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result); // Set image as the base64 encoded URL
+        if (props.uploadImage) {
+          props.uploadImage(reader.result); // Call an external image upload function if needed
+        }
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL (base64)
+    }
   };
 
   return (
     <div id="Edit" className="container-sm">
       {/* Editing information */}
-      <form className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg">
+      <form className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg" onSubmit={(e) => e.preventDefault()}>
         <h3>Update Employee Information</h3>
+
         {isEmployeeSelected ? (
           <div className="modal-content d-flex gap-2">
             <p>
@@ -111,6 +133,7 @@ function EditEmployee(props) {
             <div>
               <button
                 className="btn btn-success"
+                type="button"
                 onClick={() =>
                   FilterEmployees(props.SelectedEmployee[0].employeeID)
                 }
@@ -230,15 +253,16 @@ function EditEmployee(props) {
             className="form-control"
             type="file"
             id="formFile"
-            onChange={handleFileChange}
+            onChange={handleImageUpload} // Handle image upload
           />
+          {image && <img src={image} alt="Employee" className="img-fluid mt-3" />}
         </div>
 
         <div className="text-end">
           <button
             className="btn btn-success my-1"
             type="button"
-            onClick={() => UpdateEmployee()}
+            onClick={(event) => UpdateEmployee(event)} // Pass event explicitly
           >
             <i className="bi bi-file-arrow-up me-2"></i>
             Update

@@ -1,9 +1,26 @@
 const http = require('http');
 const url = require('url');
+const fs = require('fs');
+const path = require('path');
 
 const PORT = process.env.PORT || 3001;
+const DATA_FILE = path.join(__dirname, 'books.json');
 
-let books = [];
+// Load books data from the JSON file
+function loadBooksData() {
+    if (fs.existsSync(DATA_FILE)) {
+        const data = fs.readFileSync(DATA_FILE, 'utf8');
+        return JSON.parse(data);
+    }
+    return [];
+}
+
+// Save books data to the JSON file
+function saveBooksData(books) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(books, null, 2), 'utf8');
+}
+
+let books = loadBooksData();
 
 // Set up the HTTP server
 const server = http.createServer((req, res) => {
@@ -64,6 +81,8 @@ function handlePostRequests(req, res) {
         }
 
         books.push(newBook);
+        saveBooksData(books);  // Save updated books list to file
+
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(newBook));
     });
@@ -96,6 +115,8 @@ function handlePutRequests(parsedUrl, req, res) {
         }
 
         books[index] = { ...books[index], ...updatedBook };
+        saveBooksData(books);  // Save updated books list to file
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(books[index]));
     });
@@ -108,6 +129,7 @@ function handleDeleteRequests(parsedUrl, res) {
 
     if (index !== -1) {
         books.splice(index, 1);
+        saveBooksData(books);  // Save updated books list to file
         res.writeHead(204); // No Content
         res.end();
     } else {

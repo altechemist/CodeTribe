@@ -19,7 +19,8 @@ const RoomForm: React.FC = () => {
     size: 0,
     sofa: "",
     type: "",
-    rooms: 1,
+    totalRooms: 10,
+    bookedRooms: 0,
   });
 
   const [message, setMessage] = useState("");
@@ -68,7 +69,8 @@ const RoomForm: React.FC = () => {
       size: 0,
       sofa: "",
       type: "",
-      rooms: 1,
+      totalRooms: 10,
+      bookedRooms: 0,
     });
     setMessage("");
 
@@ -84,16 +86,13 @@ const RoomForm: React.FC = () => {
         <Form.Group controlId="formType">
           <Form.Label>Room Type</Form.Label>
           <Form.Control
-            as="select"
+            type="text"
+            placeholder="Enter room type"
+            name="type"
             value={formData.type}
             onChange={handleChange}
             required
-          >
-            <option value="">Select room type</option>
-            {roomTypes.map(room => (
-              <option key={room} value={room}>{room}</option>
-            ))}
-          </Form.Control>
+          />
         </Form.Group>
 
         <Form.Group controlId="formDescription">
@@ -127,7 +126,7 @@ const RoomForm: React.FC = () => {
             type="number"
             placeholder="Enter number of rooms"
             name="rooms"
-            value={formData.rooms}
+            value={formData.totalRooms}
             onChange={handleChange}
             required
           />

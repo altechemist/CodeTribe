@@ -7,7 +7,7 @@ function TodoListItems(props) {
   const currentUser = useSelector((state) => state.users.currentUser);
  
   const [todoList, setTodoList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   
 ;
 
@@ -169,6 +169,7 @@ function TodoListItems(props) {
                 <tr>
                   <th>Item</th>
                   <th>Qty</th>
+                  <th>Details</th>
                   <th>Category</th>
                   <th>
                     Action{" "}
@@ -188,6 +189,7 @@ function TodoListItems(props) {
                   <tr key={item.id}>
                     <td style={{ textDecoration: item.completed ? "line-through" : "none" }}>{item.name}</td>
                     <td>{item.quantity}</td>
+                    <td>{item.description}</td>
                     <td>{item.category}</td>
                     <td>
                       <div className="d-flex btn-group col-1 ms-3">

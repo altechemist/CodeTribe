@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from 'sweetalert2'
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
@@ -16,7 +17,12 @@ const Login = (props) => {
       const user = users.find((user) => user.email === email);
       if (user.password === password) {
         localStorage.setItem("user", JSON.stringify(user));
-        alert("Logged in successfully");
+        Swal.fire({
+          title: 'Welcome!',
+          text: 'Logged in successfully',
+          icon: 'success',
+          confirmButtonText: 'Continue'
+        })
         props.setUser(user);
         props.Home();
       } else {

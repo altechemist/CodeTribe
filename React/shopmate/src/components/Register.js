@@ -29,6 +29,7 @@ function Register() {
         button.click();
       }, 1000);
     }
+    
   };
 
   // Show password
@@ -69,12 +70,16 @@ function Register() {
                   </h1>
                 </div>
                 <div className="col-md-10 mx-auto">
-                  <div>
+                 <div>
                     {registerError && (
-                      <p className="text-danger mt-2">{registerError}</p>
+                      <div class="alert alert-danger" role="alert">
+                        {registerError}
+                      </div>
                     )}
                     {formSuccess && (
-                      <p className="text-success mt-2">{formSuccess}</p>
+                      <div class="alert alert-success" role="alert">
+                        {formSuccess}
+                      </div>
                     )}
                   </div>
                   <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary text-center">

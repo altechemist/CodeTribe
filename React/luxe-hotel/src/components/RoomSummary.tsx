@@ -19,6 +19,8 @@ interface Room {
   price: number;
   sofa: string;
   type: string;
+  totalRooms: number;
+  bookedRooms: number;
 }
 
 // Define the shape of your Redux state
@@ -73,6 +75,24 @@ export default function RoomSummary() {
     setSharing(!isSharing);
   };
 
+  // Find number of available units
+  let availableUnits: number = 0;
+  if (room) availableUnits = room.totalRooms - room.bookedRooms;
+
+  // Handle check availability
+  const checkAvailability = () => {
+   if (availableUnits > 1){
+     Swal.fire({
+       icon: "success",
+       title: "Available",
+       text: "The current room is available for booking.",
+       confirmButtonText: "OK",
+       showCancelButton: false,
+       confirmButtonColor: "#2c2c2c",
+      
+     });
+   };
+  };
 
   return (
     <div>
@@ -154,7 +174,7 @@ export default function RoomSummary() {
             </div>
           )}
             {/* Check availability button */}
-            <button onClick={() => handleView(room)} className="btn btn-primary">
+            <button onClick={() => checkAvailability()} className="btn btn-primary">
               Check Availability
             </button>
           </div>

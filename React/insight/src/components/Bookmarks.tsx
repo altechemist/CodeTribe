@@ -19,17 +19,27 @@ interface Article {
 const Bookmarks: React.FC<NewsArticleProps> = ({ newsCategory }) => {
   const [news, setNews] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState<{ visible: boolean; article?: Article }>({ visible: false });
-
-  useEffect(() => {
-    fetchNews();
-  }, [newsCategory]);
+  const [showModal, setShowModal] = useState<{
+    visible: boolean;
+    article?: Article;
+  }>({ visible: false });
 
   const fetchNews = () => {
     try {
-      const feed = localStorage.getItem('bookmarks');
+      // Retrieve the stored user profile from localStorage
+      const feed = localStorage.getItem("news_app");
+
       if (feed) {
-        setNews(JSON.parse(feed));
+        const userProfile = JSON.parse(feed);
+        if (userProfile.bookmarks) {
+          setNews(JSON.parse(userProfile.bookmarks));
+        } else {
+          console.log("No bookmarks found.");
+          setError("No bookmarks found.");
+        }
+      } else {
+        console.log("No news app data found in localStorage.");
+        setError("Failed to load news app data.");
       }
     } catch (error) {
       console.error("Error fetching articles: ", error);
@@ -37,14 +47,31 @@ const Bookmarks: React.FC<NewsArticleProps> = ({ newsCategory }) => {
     }
   };
 
+  useEffect(() => {
+    fetchNews();
+  }, [newsCategory]);
+
+  function handleDelete(index: number): void {
+    const updatedBookmarks = news.filter((_, i) => i !== index);
+    setNews(updatedBookmarks);
+    const userDetails = localStorage.getItem("news_app");
+    if (userDetails) {
+      const parsedUserDetails = JSON.parse(userDetails);
+      parsedUserDetails.bookmarks = updatedBookmarks;
+      localStorage.setItem("news_app", JSON.stringify(parsedUserDetails));
+    }
+  }
 
   return (
     <div className="container flex news-feed">
+      <h2 className="display-5 fw-bold text-body-emphasis text-center pb-3">
+        Bookmarks
+      </h2>
+      {error && <div className="alert alert-danger text-center">{error}</div>}
       <div className="d-flex justify-content-between">
         <div className="row">
-          {error && <div className="alert alert-danger">{error}</div>}
           {news.length === 0 ? (
-            <div>No bookmarks found.</div>
+            <div className="text-center">No bookmarks found.</div>
           ) : (
             news.map((article, index) => (
               <div className="col-sm-6" key={index}>
@@ -75,12 +102,17 @@ const Bookmarks: React.FC<NewsArticleProps> = ({ newsCategory }) => {
                       </div>
                       <div className="col text-end">
                         <div className="btn-group">
-                          <button className="btn btn-primary">
-                            <i className="bi bi-bookmark-plus-fill"></i>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleDelete(index)}
+                          >
+                            <i className="bi bi-trash"></i>
                           </button>
                           <button
                             className="btn btn-primary"
-                            onClick={() => setShowModal({ visible: true, article })}
+                            onClick={() =>
+                              setShowModal({ visible: true, article })
+                            }
                           >
                             <i className="bi bi-share-fill"></i>
                           </button>
@@ -96,7 +128,11 @@ const Bookmarks: React.FC<NewsArticleProps> = ({ newsCategory }) => {
       </div>
 
       {showModal.visible && (
-        <div className="modal fade show" style={{ display: 'block' }} onClick={() => setShowModal({ visible: false })}>
+        <div
+          className="modal fade show"
+          style={{ display: "block" }}
+          onClick={() => setShowModal({ visible: false })}
+        >
           <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <div className="modal-header">
@@ -111,7 +147,13 @@ const Bookmarks: React.FC<NewsArticleProps> = ({ newsCategory }) => {
                 <ShareSocial
                   title={showModal.article?.title}
                   url={showModal.article?.url}
-                  socialTypes={["facebook", "twitter", "reddit", "linkedin", "whatsapp"]}
+                  socialTypes={[
+                    "facebook",
+                    "twitter",
+                    "reddit",
+                    "linkedin",
+                    "whatsapp",
+                  ]}
                 />
               </div>
             </div>

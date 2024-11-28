@@ -1,4 +1,4 @@
-import {React, useState} from "react";
+import { React, useState } from "react";
 
 function ViewEmployee(props) {
   // Find employee by ID
@@ -48,60 +48,58 @@ function ViewEmployee(props) {
             </div>
 
             <div className="EmployeeForm form border rounded-4 p-4 mx-4 my-4 shadow-lg">
-            <h3>View Employee Information</h3>
-            <table className="table table-hover table-striped">
-              <tbody>
-                <tr>
-                  <th>Photo</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Employee ID</th>
-                  <th>eMail Address</th>
-                  <th>Phone Number</th>
-                  <th>Position</th>
-                  <th>Action</th>
-                </tr>
-
-                {/* Displays employee data */}
-                {filteredTasks.map((empData) => (
-                  <tr className="align-middle">
-                    <td>
-                      <img
-                        className="Thumbnail"
-                        src={empData.image}
-                        alt="avatar"
-                      />
-                    </td>
-                    <td>{empData.firstName}</td>
-                    <td>{empData.lastName}</td>
-                    <td>{empData.employeeID}</td>
-                    <td>{empData.eMailAddress}</td>
-                    <td>{empData.phoneNumber}</td>
-                    <td>{empData.position}</td>
-                    <td>
-                      <div className="btn-group" role="group">
-                        <button
-                          className="btn btn-secondary"
-                          value={empData.employeeID}
-                          onClick={() => EditEmployee(empData.employeeID)}
-                        >
-                          <i class="bi bi-pencil me-2"></i>
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-danger"
-                          value={empData.employeeID}
-                          onClick={() => RemoveEmployee(empData.employeeID)}
-                        >
-                          <i class="bi bi-trash me-2"></i>
-                          Delete
-                        </button>
-                      </div>
-                    </td>
+              <h3>View Employee Information</h3>
+              <table className="table table-hover table-striped">
+                <tbody>
+                  <tr>
+                    <th>Photo</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Employee ID</th>
+                    <th>eMail Address</th>
+                    <th>Phone Number</th>
+                    <th>Position</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+
+                  {/* Displays employee data */}
+                  {filteredTasks.map((empData) => (
+                    <tr className="align-middle">
+                      <td>
+                        <img
+                          className="Thumbnail"
+                          src={empData.image}
+                          alt="avatar"
+                        />
+                      </td>
+                      <td>{empData.firstName}</td>
+                      <td>{empData.lastName}</td>
+                      <td>{empData.employeeID}</td>
+                      <td>{empData.eMailAddress}</td>
+                      <td>{empData.phoneNumber}</td>
+                      <td>{empData.position}</td>
+                      <td>
+                        <div className="btn-group" role="group">
+                          <button
+                            className="btn btn-secondary"
+                            value={empData.employeeID}
+                            onClick={() => EditEmployee(empData.employeeID)}
+                          >
+                            <i class="bi bi-pencil me-2"></i>
+                          </button>
+                          <button
+                            className="btn btn-danger"
+                            value={empData.employeeID}
+                            onClick={() => RemoveEmployee(empData.employeeID)}
+                          >
+                            <i class="bi bi-trash me-2"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

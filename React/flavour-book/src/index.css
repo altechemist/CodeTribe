@@ -6,6 +6,14 @@
   scrollbar-color: #164240 white !important;
 }
 
+.categories {
+  flex-wrap: nowrap;
+  overflow-y: hidden;
+  overflow-x: visible;
+  scrollbar-width: thin;
+  scrollbar-color: #164240 white !important;
+}
+
 .card {
   background-color: rgb(33, 37, 41, 0.1) !important;
   margin-bottom: 5px !important;
@@ -45,8 +53,8 @@ button {
 }
 
 .button-group {
- flex-wrap: nowrap;
- overflow: scroll;
+  flex-wrap: nowrap;
+  overflow: scroll;
 }
 .green:hover {
   background-color: #9acd32;
@@ -104,4 +112,27 @@ li {
 
 .search-button i {
   color: #f7f7f7 !important;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    background-color: lightblue;
+  }
+  .card {
+    display: flex !important;
+    height: 26rem !important;
+    background-color: rgb(33, 37, 41, 0.1) !important;
+    margin-bottom: 5px !important;
+  }
+
+  .card button {
+    position: absolute !important;
+    width: 90%;
+    border: 1px solid #164240 !important;
+    left: 0.8rem !important;
+    right: 0.8rem !important;
+    bottom: 0.5rem !important;
+    margin: auto !important;
+    text-align: center !important;
+  }
 }

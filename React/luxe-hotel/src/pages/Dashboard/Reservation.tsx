@@ -4,11 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchReservations, fetchData, addReservation, updateReservation, deleteReservation } from "../../store/slices/bookingSlice";
 
 interface Reservation {
-  id: string;
-  guestName: string;
+  fullname: string;
   roomType: string;
-  checkInDate: string;
-  checkOutDate: string;
+  checkIn: string;
+  checkOut: string;
   guests: number;
 }
 
@@ -22,11 +21,10 @@ interface Room {
 const Reservations: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [newReservation, setNewReservation] = useState<Reservation>({
-    id: "",
-    guestName: "",
+    fullname: "",
     roomType: "",
-    checkInDate: "",
-    checkOutDate: "",
+    checkIn: "",
+    checkOut: "",
     guests: 1,
   });
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -74,11 +72,10 @@ const Reservations: React.FC = () => {
 
     // Reset form and close modal
     setNewReservation({
-      id: "",
-      guestName: "",
+      fullname: "",
       roomType: "",
-      checkInDate: "",
-      checkOutDate: "",
+      checkIn: "",
+      checkOut: "",
       guests: 1,
     });
     setShowModal(false);
@@ -105,11 +102,11 @@ const Reservations: React.FC = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter guest name"
-                value={newReservation.guestName}
+                value={newReservation.fullname}
                 onChange={(e) =>
                   setNewReservation({
                     ...newReservation,
-                    guestName: e.target.value,
+                    fullname: e.target.value,
                   })
                 }
                 required
@@ -130,7 +127,7 @@ const Reservations: React.FC = () => {
                 required
               >
                 <option value="">Select room type</option>
-                {roomTypes.map((room) => (
+                {roomTypes?.map((room) => (
                   <option key={room} value={room}>
                     {room}
                   </option>
@@ -142,11 +139,11 @@ const Reservations: React.FC = () => {
               <Form.Label>Check-In Date</Form.Label>
               <Form.Control
                 type="date"
-                value={newReservation.checkInDate}
+                value={newReservation.checkIn}
                 onChange={(e) =>
                   setNewReservation({
                     ...newReservation,
-                    checkInDate: e.target.value,
+                    checkIn: e.target.value,
                   })
                 }
                 required
@@ -157,11 +154,11 @@ const Reservations: React.FC = () => {
               <Form.Label>Check-Out Date</Form.Label>
               <Form.Control
                 type="date"
-                value={newReservation.checkOutDate}
+                value={newReservation.checkOut}
                 onChange={(e) =>
                   setNewReservation({
                     ...newReservation,
-                    checkOutDate: e.target.value,
+                    checkOut: e.target.value,
                   })
                 }
                 required
@@ -254,11 +251,10 @@ const Reservations: React.FC = () => {
       <div className="container-sm d-flex justify-content-end">
         <Button variant="primary" onClick={() => {
           setNewReservation({
-            id: "",
-            guestName: "",
+            fullname: "",
             roomType: "",
-            checkInDate: "",
-            checkOutDate: "",
+            checkIn: "",
+            checkOut: "",
             guests: 1,
           });
           setShowModal(true);

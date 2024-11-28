@@ -39,7 +39,7 @@ A simple, user-friendly To-Do List application that allows users to register, lo
 2. **Install dependencies (if applicable)**:
 
    ```bash
-   npm start
+   npm start (repeat for the backend folder)
    ```
 
 3. **Run the application**:

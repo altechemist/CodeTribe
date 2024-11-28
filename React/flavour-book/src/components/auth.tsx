@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 function Auth() {
   // Define a type for the user
@@ -49,13 +50,30 @@ function Auth() {
     if (user) {
       // Login successful
       console.log("Login successful!");
+      Swal.fire({
+        title: 'Done!',
+        text: 'Login successful!',
+        icon: 'success',
+        confirmButtonText: 'Ok'
+      })
       setLoginError("");
-
-      // Redirect to another page or handle successful login
+      
+    // Close modal
+    const button = document.getElementById("closeLoginModal");
+    if (button) {
+      button.click();
+    }
+  
     } else {
       // Login failed
       setLoginError("Invalid email or password.");
     }
+  };
+
+  // Show password
+  const showPassword = () => {
+    const passwordInput = document.getElementById("passwordInput") as HTMLInputElement;
+    passwordInput.type = passwordInput.type === "password"? "text" : "password";
   };
 
   return (
@@ -77,6 +95,7 @@ function Auth() {
               <button
                 type="button"
                 className="btn-close"
+                id="closeLoginModal"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
@@ -91,7 +110,12 @@ function Auth() {
                   </div>
 
                   <div className="col-md-10 mx-auto ">
-                  {loginError && <p style={{ color: "red" }}>{loginError}</p>}
+                    {loginError && (
+                      <div className="alert alert-danger" role="alert">
+                        {loginError}
+                      </div>
+                    )}
+
                     <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary">
                       <div className="form-floating mb-3">
                         <input
@@ -123,7 +147,7 @@ function Auth() {
 
                       <div className="checkbox mb-3">
                         <label>
-                          <input type="checkbox" value="show-password" /> Show
+                          <input type="checkbox" value="show-password" onChange={()  => showPassword()} /> Show
                           Password
                         </label>
                       </div>
