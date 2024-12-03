@@ -3,7 +3,8 @@ import logo from "../assets/logo.png";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
-import Swal from 'sweetalert2';  // Import SweetAlert2
+import Swal from 'sweetalert2';
+import avatar from "../assets/avatar.png";
 
 function CustomNavbar() {
   const dispatch = useDispatch();
@@ -11,7 +12,6 @@ function CustomNavbar() {
   const location = useLocation();
 
   const handleLogout = () => {
-    // Show confirmation dialog before logging out
     Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to log out?',
@@ -23,7 +23,6 @@ function CustomNavbar() {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        // If user confirms, dispatch logout and navigate to home
         dispatch(logout());
         navigate("/");
         Swal.fire('Logged out!', 'You have been logged out.', 'success');
@@ -47,7 +46,7 @@ function CustomNavbar() {
         />
       </Link>
 
-      <Container fluid className="d-flex flex-column justify-content-end">
+      <Container fluid className="d-flex flex-column justify-content-end nav-barz">
         <Navbar.Toggle aria-controls="navbarNav" />
         <Navbar.Collapse id="navbarNav" className="ms-auto">
           <Nav className="me-auto justify-content-end">
@@ -62,7 +61,7 @@ function CustomNavbar() {
             <NavDropdown
               title={
                 <img
-                  src="https://github.com/mdo.png"
+                  src={avatar}
                   alt="Profile"
                   width="32"
                   height="32"

@@ -48,7 +48,7 @@ function Rooms() {
       <HeroSection heading="Discover Our Rooms & Suites" />
 
       {/* Room Cards */}
-      <div className="container-fluid">
+      <div className="container-sm-fluid">
         <div className="text-center">
           <Heading title="Rooms & Suites" />
           <p>

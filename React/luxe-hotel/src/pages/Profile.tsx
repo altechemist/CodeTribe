@@ -29,25 +29,9 @@ function Profile() {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
-  // Reserved room
-  const room: Room = {
-    id: "1",
-    bed: "Single",
-    size: 2,
-    amenities: "Breakfast, Air conditioning, WiFi",
-    beds: 1,
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    guests: 2,
-    image: "/images/room1.jpg",
-    images: ["/images/room1.jpg", "/images/room2.jpg", "/images/room3.jpg"],
-    price: 150,
-    sofa: "Single",
-    type: "Standard",
-  };
-
   // Filter rooms by favorites
   const favoriteRooms = roomList.filter((room: Room) =>
-    user?.favorites?.includes(room.id)
+    user?.favorites.includes(room.id)
   );
 
   // Redirect to login if no user is logged in
@@ -57,8 +41,6 @@ function Profile() {
     }
     console.log(user);
   }, [user, navigate]);
-
-  // 
 
   // State to manage the active tab
   const [activeTab, setActiveTab] = useState("account");

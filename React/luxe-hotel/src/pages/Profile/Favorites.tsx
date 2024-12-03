@@ -31,6 +31,8 @@ const Favorites: React.FC<CardProps> = ({ room }) => {
     navigate(`/room/#intro`);
   };
 
+  
+
   return (
     <div id="favorites">
       {room ? (

@@ -1,6 +1,50 @@
+import { useState } from "react";
 import Heading from "./Heading";
+import Swal from "sweetalert2";
+import { sendMessage } from "../store/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 export default function ContactForm() {
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Validate form data
+    if (!name || !email || !message) {
+      Swal.fire({
+        icon: "error",
+        title: "All fields are required",
+        text: "Please fill out the name, email, and message fields.",
+      });
+      return;
+    }
+
+    try {
+      dispatch(sendMessage(name, lastName, email, message));
+
+      // Clear form fields
+      setName("");
+      setLastName("");
+      setEmail("");
+      setMessage("");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      setName("");
+      setLastName("");
+      setEmail("");
+      setMessage("");
+    }
+  };
+
   return (
     <div className="container mb-4 mt-4">
       <Heading title="Get In Touch" />
@@ -13,18 +57,19 @@ export default function ContactForm() {
       <div className="d-flex justify-content-center">
         <div className="row gap-2">
           <div className="d-flex">
-            <form className="needs-validation">
+            <form className="needs-validation" onSubmit={handleSubmit}>
               <div className="row g-3">
                 <div className="col">
                   <label htmlFor="firstName" className="form-label">
-                    First name
+                    First name <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control"
                     id="firstName"
                     placeholder=""
-                    value=""
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     required
                   />
                   <div className="invalid-feedback">
@@ -34,30 +79,29 @@ export default function ContactForm() {
 
                 <div className="col-sm-6">
                   <label htmlFor="lastName" className="form-label">
-                    Last name
+                    Last name (optional)
                   </label>
                   <input
                     type="text"
                     className="form-control"
                     id="lastName"
                     placeholder=""
-                    value=""
-                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                   />
-                  <div className="invalid-feedback">
-                    Valid last name is required.
-                  </div>
                 </div>
 
                 <div className="col-12">
                   <label htmlFor="email" className="form-label">
-                    Email
+                    Email <span className="text-danger">*</span>
                   </label>
                   <input
                     type="email"
                     className="form-control"
                     id="email"
                     placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <div className="invalid-feedback">
@@ -66,13 +110,15 @@ export default function ContactForm() {
                 </div>
 
                 <div className="col-12">
-                  <label htmlFor="address" className="form-label">
-                    Message
+                  <label htmlFor="message" className="form-label">
+                    Message <span className="text-danger">*</span>
                   </label>
                   <textarea
                     className="form-control"
-                    id="address"
-                    placeholder="1234 Main St"
+                    id="message"
+                    placeholder="Hello World!"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     required
                   />
                   <div className="invalid-feedback">
@@ -84,8 +130,9 @@ export default function ContactForm() {
               <button
                 className="w-100 btn btn-primary btn-lg mt-4"
                 type="submit"
+                disabled={loading}
               >
-                Send
+                {loading ? "Sending..." : "Send"}
               </button>
             </form>
           </div>

@@ -54,7 +54,6 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
   const handleLike = (room: Room) => {
     if (user) {
       if (isLiked) {
-        // Use SweetAlert to confirm unliking the room
         Swal.fire({
           title: 'Are you sure?',
           text: 'Do you want to remove this room from your favorites?',
@@ -67,12 +66,11 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
         }).then((result) => {
           if (result.isConfirmed) {
             dispatch(removeFavorite(user.uid, room.id));
-            setIsLiked(false); // Toggle liked state
+            setIsLiked(false);
             Swal.fire('Removed!', 'The room has been removed from your favorites.', 'success');
           }
         });
       } else {
-        // Use SweetAlert to confirm adding the room to favorites
         Swal.fire({
           title: 'Add to Favorites',
           text: 'Do you want to add this room to your favorites?',
@@ -85,7 +83,7 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
         }).then((result) => {
           if (result.isConfirmed) {
             dispatch(addToFavorites(user.uid, room.id));
-            setIsLiked(true); // Toggle liked state
+            setIsLiked(true);
             Swal.fire('Added!', 'The room has been added to your favorites.', 'success');
           }
         });
@@ -102,7 +100,7 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
     }
   };
 
-  // Function to handle "share" action with SweetAlert2 confirmation
+  // Function to handle share
   const handleShare = (room: Room) => {
     const roomLink = `${window.location.origin}/room/${room.id}`;
 
@@ -133,9 +131,9 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
   };
 
   return (
-    <div className="d-flex container-fluid rounded-5 p-1 gap-1 mb-4">
+    <div className="d-flex container-fluid rounded-5 p-1 gap-1 mb-4 right-card">
       <div className="col align-content-center justify-content-end">
-        <div className="card-body p-2">
+        <div className="card-body p-2 right-card-content">
           <div>
             <Subheading title={room.type} />
             <p className="card-text">{room.description}</p>
@@ -147,7 +145,6 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
           </div>
 
           <div className="btn-group gap-1">
-            {/* Like button with SweetAlert2 confirmation */}
             <button
               className={`btn btn-primary bi ${isLiked ? "bi-heart-fill text-danger" : "bi-heart-fill"}`}
               onClick={() => handleLike(room)}
@@ -192,8 +189,8 @@ const RightRoomCard: React.FC<CardProps> = ({ room }) => {
           </button>
         </div>
       </div>
-      <div className="d-flex img-fluid w-25 col">
-        <img src={room.image} className="card-img-top rounded-5 shadow" alt="Room" />
+      <div className="d-flex  col">
+        <img src={room.image} className="card-img-top rounded-5 shadow img-fluid" alt="Room" />
       </div>
     </div>
   );

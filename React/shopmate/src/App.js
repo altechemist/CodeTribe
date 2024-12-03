@@ -3,7 +3,7 @@ import AddTodoItem from "./components/AddItem";
 import TodoListItems from "./components/TodoList";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { useEffect } from "react";
+import { useEffect,  } from "react";
 import { useSelector } from "react-redux";
 
 // Bootstrap styles
@@ -14,6 +14,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 function App() {
   // Use Redux selector to get todos
   const todos = useSelector((state) => state.todoList.todos);
+ 
 
   useEffect(() => {
    

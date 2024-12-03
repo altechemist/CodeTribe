@@ -1,10 +1,13 @@
-import DatePicker from "../../components/DatePicker";
-
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedRoom } from "../../store/slices/dbSlice";
 
 import roomImage from "../../assets/bedroom-2.jpg";
+import { useEffect, useState } from "react";
+import { fetchReservations } from "../../store/slices/bookingSlice";
+import { Spinner } from "react-bootstrap";
+import VerticalCard from "../../components/VerticalCard";
+import ReservationCard from "../../components/ReservationCard";
 
 interface Room {
   id: string;
@@ -21,85 +24,69 @@ interface Room {
   type: string;
 }
 
+interface Reservation {
+  id: string;
+  fullname: string;
+  email: string;
+  phone: string;
+  checkIn: string;
+  checkOut: string;
+  duration: number;
+  guests: number;
+  roomType: string;
+};
+
+
 interface CardProps {
   room: Room;
 }
 
-const MyReservation: React.FC<CardProps> = ({ room }) => {
-  const navigate = useNavigate();
+const MyReservation: React.FC<CardProps> = () => {
   const dispatch = useDispatch();
 
-  // Navigate to room details page
-  const handleView = (room: Room) => {
-    dispatch(setSelectedRoom(room));
-    navigate(`/room/#intro`);
-  };
+
+  // Get list of reservations
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    dispatch(fetchReservations());
+  }, []);
+
+  const reservationsList = useSelector(
+    (state: any) => state.booking.reservations
+  );
+
+  // Filter current users reservations
+  const user = useSelector((state) => state.auth.user);
+  const currentUsersReservations = reservationsList?.filter(
+    (reservation) => reservation.email === user?.email
+  );
+
+
   return (
     <div className="d-flex justify-content-center">
-      <div className="col-sm-4 p-2">
-        <DatePicker />
-      </div>
-
-      <div>
-      <div className="col p-2">
-          <div className="card shadow-sm border-3">
-            <div style={{ position: "relative", display: "inline-block" }}>
-              <div
-                className="btn-group"
-                style={{ position: "absolute", top: "10px", right: "10px" }}
-              >
-                <button
-                  className="btn btn-primary bi bi-heart-fill"
-                  onClick={() => handleView(room)}
-                ></button>
-                <button
-                  className="btn btn-primary bi bi-share-fill"
-                  onClick={() => handleView(room)}
-                ></button>
+      <div className="container-fluid">
+        <div className="col p-2">
+          {/* Reservations */}
+          <div className="mb-3 mt-4">
+            {loading ? (
+              <div className="text-center">
+                <Spinner animation="border" />
               </div>
-              <img
-                className="card-img-top img-fluid card-image p-1 rounded-3"
-                src={roomImage}
-                alt={`Image of ${room.type}`}
-              />
-            </div>
-
-            <div className="card-body">
-              <div className="d-flex justify-content-between">
-                <h4 className="px-0 p-0">{room.type}</h4>
-                <h4 className="fw-bold px-0 pb-0">R {room.price}</h4>
+            ) : currentUsersReservations.length > 0 ? (
+              <div className="d-flex recommendations">
+                {currentUsersReservations.map((reservation: Reservation) => (
+                  <ReservationCard key={reservation.id} reservation={reservation} />
+                ))}
               </div>
-              <hr />
-              <p className="card-text pt-2 text-truncate">{room.description}</p>
-              <div className="d-flex justify-content-between align-items-center">
-                <ul className="d-flex list-unstyled border mt-auto gap-4">
-                  <li className="d-flex align-items-center me-1 border">
-                    <i className="bi bi-clock me-2" />
-                    <small className="text-nowrap">{room.bed} Bed</small>
-                  </li>
-                  <li className="d-flex align-items-center me-1 border">
-                    <i className="bi bi-fire me-2" />
-                    <small className="text-nowrap">{room.beds} Bed(s)</small>
-                  </li>
-                  <li className="d-flex align-items-center me-1 border">
-                    <i className="bi bi-people-fill me-2" />
-                    <small className="text-nowrap">{room.guests} Guests</small>
-                  </li>
-                </ul>
+            ) : (
+              <div className="text-center">
+                <p>No reservations...</p>
               </div>
-              <div className="d-flex justify-content-end">
-                <button
-                  onClick={() => handleView(room)}
-                  className="btn btn-primary rounded-pill px-3"
-                >
-                  View
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 export default MyReservation;
