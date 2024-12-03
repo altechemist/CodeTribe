@@ -68,9 +68,7 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
           timer: 1500,
         });
   
-        alert("Registration successful!");
       } else {
-        // Optionally, you can set specific error messages from the backend
         setErrorList(["Failed to register. Please check your credentials and try again."]);
       }
     }

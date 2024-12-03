@@ -12,7 +12,7 @@ interface Employee {
 }
 
 interface ViewEmployeeProps {
-  EmployeeData: Employee[] | undefined; // Allow undefined or null
+  EmployeeData: Employee[] | undefined;
   RemoveEmployee: (id: string) => void;
   SelectEmployee: (id: string) => void;
   UpdatePage: () => void;
@@ -43,7 +43,6 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
     props.UpdatePage();
   };
 
-  // Make sure EmployeeData is always an array, if it's undefined, default to empty array
   const employees = props.EmployeeData || [];
 
   if (props?.loading) {
@@ -122,14 +121,14 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                           <div className="btn-group" role="group">
                             <button
                               className="btn btn-secondary"
-                              onClick={() => editEmployee(empData.id!)} // Ensure id is not null/undefined
+                              onClick={() => editEmployee(empData.id!)}
                             >
                               <i className="bi bi-pencil me-2"></i>
                               Edit
                             </button>
                             <button
                               className="btn btn-danger"
-                              onClick={() => removeEmployee(empData.id!)} // Ensure id is not null/undefined
+                              onClick={() => removeEmployee(empData.id!)}
                             >
                               <i className="bi bi-trash me-2"></i>
                               Delete
