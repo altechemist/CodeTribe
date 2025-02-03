@@ -20,11 +20,9 @@ function Register() {
       // Show success message
       setFormSuccess("Registration successful!");
 
-      // Clear form after 1 second
       setTimeout(() => {
         setFormSuccess("");
 
-        // Find button by id
         const button = document.getElementById("closeRegistrationModal");
         button.click();
       }, 1000);

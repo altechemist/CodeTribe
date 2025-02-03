@@ -3,10 +3,10 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 const DATA_FILE = path.join(__dirname, 'books.json');
 
-// Load books data from the JSON file
+// Load books
 function loadBooksData() {
     if (fs.existsSync(DATA_FILE)) {
         const data = fs.readFileSync(DATA_FILE, 'utf8');
@@ -15,7 +15,7 @@ function loadBooksData() {
     return [];
 }
 
-// Save books data to the JSON file
+// Save books
 function saveBooksData(books) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(books, null, 2), 'utf8');
 }
@@ -28,13 +28,13 @@ const server = http.createServer((req, res) => {
     const method = req.method;
 
     if (method === 'GET') {
-        handleGetRequests(parsedUrl, res);
+        getBooks(parsedUrl, res);
     } else if (method === 'POST') {
-        handlePostRequests(req, res);
+        addBook(req, res);
     } else if (method === 'PUT' || method === 'PATCH') {
-        handlePutRequests(parsedUrl, req, res);
+        updateBook(parsedUrl, req, res);
     } else if (method === 'DELETE') {
-        handleDeleteRequests(parsedUrl, res);
+        deleteBook(parsedUrl, res);
     } else {
         res.writeHead(405, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Method not allowed' }));
@@ -46,8 +46,7 @@ server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// Function to handle GET requests
-function handleGetRequests(parsedUrl, res) {
+function getBooks(parsedUrl, res) {
     const { isbn } = parsedUrl.query;
     if (isbn) {
         const book = books.find(b => b.ISBN === isbn);
@@ -64,32 +63,41 @@ function handleGetRequests(parsedUrl, res) {
     }
 }
 
-// Function to handle POST requests
-function handlePostRequests(req, res) {
+function addBook(req, res) {
     let body = '';
     req.on('data', chunk => {
-        body += chunk.toString(); // Convert Buffer to string
+        body += chunk.toString();
     });
     req.on('end', () => {
-        const newBook = JSON.parse(body);
-        const validationError = validateBook(newBook);
-        
-        if (validationError) {
+        try {
+            const newBook = JSON.parse(body);
+            const validationError = validateBook(newBook);
+
+            if (validationError) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: validationError }));
+                return;
+            }
+            // Check ISBN
+            if (books.find(b => b.ISBN === newBook.ISBN)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'A book with the same ISBN already exists' }));
+                return;
+            }
+
+            books.push(newBook);
+            saveBooksData(books);
+
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Book added successfully', book: newBook }));
+        } catch (error) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: validationError }));
-            return;
+            res.end(JSON.stringify({ message: 'Invalid JSON format' }));
         }
-
-        books.push(newBook);
-        saveBooksData(books);  // Save updated books list to file
-
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(newBook));
     });
 }
 
-// Function to handle PUT/PATCH requests
-function handlePutRequests(parsedUrl, req, res) {
+function updateBook(parsedUrl, req, res) {
     const { isbn } = parsedUrl.query;
     let body = '';
 
@@ -98,47 +106,52 @@ function handlePutRequests(parsedUrl, req, res) {
     });
 
     req.on('end', () => {
-        const updatedBook = JSON.parse(body);
-        const index = books.findIndex(b => b.ISBN === isbn);
+        try {
+            const updatedBook = JSON.parse(body);
+            const index = books.findIndex(b => b.ISBN === isbn);
 
-        if (index === -1) {
-            res.writeHead(404, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Book not found' }));
-            return;
-        }
+            if (index === -1) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'Book not found' }));
+                return;
+            }
 
-        const validationError = validateBook(updatedBook);
-        if (validationError) {
+            const validationError = validateBook(updatedBook);
+            if (validationError) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: validationError }));
+                return;
+            }
+
+            books[index] = { ...books[index], ...updatedBook };
+            saveBooksData(books);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Book updated successfully', book: books[index] }));
+        } catch (error) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: validationError }));
-            return;
+            res.end(JSON.stringify({ message: 'Invalid JSON format' }));
         }
-
-        books[index] = { ...books[index], ...updatedBook };
-        saveBooksData(books);  // Save updated books list to file
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(books[index]));
     });
 }
 
-// Function to handle DELETE requests
-function handleDeleteRequests(parsedUrl, res) {
+function deleteBook(parsedUrl, res) {
     const { isbn } = parsedUrl.query;
     const index = books.findIndex(b => b.ISBN === isbn);
 
     if (index !== -1) {
-        books.splice(index, 1);
-        saveBooksData(books);  // Save updated books list to file
-        res.writeHead(204); // No Content
-        res.end();
+        const deletedBook = books.splice(index, 1)[0];
+        saveBooksData(books);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Book deleted successfully', book: deletedBook }));
     } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Book not found' }));
     }
 }
 
-// Function to validate book data
+// Validation
 function validateBook(book) {
     if (!book.title || typeof book.title !== 'string') {
         return 'Title is required and must be a string';
@@ -155,5 +168,5 @@ function validateBook(book) {
     if (!book.ISBN || typeof book.ISBN !== 'string') {
         return 'ISBN is required and must be a string';
     }
-    return null; // No validation errors
+    return null;
 }

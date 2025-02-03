@@ -6,8 +6,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Bookmarks from "./components/Bookmarks";
-
-// Sweet alerts
 import Swal from 'sweetalert2'
 import ProfilePage from "./components/Profile";
 import AuthForm from "./components/Auth";

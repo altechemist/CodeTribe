@@ -22,11 +22,9 @@ function Login() {
       // Show success message
       setFormSuccess("Login successful!");
 
-      // Clear form after 1 second
       setTimeout(() => {
         setFormSuccess("");
 
-        // Find button by id
         const button = document.getElementById("closeLoginModal");
         button.click();
       }, 1000);

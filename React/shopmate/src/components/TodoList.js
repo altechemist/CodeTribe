@@ -4,13 +4,14 @@ import {
   deleteTodoItem,
   checkout,
   updateTodoItem,
+  addList,
 } from "../redux/todoListReducer";
 
-function TodoListItems(props) {
+function TodoListItems({ todos, activeList, setActiveList }) {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.users.currentUser);
 
-  const [todoList, setTodoList] = useState([]);
+  const [todoLists, setTodoLists] = useState({});
   const [loading, setLoading] = useState(false);
 
   const [itemName, setItemName] = useState("");
@@ -22,8 +23,6 @@ function TodoListItems(props) {
   const [searchInput, setSearchInput] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
-
-  const [list, setList] = useState("Shopping");
 
   const categoryList = [
     "All",
@@ -51,28 +50,31 @@ function TodoListItems(props) {
     if (currentUser) {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const user = users.find((user) => user.email === currentUser.email);
-      setTodoList(user ? user.lists : []);
+      if (user) {
+        setTodoLists(user.lists || {});
+      }
       setLoading(false);
     }
-  }, [currentUser, todoList]);
+  }, [currentUser]);
 
   useEffect(() => {
-    let filtered =
-      activeCategory === "All"
-        ? todoList
-        : todoList.filter((item) => item.category === activeCategory);
-
-    if (searchInput) {
-      filtered = filtered.filter((item) =>
-        item.name.toLowerCase().includes(searchInput.toLowerCase())
-      );
+    if (todoLists && todoLists[activeList]) {
+      const listItems = todoLists[activeList] || [];
+      let filtered =
+        activeCategory === "All"
+          ? listItems
+          : listItems.filter((item) => item.category === activeCategory);
+      if (searchInput) {
+        filtered = filtered.filter((item) =>
+          item.name.toLowerCase().includes(searchInput.toLowerCase())
+        );
+      }
+      setFilteredItems(filtered);
     }
-
-    setFilteredItems(filtered);
-  }, [todoList, activeCategory, searchInput]);
+  }, [todoLists, activeList, activeCategory, searchInput]);
 
   const handleUpdate = (id) => {
-    const item = todoList.find((item) => item.id === id);
+    const item = filteredItems.find((item) => item.id === id);
     if (item) {
       setSelectedItem(id);
       setItemName(item.name);
@@ -94,21 +96,22 @@ function TodoListItems(props) {
 
       dispatch(updateTodoItem({ todo: updatedItem, email: currentUser.email }));
 
-      const updatedTodoList = todoList.map((item) =>
-        item.id === selectedItem ? updatedItem : item
-      );
-      setTodoList(updatedTodoList);
+      // Update state with the new item
+      setTodoLists((prevLists) => ({
+        ...prevLists,
+        [activeList]: prevLists[activeList].map((item) =>
+          item.id === selectedItem ? updatedItem : item
+        ),
+      }));
 
+      // Update localStorage
       const users = JSON.parse(localStorage.getItem("users"));
       const user = users.find((user) => user.email === currentUser.email);
       if (user) {
-        const itemIndex = user.lists.findIndex(
-          (item) => item.id === selectedItem
+        user.lists[activeList] = user.lists[activeList].map((item) =>
+          item.id === selectedItem ? updatedItem : item
         );
-        if (itemIndex !== -1) {
-          user.lists[itemIndex] = updatedItem;
-          localStorage.setItem("users", JSON.stringify(users));
-        }
+        localStorage.setItem("users", JSON.stringify(users));
       }
 
       resetForm();
@@ -126,14 +129,17 @@ function TodoListItems(props) {
   const handleDelete = (id) => {
     dispatch(deleteTodoItem({ todoId: id, email: currentUser.email }));
 
-    // Update local state after deletion
-    const updatedTodoList = todoList.filter((item) => item.id !== id);
-    setTodoList(updatedTodoList);
+    setTodoLists((prevLists) => ({
+      ...prevLists,
+      [activeList]: prevLists[activeList].filter((item) => item.id !== id),
+    }));
 
     const users = JSON.parse(localStorage.getItem("users"));
     const user = users.find((user) => user.email === currentUser.email);
     if (user) {
-      user.lists = user.lists.filter((item) => item.id !== id);
+      user.lists[activeList] = user.lists[activeList].filter(
+        (item) => item.id !== id
+      );
       localStorage.setItem("users", JSON.stringify(users));
     }
   };
@@ -142,44 +148,40 @@ function TodoListItems(props) {
     setActiveCategory(category);
   };
 
-  const sortItems = (order) => {
-    setFilteredItems((prevItems) =>
-      [...prevItems].sort((a, b) =>
-        order === "up"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name)
-      )
-    );
-  };
+  const handleNewList = (listName) => {
+    if (listName && !todoLists[listName]) {
+      setTodoLists((prevLists) => ({
+        ...prevLists,
+        [listName]: [],
+      }));
+      setActiveList(listName);
+    }
 
-  const handleNewList = () => {
-    setTodoList([]);
+    dispatch(addList({ email: currentUser.email, listName: activeList }));
   };
 
   const handleShare = () => {
-    // Structure the list
     const sharedList = {
-      name: list,
-      items: todoList,
+      name: activeList,
+      items: filteredItems,
     };
-  
-    // Generate a unique share link
+
     const shareLink = `https://shopmate-app.com/share/${encodeURIComponent(
       JSON.stringify(sharedList)
     )}`;
-  
-    // Prepare share text for email/socials
+
     const shareText = `
       Check out this list on ShopMate:
       ${sharedList.name}
-      
+
       Items:
-      ${sharedList.items.map((item, index) => `${index + 1}. ${item}`).join("\n")}
+      ${sharedList.items
+        .map((item, index) => `${index + 1}. ${item.name}`)
+        .join("\n")}
       
       View or edit it here: ${shareLink}
     `;
-  
-    // Use the navigator.share API for supported platforms
+
     if (navigator.share) {
       navigator
         .share({
@@ -187,98 +189,63 @@ function TodoListItems(props) {
           text: shareText,
           url: shareLink,
         })
-        .then(() => console.log("Share successful"))
         .catch((error) => console.error("Error sharing", error));
     } else {
-
-      // Fallback for platforms without navigator.share
-      alert(
-        `Your list is ready to share!\n\nCopy this text and share it via email or socials:\n\n${shareText}`
-      );
+      alert(`Share the list with this link: ${shareLink}`);
     }
-  
-    // Log for debugging
-    console.log(sharedList);
   };
-  
+
+  // Get a list of users list
+  function getListNamesByEmail(email) {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find((user) => user.email === email);
+
+    if (user && user.lists) {
+      return Object.keys(user.lists);
+    }
+
+    return [];
+  }
+
+  const listNames = getListNamesByEmail(currentUser.email);
 
   return (
     <div className="container-sm mb-2 border shadow-lg rounded-4">
-      {/* New List */}
-      <>
-        <div
-          class="modal fade"
-          id="staticBackdrop"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          tabindex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                  New List...
-                </h1>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <div class="mb-3">
-                  <label for="listName" class="form-label">
-                    Enter name
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="listName"
-                    placeholder="Shopping List"
-                    onChange={e => setList(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" onClick={() => handleNewList()}>
-                  Understood
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-
       <div className="flex p-2">
         {loading ? (
           <h1 className="mb-2 p-2">Loading...</h1>
-        ) : todoList.length === 0 ? (
-          <h1 className="mb-2 p-2">Add Items...</h1>
         ) : (
-          <section>
+          <>
             <div className="d-flex flex-row justify-content-between">
               <div className="d-flex gap-3 mb-2 align-baseline">
-                <h1>{list} List</h1>
-
-                <button
+                <div className="flex d-flex">
+                  <select
+                    className="form-select form-select-lg border-0"
+                    onChange={(e) => setActiveList(e.target.value)}
+                    value={activeList}
+                  >
+                    <option value="">Select a List</option>
+                    {listNames.map((listName) => (
+                      <option key={listName} value={listName}>
+                        {listName} List
+                      </option>
+                    ))}
+                  </select>
+                  <button
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"
                   className="btn"
                 >
                   <i className="bi bi-journal-plus"></i>
                 </button>
+                </div>
               </div>
-              <button type="button" className="btn my-3 me-0" onClick={() => handleShare()}>
+              
+              <button
+                type="button"
+                className="btn my-3 me-0"
+                onClick={() => handleShare()}
+              >
                 <i className="bi bi-share-fill"></i>
               </button>
             </div>
@@ -313,162 +280,89 @@ function TodoListItems(props) {
                   <th>Qty</th>
                   <th>Details</th>
                   <th>Category</th>
-                  <th>
-                    Action{" "}
-                    <div className="btn-group">
-                      <button
-                        className="btn btn-outline-secondary btn-sm"
-                        onClick={() => sortItems("down")}
-                      >
-                        <i className="bi bi-sort-down"></i>
-                      </button>
-                      <button
-                        className="btn btn-outline-secondary btn-sm"
-                        onClick={() => sortItems("up")}
-                      >
-                        <i className="bi bi-sort-up"></i>
-                      </button>
-                    </div>
-                  </th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {Array.isArray(filteredItems) &&
                   filteredItems.map((item) => (
                     <tr key={item.id}>
-                      <td
-                        style={{
-                          textDecoration: item.completed
-                            ? "line-through"
-                            : "none",
-                        }}
-                      >
-                        {item.name}
-                      </td>
+                      <td>{item.name}</td>
                       <td>{item.quantity}</td>
                       <td>{item.description}</td>
                       <td>{item.category}</td>
                       <td>
-                        <div className="d-flex btn-group col-1 ms-3">
-                          <button
-                            type="button"
-                            className="btn btn-primary btn-sm"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editModal"
-                            onClick={() => handleUpdate(item.id)}
-                          >
-                            <i className="bi bi-pencil-square" />
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-success btn-sm"
-                            onClick={() =>
-                              dispatch(
-                                checkout({
-                                  todoId: item.id,
-                                  email: currentUser.email,
-                                })
-                              )
-                            }
-                          >
-                            {item.completed ? (
-                              <i className="bi bi-arrow-counterclockwise" />
-                            ) : (
-                              <i className="bi bi-check-circle" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            <i className="bi bi-trash" />
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editModal"
+                          onClick={() => handleUpdate(item.id)}
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                   ))}
               </tbody>
             </table>
-          </section>
+          </>
         )}
       </div>
 
-      {/* Edit Item Modal */}
-      <div className="edit-item-modal">
-        <div
-          className="modal fade"
-          id="editModal"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          tabIndex="-1"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h1 className="modal-title fs-5">Update Item...</h1>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
+      {/* Modal for new list creation */}
+      <div
+        className="modal fade"
+        id="staticBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="staticBackdropLabel">
+                New List...
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label for="listName" className="form-label">
+                  Enter name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="listName"
+                  placeholder="Shopping List"
+                  onChange={(e) => setActiveList(e.target.value)}
+                />
               </div>
-              <div className="modal-body">
-                <div className="d-flex px-2 row g-2 justify-content-center">
-                  <div className="mb-3 col-5">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter Name"
-                      value={itemName}
-                      onChange={(e) => setItemName(e.target.value)}
-                    />
-                  </div>
-                  <div className="mb-3 col-4">
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Quantity"
-                      value={itemQuantity}
-                      onChange={(e) => setItemQuantity(e.target.value)}
-                    />
-                  </div>
-                  <div className="mb-3 col-3">
-                    <select
-                      className="form-select"
-                      value={itemCategory}
-                      onChange={(e) => setItemCategory(e.target.value)}
-                    >
-                      {categoryList.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-center mb-2">
-                  <textarea
-                    className="form-control"
-                    placeholder="Enter Description"
-                    value={itemDescription}
-                    onChange={(e) => setItemDescription(e.target.value)}
-                    rows="3"
-                  ></textarea>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  data-bs-dismiss="modal"
-                  onClick={postUpdate}
-                >
-                  Update
-                </button>
-              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+                onClick={() => handleNewList(activeList)}
+              >
+                Add
+              </button>
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ function EditEmployee(props) {
   const [eMailAddress, setEmailAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [position, setPosition] = useState("");
-  const [image, setImage] = useState(null); // Handle the image as a base64 data URL
+  const [image, setImage] = useState(null);
 
   // Filter the employee data
   const FilterEmployees = (employeeID) => {
@@ -46,7 +46,7 @@ function EditEmployee(props) {
     setEmailAddress(filteredEmp[0].eMailAddress);
     setPhoneNumber(filteredEmp[0].phoneNumber);
     setPosition(filteredEmp[0].position);
-    setImage(filteredEmp[0].image); // Assuming `image` is a URL or path
+    setImage(filteredEmp[0].image);
   };
 
   // If employee already selected
@@ -60,13 +60,12 @@ function EditEmployee(props) {
     setEmailAddress("");
     setPhoneNumber("");
     setPosition("");
-    setImage(null); // Clear the image state
-    props.SelectEmployee(null); // Clear the selected employee
+    setImage(null);
+    props.SelectEmployee(null);
   };
 
   // Add user input to data object
   const UpdateEmployee = (event) => {
-    // Prevent form submission to avoid page refresh
     event.preventDefault();
 
     const isFormValid = props.FormValidation(
@@ -102,18 +101,18 @@ function EditEmployee(props) {
     }
   };
 
-  // Handle file upload (image upload logic)
+  // Handle file upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setImage(reader.result); // Set image as the base64 encoded URL
+        setImage(reader.result);
         if (props.uploadImage) {
-          props.uploadImage(reader.result); // Call an external image upload function if needed
+          props.uploadImage(reader.result);
         }
       };
-      reader.readAsDataURL(file); // Read the file as a data URL (base64)
+      reader.readAsDataURL(file);
     }
   };
 
@@ -253,7 +252,7 @@ function EditEmployee(props) {
             className="form-control"
             type="file"
             id="formFile"
-            onChange={handleImageUpload} // Handle image upload
+            onChange={handleImageUpload}
           />
           {image && <img src={image} alt="Employee" className="img-fluid mt-3" />}
         </div>
@@ -262,7 +261,7 @@ function EditEmployee(props) {
           <button
             className="btn btn-success my-1"
             type="button"
-            onClick={(event) => UpdateEmployee(event)} // Pass event explicitly
+            onClick={(event) => UpdateEmployee(event)}
           >
             <i className="bi bi-file-arrow-up me-2"></i>
             Update

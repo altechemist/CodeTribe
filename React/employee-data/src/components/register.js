@@ -9,7 +9,6 @@ const Register = (props) => {
 
   // Store user to local storage
   const CreateUser = async (name, email, password) => {
-    // Get current users
     const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
 
     // Update existing users
@@ -18,7 +17,6 @@ const Register = (props) => {
 
     props.setUser({ name, email, password });
 
-    // Redirect to home page
     props.Home();
 
     return name && email && password;

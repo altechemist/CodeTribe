@@ -1,6 +1,4 @@
 import React from 'react'
-
-// Sweet alerts
 import Swal from 'sweetalert2'
 
 // Define the profile type

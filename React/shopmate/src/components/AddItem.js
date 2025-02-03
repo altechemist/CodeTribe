@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { addTodoItem } from "../redux/todoListReducer";
 import { selectCurrentUser } from "../redux/usersReducer";
 
-function AddTodoItem() {
+function AddTodoItem({ activeList, setActiveList}) {
   const [itemName, setItemName] = useState("");
   const [itemQuantity, setItemQuantity] = useState("");
   const [itemCategory, setItemCategory] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
+  
 
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
@@ -42,6 +43,11 @@ function AddTodoItem() {
       return;
     }
 
+    if (!currentUser || !currentUser.email) {
+      setFormError("User email is missing. Please log in.");
+      return;
+    }
+
     const newItem = {
       id: Date.now(),
       name: itemName,
@@ -51,8 +57,12 @@ function AddTodoItem() {
       completed: false,
     };
 
-    // Dispatch the action with email included
-    dispatch(addTodoItem({ todo: newItem, email: currentUser.email }));
+
+    dispatch(addTodoItem({
+      todo: newItem,
+      email: currentUser.email,
+      listName: activeList,
+    }));
 
     setFormSuccess("Item added successfully!");
     resetForm();
@@ -86,7 +96,6 @@ function AddTodoItem() {
       </div>
     );
   }
-
 
   return (
     <div className="container-sm rounded-4 mt-4 mb-3">

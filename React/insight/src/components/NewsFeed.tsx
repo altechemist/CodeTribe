@@ -73,7 +73,7 @@ const NewsFeed: React.FC<NewsArticleProps> = ({ newsCategory, searchTerm, user }
 
   const loadBookmarks = () => {
     const savedBookmarks = localStorage.getItem("news_app");
-    console.log(savedBookmarks.bookmarks);
+    //console.log(savedBookmarks.bookmarks);
     if (savedBookmarks?.bookmarks) {
       setBookmarks(JSON.parse(savedBookmarks.bookmarks));
     }

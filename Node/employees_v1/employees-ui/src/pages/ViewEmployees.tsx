@@ -124,14 +124,12 @@ const ViewEmployees: React.FC<ViewEmployeeProps> = (props) => {
                               onClick={() => editEmployee(empData.id!)}
                             >
                               <i className="bi bi-pencil me-2"></i>
-                              Edit
                             </button>
                             <button
                               className="btn btn-danger"
                               onClick={() => removeEmployee(empData.id!)}
                             >
                               <i className="bi bi-trash me-2"></i>
-                              Delete
                             </button>
                           </div>
                         </td>

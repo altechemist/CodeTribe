@@ -12,7 +12,6 @@ function CreateEmployee(props) {
 
   // Check if input valid
   const AddEmployee = (event) => {
-    // Prevent form submission and page reload
     event.preventDefault();
 
     const isFormValid = props.FormValidation(
@@ -43,7 +42,7 @@ function CreateEmployee(props) {
       setEmailAddress("");
       setPhoneNumber("");
       setPosition("");
-      uploadImage(""); // Clear the image after submitting
+      uploadImage("");
     }
   };
 
@@ -53,9 +52,9 @@ function CreateEmployee(props) {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        uploadImage(reader.result); // Store the image as a base64 data URL
+        uploadImage(reader.result);
       };
-      reader.readAsDataURL(file); // Read the file as a base64-encoded string
+      reader.readAsDataURL(file);
     }
   };
 
@@ -63,7 +62,7 @@ function CreateEmployee(props) {
     <div id="Add" className="container-sm form">
       <form
         className="EmployeeForm border p-4 my-4 rounded-4 shadow-lg"
-        onSubmit={(e) => e.preventDefault()} // Prevent form submission on Enter press
+        onSubmit={(e) => e.preventDefault()}
       >
         <h3>Add Employee Information</h3>
 
@@ -215,7 +214,7 @@ function CreateEmployee(props) {
         <div className="text-end">
           <button
             className="btn btn-primary my-1"
-            type="button" // Ensure this is a button, not submit to prevent form submission
+            type="button"
             onClick={AddEmployee}
           >
             <i className="bi bi-floppy me-2"></i>

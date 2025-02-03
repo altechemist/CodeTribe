@@ -66,7 +66,6 @@ const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
         setConfirmPassword("");
         setErrorList([]);
 
-        // You can add your custom success logic here (e.g., showing a success message)
         alert("Registration successful!");
         
       } else {

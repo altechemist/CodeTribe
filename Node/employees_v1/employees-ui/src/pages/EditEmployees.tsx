@@ -49,7 +49,7 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setImageFile(file); // Store the file for upload
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = () => {
         setImagePreview(reader.result as string);
@@ -100,7 +100,7 @@ const EditEmployees: React.FC<EditEmployeeProps> = (props) => {
      
       try {
         await props.UpdateEmployee(firstName, lastName, eMailAddress, phoneNumber, position, imageFile);
-        CancelEdit(); // Clear the form after successful update
+        CancelEdit();
       } catch (error) {
         console.error("Error updating employee:", error);
         alert("Failed to update employee. Please try again.");

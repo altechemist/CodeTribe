@@ -48,7 +48,7 @@ Flavour Book is a recipe management application that allows users to discover, a
    npm start
    ```
 
-   Open your browser and navigate to http://localhost:5173/ (or the specified port)
+   Open your browser and navigate to <http://localhost:5173/> (or the specified port)
 
 ## Usage
 

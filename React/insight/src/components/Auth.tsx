@@ -19,7 +19,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ setUser }) => {
   const [interest, setInterest] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(true); // To toggle between Sign Up and Login
+  const [isSignUp, setIsSignUp] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,10 +70,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ setUser }) => {
     setInterest("");
     setConfirmPassword("");
 
-    // Optionally clear the success message after a few seconds
     setTimeout(() => {
       setSuccess(false);
-    }, 3000); // Hide success message after 3 seconds
+    }, 3000);
   };
 
   return (

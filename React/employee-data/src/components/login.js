@@ -9,7 +9,6 @@ const Login = (props) => {
 
   // Check users from local storage
   const LoginUser = async (email, password) => {
-    // Get users from local storage
     const users = JSON.parse(localStorage.getItem("users")) || [];
     // Check if user exists in local storage
     const userExists = users.some((user) => user.email === email);
@@ -36,7 +35,6 @@ const Login = (props) => {
   };
 
   const passwordReset = async (email) => {
-    // Replace this with actual password reset logic
     return email === "user@example.com";
   };
 

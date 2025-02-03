@@ -38,7 +38,7 @@ function ViewEmployee(props) {
                       type="text"
                       class="form-control"
                       id="searchID"
-                      placeholder={"Enter Employee ID..."}
+                      placeholder={"Enter Employee Name..."}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       required
                     />

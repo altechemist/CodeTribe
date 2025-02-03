@@ -15,13 +15,11 @@ interface RegisterProps {
 
 // Register component
 const Register: React.FC<RegisterProps> = ({ CreateUser }) => {
-  // State to hold form inputs
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  // State for success message and errors
   const [errorList, setErrorList] = useState<string[]>([]);
 
   // Function to handle form submission

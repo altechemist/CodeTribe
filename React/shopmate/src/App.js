@@ -3,7 +3,7 @@ import AddTodoItem from "./components/AddItem";
 import TodoListItems from "./components/TodoList";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { useEffect,  } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 // Bootstrap styles
@@ -14,11 +14,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 function App() {
   // Use Redux selector to get todos
   const todos = useSelector((state) => state.todoList.todos);
- 
+  const [activeList, setActiveList] = useState("Shopping");
 
-  useEffect(() => {
-   
-  }, [todos]); 
+  useEffect(() => {}, [todos, activeList, setActiveList]);
 
   return (
     <div className="container-sm justify-content-center">
@@ -123,7 +121,7 @@ function App() {
             <div className="modal-content">
               <div className="modal-header">
                 <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                  Add Item...
+                  Add Item... {activeList}
                 </h1>
                 <button
                   type="button"
@@ -134,7 +132,7 @@ function App() {
                 ></button>
               </div>
               <div className="modal-body">
-                <AddTodoItem />
+                <AddTodoItem activeList={activeList} setActiveList={setActiveList} />
               </div>
             </div>
           </div>
@@ -143,7 +141,7 @@ function App() {
 
       {/* Todo List */}
       <div className="d-flex justify-content-center">
-        <TodoListItems todos={todos} />
+        <TodoListItems todos={todos} activeList={activeList} setActiveList={setActiveList} />
       </div>
 
       {/* Add Item button */}

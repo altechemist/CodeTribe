@@ -44,6 +44,8 @@ const usersSlice = createSlice({
 
       state.registerError = '';
     },
+
+    
     loginUser(state, action) {
       const { email, password } = action.payload;
       if (!email || !password) {
@@ -73,7 +75,6 @@ const usersSlice = createSlice({
 // Selector to get the currentUser
 export const selectCurrentUser = (state) => state.users.currentUser;
 
-// Call getUsers on app start (in your main component or useEffect)
 export const {
   getUsers,
   registerUser,
