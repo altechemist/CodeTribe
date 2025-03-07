@@ -4,7 +4,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface ShoppingListItem {
   id: string;
   name: string;
+  price: number;
   quantity: number;
+  category: string;
+  description: string;
   completed: boolean;
 }
 

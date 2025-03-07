@@ -10,14 +10,16 @@ import {
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons"; // For the close button icon
 
-const PopUpModal = () => {
+const PopUpModal = ({ onAdd }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [product, setProduct] = useState({
+    id: Date.now().toString(), // Generate a unique ID for the product
     name: "",
     price: "",
     quantity: "",
     category: "",
     description: "",
+    completed: false,
   });
 
   const handleAddProduct = () => {
@@ -33,6 +35,18 @@ const PopUpModal = () => {
     }
     // Handle adding the product logic here (e.g., adding to list)
     console.log("Product added:", product);
+    onAdd(product);
+
+    setProduct({
+      id: Date.now().toString(), // Generate a new unique ID for the next product
+      name: "",
+      price: "",
+      quantity: "",
+      category: "",
+      description: "",
+      completed: false,
+    });
+
     setModalVisible(false);
   };
 
@@ -78,7 +92,7 @@ const PopUpModal = () => {
                 </View>
 
                 {/* Product Price */}
-                 <View>
+                <View>
                   <Text className="text-sm font-medium text-gray-900">
                     Price
                   </Text>
@@ -123,8 +137,6 @@ const PopUpModal = () => {
                     className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-900"
                   />
                 </View>
-
-               
 
                 {/* Product Description */}
                 <View>

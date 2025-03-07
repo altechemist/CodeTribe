@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Card = ({ item, onDelete, onEdit, onToggleDone }) => {
-  const [checked, setChecked] = useState(item.done);
+  const [checked, setChecked] = useState(item.completed);
 
   const handleCheckboxChange = () => {
     setChecked(!checked);
@@ -17,9 +17,22 @@ const Card = ({ item, onDelete, onEdit, onToggleDone }) => {
         {/* Item details */}
         <View className="flex-row justify-between items-center">
           <View className="flex-1">
-            <Text className="text-lg font-semibold text-gray-900">{item.name}</Text>
-            <Text className="text-sm text-gray-600">Qty: {item.quantity}</Text>
-            <Text className="text-sm text-gray-600">Total: ${item.totalPrice.toFixed(2)}</Text>
+            <Text className="text-lg font-semibold text-gray-900">
+              {item?.name}
+            </Text>
+            <Text className="text-lg font-semibold text-gray-900">
+              {item?.id}
+            </Text>
+            <Text className="text-sm text-gray-600">Qty: {item?.quantity}</Text>
+            <Text className="text-sm text-gray-600">
+              Price: ${item?.price}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              Category: {item?.category}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              Description: {item?.description}
+            </Text>
           </View>
           {/* Checkbox */}
         </View>
@@ -30,7 +43,7 @@ const Card = ({ item, onDelete, onEdit, onToggleDone }) => {
             <MaterialIcons name="edit" size={24} color="blue" />
           </TouchableOpacity>
           {/* Delete Button */}
-          <TouchableOpacity onPress={() => onDelete(item.id)}>
+          <TouchableOpacity onPress={() => onDelete(item?.id)}>
             <MaterialIcons name="delete" size={24} color="red" />
           </TouchableOpacity>
         </View>
