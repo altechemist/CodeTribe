@@ -3,18 +3,24 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal } from "react
 import ReservationsCard from "../../components/ReservationCard";
 import ReservationForm from "../../components/ReservationForm";
 import FloatingButton from "@/components/FloatingButton";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 const ManageReservations = () => {
-  const [reservations, setReservations] = useState([
-    {
-      id: "1",
-      user: "John Doe",
-      restaurant: "Pasta Palace",
-      date: "2025-01-20",
-      time: "7:00 PM",
-      guests: 2,
-    },
-  ]);
+
+  const { reservations, loading, error } = useSelector((state: RootState) => state.reservations);
+  const { user } = useSelector((state: RootState) => state.users);
+
+ // If the restaurant has multiple admins, check if the user is one of them
+ const restaurantReservations = reservations.filter((reservation) =>
+  reservation?.restaurant_id?.admin === user?._id
+);
+
+
+
+  console.log("reservations: ", restaurantReservations);
+  console.log(user?._id)
+
   const [editingReservation, setEditingReservation] = useState<{ id: string; user: string; restaurant: string; date: string; time: string; guests: number; } | null>(null);
   const [isFormVisible, setFormVisible] = useState(false);
 
@@ -70,13 +76,14 @@ const ManageReservations = () => {
       ) : (
         <>
           <FlatList
-            data={reservations}
-            keyExtractor={(item) => item.id}
+            data={restaurantReservations}
+            keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <ReservationsCard
                 reservation={item}
                 onEdit={handleEditReservation}
                 onDelete={handleDeleteReservation}
+                user={user}
               />
             )}
             ListEmptyComponent={

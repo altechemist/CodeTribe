@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import { createReservation } from "@/redux/slices/reservationSlice";
+import { RootState } from "@/redux/store";
+import { useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,46 +9,116 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-} from 'react-native';
+  Platform,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "@/redux/store";
+import { Restaurant } from "@/redux/slices/restaurantSlice";
+import Button from "@/components/Button";
 
 const Reservation = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [guests, setGuests] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [specialRequests, setSpecialRequests] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [numberOfPeople, setNumberOfPeople] = useState("");
+  const [specialRequests, setSpecialRequests] = useState("");
 
-  const handleSubmit = () => {
-    if (!name || !email || !phone || !guests || !date || !time) {
-      Alert.alert('Error', 'Please fill in all required fields.');
+  const [selectedSpot, setSelectedSpot] = useState<Date | null>(null);
+
+  const { id } = useLocalSearchParams();
+  const user = useSelector((state: RootState) => state.users.user);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { restaurants } = useSelector((state: RootState) => state.restaurants);
+  const restaurant = restaurants.find(
+    (restaurant: Restaurant) => restaurant._id === id
+  );
+
+  // Map available spots
+  const availableSpots = restaurant?.availableSlots;
+
+  // Handle spot selection
+  const handleSpotSelection = (itemValue: string) => {
+    if (itemValue) {
+      const newDate = new Date(itemValue);
+      setSelectedSpot(newDate);
+    } else {
+      setSelectedSpot(null);
+    }
+  };
+
+  // Format date for display
+  const formatDate = (date: Date | null) => {
+    return date
+      ? date.toLocaleString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+      : "Select a Spot";
+  };
+
+  const handleSubmit = async () => {
+    if (
+      !fullName ||
+      !email ||
+      !phoneNumber ||
+      !numberOfPeople ||
+      !selectedSpot
+    ) {
+      const errorMessage = "Please fill in all required fields.";
+      Platform.OS === "web"
+        ? alert(errorMessage)
+        : Alert.alert("Error", errorMessage);
       return;
     }
 
-    Alert.alert(
-      'Reservation Confirmed',
-      `Thank you, ${name}! Your table for ${guests} guest(s) has been reserved on ${date} at ${time}.`
-    );
+    const reservationData = {
+      user_id: user?._id || "",
+      restaurant_id: id,
+      restaurant_name: restaurant?.name,
+      fullName,
+      email,
+      phoneNumber,
+      date: selectedSpot.toISOString().split("T")[0], // YYYY-MM-DD
+      time: selectedSpot.toTimeString().split(" ")[0], // HH:MM:SS
+      numberOfPeople,
+      specialRequests,
+    };
+
+    console.log(reservationData);
+    await dispatch(createReservation(reservationData));
+
+    const successMessage = `Thank you, ${fullName}! Your table for ${numberOfPeople} guest(s) has been reserved on ${formatDate(
+      selectedSpot
+    )}.`;
+    Platform.OS === "web"
+      ? alert(successMessage)
+      : Alert.alert("Reservation Confirmed", successMessage);
 
     // Clear form
-    setName('');
-    setEmail('');
-    setPhone('');
-    setGuests('');
-    setDate('');
-    setTime('');
-    setSpecialRequests('');
+    setFullName("");
+    setEmail("");
+    setPhoneNumber("");
+    setNumberOfPeople("");
+    setSelectedSpot(null);
+    setSpecialRequests("");
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Table Reservation</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Full Name"
-        value={name}
-        onChangeText={setName}
+        value={fullName}
+        onChangeText={setFullName}
       />
       <TextInput
         style={styles.input}
@@ -58,28 +131,35 @@ const Reservation = () => {
         style={styles.input}
         placeholder="Phone Number"
         keyboardType="phone-pad"
-        value={phone}
-        onChangeText={setPhone}
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
       />
       <TextInput
         style={styles.input}
         placeholder="Number of Guests"
         keyboardType="numeric"
-        value={guests}
-        onChangeText={setGuests}
+        value={numberOfPeople}
+        onChangeText={setNumberOfPeople}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Date (YYYY-MM-DD)"
-        value={date}
-        onChangeText={setDate}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Time (HH:MM)"
-        value={time}
-        onChangeText={setTime}
-      />
+
+      {/* Dropdown for available spots */}
+      <View style={styles.pickerContainer}>
+        <Picker
+          style={styles.picker}
+          selectedValue={selectedSpot?.toISOString()}
+          onValueChange={handleSpotSelection}
+        >
+          <Picker.Item label="Select a Spot" value={null} />
+          {availableSpots?.map((spot, index) => (
+            <Picker.Item
+              key={index}
+              label={formatDate(new Date(spot))}
+              value={spot}
+            />
+          ))}
+        </Picker>
+      </View>
+
       <TextInput
         style={styles.textArea}
         placeholder="Special Requests (Optional)"
@@ -88,9 +168,8 @@ const Reservation = () => {
         multiline
         numberOfLines={4}
       />
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Book Table</Text>
-      </TouchableOpacity>
+
+      <Button title="Book Table" onPress={handleSubmit} />
     </View>
   );
 };
@@ -99,17 +178,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
+  },
+  pickerContainer: {
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  picker: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
@@ -117,23 +207,12 @@ const styles = StyleSheet.create({
   },
   textArea: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
     fontSize: 16,
-    textAlignVertical: 'top', // For Android to align text at the top
-  },
-  button: {
-    backgroundColor: 'tomato',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    textAlignVertical: "top",
   },
 });
 

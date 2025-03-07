@@ -9,100 +9,19 @@ import {
 } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from "expo-router"; // Import router
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { Restaurant } from "@/redux/slices/restaurantSlice";
 
 const RestaurantDetails = () => {
   const { id } = useLocalSearchParams(); // Get restaurant ID from params
   const router = useRouter(); // Initialize the router for navigation
   
-const [restaurants, setRestaurants] = useState([
-    {
-      id: "1",
-      name: "Pasta Palace",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Italian",
-      rating: 4.5,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-    {
-      id: "2",
-      name: "Sushi World",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Japanese",
-      rating: 4.8,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-    {
-      id: "3",
-      name: "Sushi World",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Japanese",
-      rating: 4.8,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-    {
-      id: "4",
-      name: "Sushi World",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Japanese",
-      rating: 4.8,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-    {
-      id: "5",
-      name: "Sushi World",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Japanese",
-      rating: 4.8,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-    {
-      id: "6",
-      name: "Sushi World",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Japanese",
-      rating: 4.8,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-    {
-      id: "7",
-      name: "Sushi World",
-      address: "102 Hacker Way",
-      distance: 2,
-      cuisine: "Japanese",
-      rating: 4.8,
-      reviews: 142,
-      description: "Pasta Palace is a cozy Italian restaurant located in the heart of the city. We serve a wide variety of pasta dishes, from classic spaghetti and meatballs to creamy fettuccine alfredo. Our pasta is made fresh daily, and we use only the finest ingredients to create our signature sauces. Whether you're in the mood for a hearty lasagna or a light and refreshing caprese salad, Pasta Palace has something for everyone. Come in and enjoy a delicious meal in a warm and welcoming atmosphere.",
-      image:
-        "https://i1.adis.ws/i/canon/pro-sid-ali-food-photography-trends-2_e5830f8b14d841ecab4f62b476497935?$media-collection-full-dt-jpg$",
-    },
-  ]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { restaurants, loading, error } = useSelector((state: RootState) => state.restaurants);
 
   // Find the restaurant by ID
-  const restaurant = restaurants.find((restaurant) => restaurant.id === id);
+  const restaurant = restaurants.find((restaurant: Restaurant) => restaurant._id === id);
 
   // Function to generate star icons based on rating
   const renderStars = (rating: number) => {
@@ -129,6 +48,17 @@ const [restaurants, setRestaurants] = useState([
     return stars;
   };
 
+  // Render menu items
+  const renderMenu = (menuItems: Array<{ name: string, description: string, price: number }>) => {
+    return menuItems.map((item, index) => (
+      <View key={index} style={styles.menuItemContainer}>
+        <Text style={styles.menuItemName}>{item.name}</Text>
+        <Text style={styles.menuItemDescription}>{item.description}</Text>
+        <Text style={styles.menuItemPrice}>${item.price.toFixed(2)}</Text>
+      </View>
+    ));
+  };
+
   return restaurant ? (
     <ScrollView style={styles.container}>
       <Image source={{ uri: restaurant?.image }} style={styles.image} />
@@ -146,11 +76,22 @@ const [restaurants, setRestaurants] = useState([
           <Ionicons key="location" name="location" size={20} color="tomato" />
           <Text style={styles.addressText}>{restaurant?.address}</Text>
         </View>
+        
+        {/* Menu Section */}
+        {restaurant?.menuItems && restaurant.menuItems.length > 0 ? (
+          <View style={styles.menuSection}>
+            <Text style={styles.menuHeader}>Menu</Text>
+            {renderMenu(restaurant.menuItems)}
+          </View>
+        ) : (
+          <Text style={styles.noMenuText}>No menu available</Text>
+        )}
       </View>
+      
       <View style={styles.bookContainer}>
         <TouchableOpacity
           style={styles.bookButton}
-          onPress={() => router.push(`/Reservation?id=${restaurant.id}`)} // Pass the restaurant ID for navigation
+          onPress={() => router.push(`/Reservation?id=${restaurant._id}`)} // Pass the restaurant ID for navigation
         >
           <Text style={styles.bookText}>Book Now</Text>
         </TouchableOpacity>
@@ -204,6 +145,34 @@ const styles = StyleSheet.create({
   addressText: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  menuSection: {
+    marginTop: 16,
+  },
+  menuHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  menuItemContainer: {
+    marginBottom: 16,
+  },
+  menuItemName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  menuItemDescription: {
+    fontSize: 14,
+    color: "#666",
+  },
+  menuItemPrice: {
+    fontSize: 16,
+    color: "green",
+    fontWeight: "bold",
+  },
+  noMenuText: {
+    fontSize: 16,
+    color: "#888",
   },
   bookContainer: {
     padding: 16,

@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
+import { AppDispatch } from '@/redux/store';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import Button from '@/components/Button';
+import { useDispatch } from 'react-redux';
 
-const Welcome = () => {
+const Welcome: React.FC = () => {
   const router = useRouter();
   const fadeAnim = new Animated.Value(0);
+
+
 
   useEffect(() => {
     Animated.timing(fadeAnim, {

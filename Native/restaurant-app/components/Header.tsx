@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface HeaderProps {
   title: string;
@@ -22,15 +22,15 @@ const Header: React.FC<HeaderProps> = ({ title, onBackPress }) => {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#fff",
   },
+
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 8,
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
   },
 });
 

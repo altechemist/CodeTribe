@@ -1,51 +1,106 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import RestaurantCard from "../../components/RestaurantCard"; // Assuming RestaurantCard component exists
+import RestaurantForm from "../../components/RestaurantForm"; // Import RestaurantForm component
+import FloatingButton from "@/components/FloatingButton";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRestaurants, addRestaurant, deleteRestaurant, updateRestaurant, Restaurant } from "@/redux/slices/restaurantSlice";
 
-const Restaurants = () => {
-  const [restaurants, setRestaurants] = useState([
-    { id: '1', name: 'Pasta Palace', cuisine: 'Italian', location: '123 Main St' },
-    { id: '2', name: 'Sushi World', cuisine: 'Japanese', location: '456 Elm St' },
-  ]);
+const ManageRestaurants = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  
+  useEffect(() => {
+    dispatch(fetchRestaurants());
+  }, [dispatch]);
 
-  const handleDelete = (id: string) => {
-    Alert.alert('Delete Restaurant', 'Are you sure you want to delete this restaurant?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          setRestaurants(restaurants.filter((restaurant) => restaurant.id !== id));
-        },
-      },
-    ]);
+  const { restaurants, loading, error } = useSelector((state: RootState) => state.restaurants);
+  const { user } = useSelector((state: RootState) => state.users);
+
+  // Filter restaurants managed by user
+  const userRestaurants = restaurants.filter((restaurant) =>
+    restaurant.admin?.toLowerCase().includes(user?._id)
+  );
+  
+  const [editingRestaurant, setEditingRestaurant] = useState<Restaurant | null>(null);
+  const [isFormVisible, setFormVisible] = useState(false);
+
+  const handleAddRestaurant = () => {
+    setEditingRestaurant(null);
+    setFormVisible(true);
+  };
+
+  const handleEditRestaurant = (restaurantId: string) => {
+    const restaurantToEdit = restaurants.find((rest) => rest._id === restaurantId);
+    setEditingRestaurant(restaurantToEdit || null);
+    setFormVisible(true);
+  };
+
+  const handleDeleteRestaurant = (restaurantId: string) => {
+    dispatch(deleteRestaurant(restaurantId)); // Dispatch delete action to Redux store
+  };
+
+  const handleFormSubmit = (restaurant: Restaurant) => {
+    if (editingRestaurant) {
+      // Update restaurant
+      dispatch(updateRestaurant(restaurant));
+    } else {
+      // Add new restaurant
+      dispatch(addRestaurant(restaurant));
+    }
+    setFormVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Manage Restaurants</Text>
-      <FlatList
-        data={restaurants}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View>
-              <Text style={styles.cardText}>{item.name}</Text>
-              <Text style={styles.cardSubText}>{item.cuisine}</Text>
-              <Text style={styles.cardSubText}>{item.location}</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDelete(item.id)}
-            >
-              <Ionicons name="trash-outline" size={24} color="white" />
-            </TouchableOpacity>
+
+      {isFormVisible ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isFormVisible}
+          onRequestClose={() => setFormVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <RestaurantForm
+              restaurantData={editingRestaurant}
+              onSubmit={handleFormSubmit}
+              onCancel={() => setFormVisible(false)}
+            />
           </View>
-        )}
-      />
+        </Modal>
+      ) : (
+        <>
+          {loading ? (
+            <Text>Loading...</Text>
+          ) : error ? (
+            <Text style={styles.errorText}>{error}</Text>
+          ) : (
+            <FlatList
+              data={userRestaurants}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <RestaurantCard
+                  restaurant={item}
+                  onEdit={handleEditRestaurant}
+                  onDelete={handleDeleteRestaurant}
+                  user={user}
+                />
+              )}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>
+                  No restaurants found. Add some data!
+                </Text>
+              }
+            />
+          )}
+          
+          <TouchableOpacity>
+            <FloatingButton title="+ Add Restaurant" onPress={handleAddRestaurant} />
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
@@ -54,44 +109,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
-  card: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#aaa",
+    marginTop: 20,
+  },
+  errorText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "red",
+    marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
     padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  cardText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  cardSubText: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  deleteButton: {
-    marginTop: 8,
-    backgroundColor: 'red',
-    padding: 8,
-    borderRadius: 8,
-    alignItems: 'center',
   },
 });
 
-export default Restaurants;
+export default ManageRestaurants;

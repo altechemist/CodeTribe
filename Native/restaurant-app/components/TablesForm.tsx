@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 
-const UsersForm = ({ user, onSubmit, onCancel }) => {
+const TablesForm = ({ user, onSubmit, onCancel }) => {
   const [name, setName] = useState(user ? user.name : '');
   const [email, setEmail] = useState(user ? user.email : '');
   const [role, setRole] = useState(user ? user.role : 'User');
@@ -110,4 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UsersForm;
+export default TablesForm;

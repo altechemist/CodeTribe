@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Restaurant } from "@/redux/slices/restaurantSlice";
 
 // Function to render the star rating
 const renderStars = (rating: number) => {
@@ -11,37 +12,31 @@ const renderStars = (rating: number) => {
 
   // Add full stars
   for (let i = 0; i < fullStars; i++) {
-    stars.push(<Ionicons  key={`full-${i}`} name="star" size={18} color="gold" />);
+    stars.push(<Ionicons key={`full-${i}`} name="star" size={18} color="gold" />);
   }
 
   // Add half star if necessary
   if (halfStar) {
-    stars.push(<Ionicons  key="half" name="star-half" size={18} color="gold" />);
+    stars.push(<Ionicons key="half" name="star-half" size={18} color="gold" />);
   }
 
   // Add empty stars
   for (let i = 0; i < emptyStars; i++) {
-    stars.push(<Ionicons key={`empty-${i}`} name="star" size={20} color="white" />);
+    stars.push(<Ionicons key={`empty-${i}`} name="star" size={18} color="#e0e0e0" />);
   }
 
   return stars;
 };
 
-interface Restaurant {
-  image: string;
-  name: string;
-  cuisine: string;
-  rating: number;
-  reviews: number;
-  address: string;
-}
-
 interface RestaurantCardProps {
   restaurant: Restaurant;
-  onPress: () => void;
+  onPress: (restaurantId: string) => void;
+  onEdit: (restaurantId: string) => void; // Function for editing the restaurant
+  onDelete: (restaurantId: string) => void; // Function for deleting the restaurant
+  user?: { role: string }; // User's role (admin or not)
 }
 
-const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant, onPress }) => {
+const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant, onPress, onEdit, onDelete, user }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image source={{ uri: restaurant.image }} style={styles.image} />
@@ -50,12 +45,26 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant, onPress }) 
         <Text>{restaurant.cuisine}</Text>
         
         <View style={styles.reviewsContainer}>
-          <Text style={styles.reviews}>
-            {renderStars(restaurant.rating)} ({restaurant.reviews} reviews)
-          </Text>
+          {renderStars(restaurant.rating)}
+          <Text style={styles.reviews}> ({restaurant.reviews} reviews)</Text>
         </View>
 
         <Text style={styles.rating}>{restaurant.address}</Text>
+
+        {/* Show admin actions if user is admin */}
+        {user?.role === 'admin' && (
+          <View style={styles.adminActions}>
+            <TouchableOpacity onPress={() => onEdit(restaurant._id)} style={styles.editButton}>
+              <Text style={styles.actionText}>Edit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => onDelete(restaurant._id)}  style={styles.deleteButton}>
+              <Text style={styles.actionText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+          
+        )}
+
       </View>
     </TouchableOpacity>
   );
@@ -63,10 +72,13 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant, onPress }) 
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: "row",
+    flexDirection: "column",
     marginBottom: 16,
     backgroundColor: "#fff",
     borderRadius: 12,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#ccc",
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -75,34 +87,62 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   image: {
-    width: 120,
-    height: 125,
+    width: "100%",
+    height: 150,
+    resizeMode: "cover",
   },
   content: {
-    flex: 1,
-    padding: 12,
-    justifyContent: "center",
+    padding: 10,
   },
   name: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
   },
+  reviewsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   reviews: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 8,
-    flexDirection: "row",
-    alignItems: "center",
+    marginLeft: 4,
   },
   rating: {
     fontSize: 16,
     fontWeight: "bold",
     color: "tomato",
   },
-  reviewsContainer: {
+  adminActions: {
     flexDirection: "row",
+    marginTop: 10,
+  },
+  actionButton: {
+    backgroundColor: "tomato",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 6,
     alignItems: "center",
+  },
+  actionText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  editButton: {
+    marginTop: 8,
+    backgroundColor: 'blue',
+    padding: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  deleteButton: {
+    marginTop: 8,
+    backgroundColor: 'red',
+    padding: 8,
+    borderRadius: 8,
+    alignItems: 'center',
   },
 });
 

@@ -2,25 +2,34 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const ReservationsCard = ({ reservation, onEdit, onDelete }) => (
+const ReservationsCard = ({ reservation, onEdit, onDelete, user }) => (
   <View style={styles.card}>
     <View>
-      <Text style={styles.userName}>{reservation.user}</Text>
+      {user?.role === 'admin' && <Text style={styles.userName}>{reservation?.fullName}</Text>}{/* Display full name */}
+      <Text style={styles.userName}>{reservation.restaurant_name}</Text>
       <Text style={styles.reservationDetails}>
-        {reservation.restaurant} • {reservation.date} • {reservation.time}
+        {reservation.date} • {reservation.time}
       </Text>
-      <Text style={styles.guestCount}>Guests: {reservation.guests}</Text>
+      <Text style={styles.guestCount}>
+        Guests: {reservation.numberOfPeople}
+      </Text>{" "}
+      {/* Display number of people */}
+      {reservation.specialRequests && (
+        <Text style={styles.specialRequests}>
+          Special Requests: {reservation.specialRequests}
+        </Text> // Display special requests if provided
+      )}
     </View>
     <View style={styles.actions}>
       <TouchableOpacity
         style={styles.actionButton}
-        onPress={() => onEdit(reservation.id)}
+        onPress={() => onEdit(reservation._id)} // Use _id for unique identification
       >
         <Ionicons name="create-outline" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => onDelete(reservation.id)}
+        onPress={() => onDelete(reservation._id)} // Use _id for unique identification
       >
         <Ionicons name="trash-outline" size={24} color="white" />
       </TouchableOpacity>
@@ -56,6 +65,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#444",
     marginTop: 4,
+  },
+  specialRequests: {
+    fontSize: 14,
+    color: "#444",
+    marginTop: 4,
+    fontStyle: "italic",
   },
   actions: {
     flexDirection: "row",

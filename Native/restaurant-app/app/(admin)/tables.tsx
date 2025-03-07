@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity, Modal } from 'react-native';
-import UserCard from '../../components/UsersCard';
-import UsersForm from '../../components/UsersForm';
+import TableCard from '../../components/TablesCard';
+import TablesForm from '../../components/TablesForm';
 import FloatingButton from '@/components/FloatingButton';
 
-const Users = () => {
-  const [users, setUsers] = useState([
+const Tables = () => {
+  const [Tables, setTables] = useState([
     { id: '1', name: 'John Doe', email: 'john@example.com', role: 'User' },
     { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'Admin' },
   ]);
@@ -13,7 +13,7 @@ const Users = () => {
   const [isFormVisible, setFormVisible] = useState(false);
 
   const handleEditUser = (userId) => {
-    const userToEdit = users.find((user) => user.id === userId);
+    const userToEdit = Tables.find((user) => user.id === userId);
     setEditingUser(userToEdit);
     setFormVisible(true);
   };
@@ -28,15 +28,15 @@ const Users = () => {
           text: 'Delete',
           style: 'destructive',
           onPress: () =>
-            setUsers((prevUsers) =>
-              prevUsers.filter((user) => user.id !== userId)
+            setTables((prevTables) =>
+              prevTables.filter((user) => user.id !== userId)
             ),
         },
       ]
     );
   };
 
-  const handleAddUser = () => {
+  const handleAddTable = () => {
     setEditingUser(null);
     setFormVisible(true);
   };
@@ -44,19 +44,19 @@ const Users = () => {
   const handleFormSubmit = (user) => {
     if (editingUser) {
       // Update user
-      setUsers((prevUsers) =>
-        prevUsers.map((u) => (u.id === user.id ? user : u))
+      setTables((prevTables) =>
+        prevTables.map((u) => (u.id === user.id ? user : u))
       );
     } else {
       // Add new user
-      setUsers((prevUsers) => [...prevUsers, user]);
+      setTables((prevTables) => [...prevTables, user]);
     }
     setFormVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Manage Users</Text>
+      <Text style={styles.title}>Manage Tables</Text>
 
       {isFormVisible ? (
           <Modal
@@ -66,7 +66,7 @@ const Users = () => {
           onRequestClose={() => setFormVisible(false)}
         >
           <View style={styles.modalContainer}>
-          <UsersForm
+          <TablesForm
           user={editingUser}
           onSubmit={handleFormSubmit}
           onCancel={() => setFormVisible(false)}
@@ -76,24 +76,24 @@ const Users = () => {
       
       ) : (
         <FlatList
-          data={users}
+          data={Tables}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <UserCard
+            <TableCard
               user={item}
               onEdit={handleEditUser}
               onDelete={handleDeleteUser}
             />
           )}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>No users available.</Text>
+            <Text style={styles.emptyText}>No Tables available.</Text>
           }
         />
       )}
 
       {!isFormVisible && (
         <TouchableOpacity  >
-          <FloatingButton title="+ Add User" onPress={handleAddUser} />
+          <FloatingButton title="+ Add Table" onPress={handleAddTable} />
         </TouchableOpacity>
       )}
     </View>
@@ -139,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Users;
+export default Tables;

@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 const getTabIcon = (routeName: string, focused: boolean) => {
   const icons = {
     home: focused ? 'home' : 'home-outline',
-    search: focused ? 'search' : 'search-outline',
     reservations: focused ? 'calendar' : 'calendar-outline',
     profile: focused ? 'person' : 'person-outline',
   };
@@ -28,7 +27,6 @@ const TabLayout = () => {
       })}
     >
       <Tabs.Screen name="home" options={{ title: 'Home', tabBarLabel: 'Home' }} />
-      <Tabs.Screen name="search" options={{ title: 'Search', tabBarLabel: 'Search' }} />
       <Tabs.Screen
         name="reservations"
         options={{ title: 'Reservations', tabBarLabel: 'Reservations' }}

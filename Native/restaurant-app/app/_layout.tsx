@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { Slot, useRouter } from 'expo-router';
+import { store } from "../redux/store"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Provider } from 'react-redux';
 
 const RootLayout = () => {
   const router = useRouter();
@@ -36,7 +38,11 @@ const RootLayout = () => {
     );
   }
 
-  return <Slot />;
+  return (
+    <Provider store={store}>
+      <Slot />
+    </Provider>
+  );
 };
 
 const styles = StyleSheet.create({

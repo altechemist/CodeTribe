@@ -1,12 +1,13 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+
 const getTabIcon = (routeName, focused) => {
   const icons = {
     dashboard: focused ? 'grid' : 'grid-outline',
     restaurants: focused ? 'restaurant' : 'restaurant-outline',
-    reservations: focused ? 'calendar' : 'calendar-outline',
-    users: focused ? 'people' : 'people-outline',
+    reserve: focused ? 'calendar' : 'calendar-outline',
+    tables: focused ? 'fast-food' : 'fast-food-outline',
   };
   return icons[routeName] || 'help-circle-outline';
 };
@@ -50,10 +51,10 @@ const AdminTabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="users"
+        name="tables"
         options={{
-          title: 'Manage Users',
-          tabBarLabel: 'Users',
+          title: 'Manage Tables',
+          tabBarLabel: 'Tables',
         }}
       />
     </Tabs>

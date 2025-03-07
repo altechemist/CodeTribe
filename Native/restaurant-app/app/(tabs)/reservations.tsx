@@ -1,63 +1,93 @@
-// app/tabs/reservations.tsx
-import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, Alert, Modal, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, StyleSheet, FlatList, Alert, Modal } from "react-native";
 import ReservationsCard from "../../components/ReservationCard";
 import ReservationForm from "@/components/ReservationForm";
+import { RootState, AppDispatch } from "@/redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  Reservation,
+  deleteReservation,
+  fetchReservations,
+  updateReservation,
+} from "@/redux/slices/reservationSlice";
 
 const Reservations = () => {
-  const [reservations, setReservations] = useState([
-    {
-      id: "1",
-      user: "John Doe",
-      restaurant: "Pasta Palace",
-      date: "2025-01-20",
-      time: "7:00 PM",
-      guests: 2,
-    },
-    {
-      id: "2",
-      user: "Jane Smith",
-      restaurant: "Sushi Spot",
-      date: "2025-01-22",
-      time: "6:30 PM",
-      guests: 4,
-    },
-  ]);
+  const user = useSelector((state: RootState) => state.users.user);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
+  // State declarations must come first.
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [isFormVisible, setFormVisible] = useState(false);
 
-  const handleEditReservation = (reservationId) => {
-    const reservation = reservations.find((r) => r.id === reservationId);
-    setSelectedReservation(reservation);
-    setFormVisible(true);
+  // Fetch reservations when the component mounts
+  useEffect(() => {
+    console.log("Fetching reservations on mount...");
+    dispatch(fetchReservations());
+  }, [dispatch]);
+
+  // Reload reservations whenever the form is closed
+  useEffect(() => {
+    if (!isFormVisible) {
+      console.log("Modal closed, reloading reservations...");
+      dispatch(fetchReservations());
+    }
+  }, [isFormVisible, dispatch]);
+
+  // Filter reservations for the logged-in user
+  const reservations = useSelector((state: RootState) =>
+    state.reservations.reservations.filter(
+      (res: Reservation) => res.user_id?._id === user?._id
+    )
+  );
+
+  // Log when reservations change (for debugging)
+  useEffect(() => {
+    console.log("Reservations updated:", reservations);
+  }, [reservations]);
+
+  // When user clicks Edit on a reservation card:
+  const handleEditReservation = (reservationId: string) => {
+    const reservation = reservations.find((r) => r._id === reservationId);
+    console.log("Editing reservation:", reservation);
+    if (reservation) {
+      setSelectedReservation(reservation);
+      setFormVisible(true);
+    }
   };
 
-  const handleDeleteReservation = (reservationId) => {
-    Alert.alert(
-      "Delete Reservation",
-      "Are you sure you want to delete this reservation?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            setReservations((prev) =>
-              prev.filter((reservation) => reservation.id !== reservationId)
-            );
-          },
+  // Delete action for a reservation:
+  const handleDeleteReservation = (reservationId: string) => {
+    Alert.alert("Delete Reservation", "Are you sure you want to delete this reservation?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          console.log("Deleting reservation with id:", reservationId);
+          dispatch(deleteReservation(reservationId));
         },
-      ]
-    );
+      },
+    ]);
   };
 
-  const handleSaveReservation = (updatedReservation) => {
-    setReservations((prev) =>
-      prev.map((reservation) =>
-        reservation.id === updatedReservation.id ? updatedReservation : reservation
-      )
-    );
+  // The onSubmit handler passed to ReservationForm.
+  // It receives formData from the form, merges it with the selected reservation's _id,
+  // and dispatches updateReservation.
+  const handleFormSubmit = useCallback(
+    (formData: any) => {
+      if (!selectedReservation) return;
+      dispatch(updateReservation({ id: selectedReservation._id, data: formData }));
+      
+      // Hide the form and clear the selected reservation
+      setFormVisible(false);
+      setSelectedReservation(null);
+    },
+    [dispatch, selectedReservation]
+  );
+
+  // Called when the user cancels editing
+  const handleCancelForm = () => {
+    console.log("Form cancelled");
     setFormVisible(false);
     setSelectedReservation(null);
   };
@@ -67,8 +97,9 @@ const Reservations = () => {
       <Text style={styles.title}>Your Reservations</Text>
       <FlatList
         data={reservations}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
+          
           <ReservationsCard
             reservation={item}
             onEdit={handleEditReservation}
@@ -77,18 +108,18 @@ const Reservations = () => {
         )}
         ListEmptyComponent={<Text>No reservations yet!</Text>}
       />
-      {isFormVisible && (
+      {isFormVisible && selectedReservation && (
         <Modal
           animationType="slide"
           transparent={true}
           visible={isFormVisible}
-          onRequestClose={() => setFormVisible(false)}
+          onRequestClose={handleCancelForm}
         >
           <View style={styles.modalContainer}>
             <ReservationForm
               reservation={selectedReservation}
-              onSave={handleSaveReservation}
-              onCancel={() => setFormVisible(false)}
+              onSubmit={handleFormSubmit}
+              onCancel={handleCancelForm}
             />
           </View>
         </Modal>

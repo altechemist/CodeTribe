@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const UserCard = ({ user, onEdit, onDelete }) => {
+const TableCard = ({ user, onEdit, onDelete }) => {
   return (
     <View style={styles.userCard}>
       <View>
@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserCard;
+export default TableCard;

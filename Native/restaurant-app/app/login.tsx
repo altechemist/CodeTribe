@@ -1,51 +1,47 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Alert, ActivityIndicator, Text } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { loginUser } from '@/redux/slices/userSlice'; 
 import Header from '../components/Header';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios'; // Import axios
+import { AppDispatch, RootState } from '@/redux/store'; // Ensure these are correctly imported
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Access Redux state
+  const { loading, error } = useSelector((state: RootState) => state.users);
 
   const handleLogin = async () => {
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-
     if (!email || !password) {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
 
-    setLoading(true);
     try {
-      console.log(`${apiUrl}/users/login`);
-      const response = await axios.post(
-        `${apiUrl}/users/login`,
-        { email, password }, // Sending the email and password as body
-        { headers: { 'Content-Type': 'application/json' } } // Axios sets this automatically, but it's good to be explicit
-      );
+      const user = await dispatch(loginUser({ email, password })).unwrap(); 
 
-      // If the response is successful, handle the data
-      const data = response.data;
-      await AsyncStorage.setItem('token', data.token);
+      // Save token to AsyncStorage
+      await AsyncStorage.setItem('token', user.token);
 
-      // Navigate based on user role
-      if (data.role === 'admin') {
-        router.push('/(admin)/dashboard');
-      } else {
-        router.push('/(tabs)/home');
-      }
-    } catch (error) {
-      console.error(error);
-      const errorMessage = error.response?.data?.message || 'Something went wrong. Please try again later.';
-      Alert.alert('Error', errorMessage);
-    } finally {
-      setLoading(false);
+      // Redirect to dashboard
+      router.replace('/home');
+
+      
+      // Redirection to admin
+      if (user?.user.role === 'admin')
+      router.replace('/(admin)/dashboard')
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      Alert.alert('Login Failed', errorMessage);
     }
   };
 
@@ -69,10 +65,14 @@ const Login = () => {
       ) : (
         <Button title="Login" onPress={handleLogin} />
       )}
+      
       <Button
         title="Don't have an account? Sign Up"
         onPress={() => router.push('/signup')}
       />
+
+      {/* Display error message instead of using Alert.alert inside JSX */}
+      {error && <Text style={styles.errorText}>{error}</Text>} 
     </View>
   );
 };
@@ -83,8 +83,10 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
   },
-  link: {
-    marginTop: 16,
+  errorText: {
+    color: 'red',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 

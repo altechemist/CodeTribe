@@ -5,8 +5,12 @@ import TextItem from '../../components/TextItem'; // A reusable component for di
 import Button from '../../components/Button'; // Reusable Button component
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { RootState, AppDispatch } from '@/redux/store';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Profile = () => {
+  const user = useSelector((state: RootState) => state.users.user);
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -21,8 +25,8 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Header title="Your Profile" />
-      <TextItem label="Name" value="John Doe" />
-      <TextItem label="Email" value="john.doe@example.com" />
+      <TextItem label="Name" value={user?.name || 'John Doe' }/>
+      <TextItem label="Email" value={user?.email || 'email@domain.com' } />
       <Button title="My Reservations" onPress={() => router.replace('/reservations')} />
       <Button title="Logout" onPress={handleLogout} />
     </View>
